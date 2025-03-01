@@ -1,25 +1,44 @@
-spring.application.name=backend
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecommForAll
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.datasource.username=postgres
-spring.datasource.password=postgres
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.security.user.name=admin
-spring.security.user.password=admin
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommForAll
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin
 
-jwt.secret=K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
-jwt.expiration=86400000
+jwt:
+  secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
+  expiration: 86400000
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
 
-springdoc.swagger-ui.path=/swagger-ui.html
-springdoc.api-docs.path=/v3/api-docs
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
 
-logging.level.org.springframework.security=DEBUG
-
-
-
-#logging.level.root=ERROR
-#logging.level.org.springframework=ERROR
-#logging.file.name=logs/spring-boot-application.log
+# Commented settings
+#logging:
+#  level:
+#    root: ERROR
+#    org:
+#      springframework: ERROR
+#  file:
+#    name: logs/spring-boot-application.log
