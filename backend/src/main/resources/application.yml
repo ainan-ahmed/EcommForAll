@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ecommForAll
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin
+
+jwt:
+  secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
+  expiration: 86400000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+# Commented settings
+#logging:
+#  level:
+#    root: ERROR
+#    org:
+#      springframework: ERROR
+#  file:
+#    name: logs/spring-boot-application.log

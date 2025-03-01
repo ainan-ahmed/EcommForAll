@@ -8,8 +8,7 @@ services:
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
     depends_on:
-      db:
-        condition: service_healthy
+    - db
 
   db:
     image: postgres:15
