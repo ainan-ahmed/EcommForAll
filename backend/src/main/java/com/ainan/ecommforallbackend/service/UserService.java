@@ -13,5 +13,6 @@ public interface UserService {
     void deleteUser(UUID id);
     UserDto getUserByUsername(String username);
     UserDto getUserByEmail(String email);
+    void changePassword(String username, String oldPassword, String newPassword);
 //    List<UserDto> getAllUsers();
 }
