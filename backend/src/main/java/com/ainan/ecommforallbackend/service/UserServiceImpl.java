@@ -7,16 +7,20 @@ import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 //    @Override
 //    public UserAuthDto createUser(UserAuthDto userAuthDto) {
 //        User user = UserMapper.INSTANCE.UserAuthDtoToUser(userAuthDto);
@@ -60,5 +64,24 @@ public class UserServiceImpl implements UserService{
     public UserDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return UserMapper.INSTANCE.UserToUserDto(user);
+    }
+
+    @Override
+    public void changePassword(String username, String oldPassword, String newPassword) {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+
+        if (optionalUser.isEmpty()) {
+            throw new UsernameNotFoundException("User not found.");
+        }
+
+        User user = optionalUser.get();
+
+        // Correct logic: if old password doesn't match, throw error; otherwise update
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 }
