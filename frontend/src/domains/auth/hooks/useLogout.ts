@@ -20,7 +20,7 @@ export function useLogout() {
     // Show notification
     notifications.show({
       title: 'Success',
-      position: "top-right",
+      position: "top-center",
       message: 'Logged out successfully',
       color: 'blue'
     });
