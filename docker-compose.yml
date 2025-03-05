@@ -29,6 +29,8 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    environment:
+      - HOST=0.0.0.0
     # Mount the local frontend code to the container for live reloading (development only)
     volumes:
       - ./frontend:/app
