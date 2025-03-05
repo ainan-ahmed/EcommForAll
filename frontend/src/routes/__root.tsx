@@ -4,18 +4,15 @@ import {TanStackRouterDevtools} from "@tanstack/router-devtools";
 import {IconLogin, IconLogout, IconSettings, IconUser} from "@tabler/icons-react";
 import {useDisclosure} from "@mantine/hooks";
 import {JSX} from "react";
+import {useAuth} from "../domains/auth/hooks/useAuth.ts";
 
 
 
 function RootComponent() : JSX.Element {
-    const isAuthenticated = false;
-    const user = {
-        name: 'User Name',
-        image: null
-    };
+    const {isAuthenticated, user} = useAuth()
     const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-    console.log(user);
+    console.log(user,isAuthenticated);
     return (
         <Container>
             <AppShell
@@ -35,12 +32,12 @@ function RootComponent() : JSX.Element {
                                         <Group gap="xs">
                                             <Avatar
                                                 size="sm"
-                                                src={user.image}
+                                                // src={user.image}
                                                 color="blue"
                                             >
-                                                {user.name.charAt(0)}
+                                                {user?.firstName.charAt(0)}
                                             </Avatar>
-                                            <Text>{user.name}</Text>
+                                            <Text>{user?.lastName}</Text>
                                         </Group>
                                     </Button>
                                 </Menu.Target>
