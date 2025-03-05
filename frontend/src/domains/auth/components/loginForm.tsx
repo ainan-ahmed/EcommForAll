@@ -9,16 +9,16 @@ interface LoginFormProps {
 }
 export function LoginForm({ onSubmit, isLoading }: LoginFormProps) {
     const form = useForm<LoginFormValues>({
-        initialValues: {email: '', password: ''},
+        initialValues: {username: '', password: ''},
         validate: zodResolver(loginSchema),
     });
     return !isLoading?(
         <form onSubmit={form.onSubmit(onSubmit)}>
             <TextInput
-                label="Email"
-                placeholder="your@email.com"
+                label="Username"
+                placeholder="enter your username"
                 required
-                {...form.getInputProps('email')}
+                {...form.getInputProps('username')}
             />
 
             <PasswordInput

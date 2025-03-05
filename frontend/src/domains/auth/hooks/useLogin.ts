@@ -18,12 +18,16 @@ export function useLogin(options: UseLoginOptions = {}) {
     return useMutation({
         mutationFn: (data: LoginFormValues) => login(data),
         onSuccess: (response) => {
-            setAuth(response.user); // Update global auth state
-            notifications.show({ title: 'Success', message: 'Logged in!', color: 'green' });
+            const {user,token} = response;
+            console.log(response)
+            localStorage.setItem('authToken', token);
+            setAuth(user); // Update global auth state
+            notifications.show({ title: 'Success',position: "top-right", message: 'Logged in!', color: 'green' });
             onSuccess?.(response); // Call optional callback
         },
         onError: (error: Error) => {
-            notifications.show({ title: 'Error', message: error.message, color: 'red' });
+            // console.error('Login failed:', error.message);
+            notifications.show({ title: 'Error',position: "top-right", message: error.message, color: 'red' });
             onError?.(error); // Call optional error callback
         },
     });

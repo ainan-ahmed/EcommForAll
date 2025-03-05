@@ -13,11 +13,12 @@ function LoginPage() {
     const navigate = useNavigate();
     const loginMutation = useLogin({
         onSuccess: () => navigate({ to: '/' }),
-        onError: (error) => {
-            console.error('Login failed:', error.message);
+        onError: () => {
+            // console.error('Login failed:', error.message);
         },
     });
     const handleSubmit = (values : LoginFormValues) => {
+        loginMutation.mutate(values);
         console.log(values);
     }
     return (

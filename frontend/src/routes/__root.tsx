@@ -4,18 +4,16 @@ import {TanStackRouterDevtools} from "@tanstack/router-devtools";
 import {IconLogin, IconLogout, IconSettings, IconUser} from "@tabler/icons-react";
 import {useDisclosure} from "@mantine/hooks";
 import {JSX} from "react";
+import {useAuth} from "../domains/auth/hooks/useAuth.ts";
+import { useLogout } from '../domains/auth/hooks/useLogout.ts';
 
 
 
 function RootComponent() : JSX.Element {
-    const isAuthenticated = false;
-    const user = {
-        name: 'User Name',
-        image: null
-    };
-    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+    const {isAuthenticated, user} = useAuth() as { isAuthenticated: boolean, user: { firstName: string, lastName: string, email: string,username: string } | null };    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
-    console.log(user);
+    const logout = useLogout();
+    console.log(user,isAuthenticated);
     return (
         <Container>
             <AppShell
@@ -35,12 +33,12 @@ function RootComponent() : JSX.Element {
                                         <Group gap="xs">
                                             <Avatar
                                                 size="sm"
-                                                src={user.image}
+                                                // src={user.image}
                                                 color="blue"
                                             >
-                                                {user.name.charAt(0)}
+                                                {user?.firstName.charAt(0)}
                                             </Avatar>
-                                            <Text>{user.name}</Text>
+                                            <Text>{user?.lastName}</Text>
                                         </Group>
                                     </Button>
                                 </Menu.Target>
@@ -51,6 +49,7 @@ function RootComponent() : JSX.Element {
                                     <Menu.Item
                                         leftSection={<IconLogout size={16}/>}
                                         color="red"
+                                        onClick={logout}
                                     >
                                         Logout
                                     </Menu.Item>
