@@ -5,13 +5,14 @@ import {IconLogin, IconLogout, IconSettings, IconUser} from "@tabler/icons-react
 import {useDisclosure} from "@mantine/hooks";
 import {JSX} from "react";
 import {useAuth} from "../domains/auth/hooks/useAuth.ts";
+import { useLogout } from '../domains/auth/hooks/useLogout.ts';
 
 
 
 function RootComponent() : JSX.Element {
-    const {isAuthenticated, user} = useAuth()
-    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
+    const {isAuthenticated, user} = useAuth() as { isAuthenticated: boolean, user: { firstName: string, lastName: string, email: string,username: string } | null };    const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
     const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
+    const logout = useLogout();
     console.log(user,isAuthenticated);
     return (
         <Container>
@@ -48,6 +49,7 @@ function RootComponent() : JSX.Element {
                                     <Menu.Item
                                         leftSection={<IconLogout size={16}/>}
                                         color="red"
+                                        onClick={logout}
                                     >
                                         Logout
                                     </Menu.Item>
