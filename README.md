@@ -49,14 +49,14 @@ mvn spring-boot:run
 3. **Frontend**:
 - Install Node.js and npm
 - Navigate to frontend:
-  ```bash
+```bash
 cd frontend
 npm install
 npm start
 ```
 
 4. **Docker (Optional)**:
-   ```bash
+```bash
 docker-compose up --build
 ```
 - Access the frontend at: `http://localhost:3000`
