@@ -1,11 +1,20 @@
-import {createFileRoute, Link, useNavigate} from '@tanstack/react-router'
+import {createFileRoute, Link, redirect, useNavigate} from '@tanstack/react-router'
 import {  Anchor, Paper, Container, Title, Text } from '@mantine/core';
 import { userSchema } from '../domains/auth/schemas/userSchema.ts';
 import {LoginFormValues} from "../types/formTypes.ts";
 import { useLogin } from '../domains/auth/hooks/useLogin.ts';
 import {LoginForm} from "../domains/auth/components/loginForm.tsx";
+import {authStore} from "../stores/authStore.ts";
 export const loginSchema = userSchema.pick({ email: true, password: true });
+
 export const Route  = createFileRoute('/login')({
+    beforeLoad: ({location}) => {
+        if (authStore.getState().isAuthenticated) {
+            throw redirect({ to: '/', search: {
+                    redirect: location.href
+                } });
+        }
+    },
     component: LoginPage,
 })
 

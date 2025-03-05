@@ -22,12 +22,12 @@ export function useLogin(options: UseLoginOptions = {}) {
             console.log(response)
             localStorage.setItem('authToken', token);
             setAuth(user); // Update global auth state
-            notifications.show({ title: 'Success',position: "top-right", message: 'Logged in!', color: 'green' });
+            notifications.show({ title: 'Success',position: "top-center", message: 'Logged in!', color: 'green' });
             onSuccess?.(response); // Call optional callback
         },
         onError: (error: Error) => {
             // console.error('Login failed:', error.message);
-            notifications.show({ title: 'Error',position: "top-right", message: error.message, color: 'red' });
+            notifications.show({ title: 'Error',position: "top-center", message: error.message, color: 'red' });
             onError?.(error); // Call optional error callback
         },
     });
