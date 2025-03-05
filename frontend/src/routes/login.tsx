@@ -1,10 +1,10 @@
 import {createFileRoute, Link, redirect, useNavigate} from '@tanstack/react-router'
-import {  Anchor, Paper, Container, Title, Text } from '@mantine/core';
 import { userSchema } from '../domains/auth/schemas/userSchema.ts';
 import {LoginFormValues} from "../types/formTypes.ts";
 import { useLogin } from '../domains/auth/hooks/useLogin.ts';
 import {LoginForm} from "../domains/auth/components/loginForm.tsx";
 import {authStore} from "../stores/authStore.ts";
+import {Anchor, Container, Paper, Title, Text} from '@mantine/core';
 export const loginSchema = userSchema.pick({ email: true, password: true });
 
 export const Route  = createFileRoute('/login')({
@@ -21,7 +21,18 @@ export const Route  = createFileRoute('/login')({
 function LoginPage() {
     const navigate = useNavigate();
     const loginMutation = useLogin({
-        onSuccess: () => navigate({ to: '/' }),
+        onSuccess: () => {
+            const searchParams = new URLSearchParams(window.location.search);
+            const redirectUrl = searchParams.get('redirect');
+            if (redirectUrl) {
+                navigate({
+                    to: redirectUrl,
+                    replace: true
+                });
+            } else {
+                navigate({ to: '/' });
+            }
+        },
         onError: () => {
             // console.error('Login failed:', error.message);
         },
