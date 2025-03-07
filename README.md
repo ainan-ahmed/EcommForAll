@@ -68,8 +68,8 @@ docker-compose up --build
 ## Development Todos
 ### Phase 1: Core E-commerce & Blog Features (MVP)
 
-- [ ]  User Authentication & Authorization with Jwt Based Authentication
-	- [ ]  Implement role-based access control (Admin, Seller, Customer)
+- []  User Authentication & Authorization with Jwt Based Authentication
+	- [x]  Implement role-based access control (Admin, Seller, Customer)
 	- [ ]  Integrate OAuth2 for Google and Facebook login
 - [ ]  Product Management
 	- [ ] Implement product Categories and subcategories.
