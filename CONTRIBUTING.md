@@ -8,21 +8,21 @@ Please read and adhere to the [Code of Conduct](CODE_OF_CONDUCT.md)(not added ye
 1. **Fork the Repository**: Click the "Fork" button at the top of this repository to create your own copy.
 
 2. **Clone the Repository**: Clone your forked repository to your local machine.
-    ```sh
+    ```shell
     git clone https://github.com/your-username/EcommForAll.git
     ```
 3. Create a Branch: Create a new branch for your feature or bug fix.
-    ```sh
+    ```shell
     git checkout -b feature/your-feature-name
     ```
 4. **Make Changes**: Make your changes in the new branch.
 
 5. **Commit Changes**: Commit your changes with a clear and descriptive commit message following the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
-    ```sh
+    ```shell
     git commit -m "feat: description of your feature"
     ```
 6. **Push Changes**: Push your changes to your forked repository.
-    ```sh
+    ```shell
     git push origin feature/your-feature-name
     ```
 7. **Create a Pull Request**: Open a pull request from your forked repository to the dev branch of the main repository. Include a detailed description of your changes.
