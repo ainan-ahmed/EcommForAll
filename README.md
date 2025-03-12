@@ -72,8 +72,9 @@ docker-compose up --build
 	- [x]  Implement role-based access control (Admin, Seller, Customer)
 	- [ ]  Integrate OAuth2 for Google and Facebook login
 - [ ]  Product Management
-	- [ ] Implement product Categories and subcategories.
-	- [ ] Add product attributes (size, color, brand)
+	- [x] Implement product Categories and subcategories.
+	- [x] Add product attributes (size, color, brand)
+  - [ ] implement api endpoints
 	- [ ] Implement filtering and sorting for products
 - [ ]  Shopping Cart & Checkout
 	- [ ] Implement add/update/remove items in cart
