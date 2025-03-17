@@ -2,7 +2,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://db:5432/ecommForAll
+    url: jdbc:postgresql://localhost:5432/ecommforall
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres

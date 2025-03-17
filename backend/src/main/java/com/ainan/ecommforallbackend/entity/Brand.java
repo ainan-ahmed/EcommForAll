@@ -24,12 +24,13 @@ public class Brand {
     private UUID id;
     @Column(nullable = false)
     private String name;
-    private String description;
     @Column(nullable = false)
+    private String description;
+    @Column(name = "logo_url")
     private String logoUrl;
     @Column(unique = true)
     private String website;
-    @Column(nullable = false)
+    @Column(name = "is_active")
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "brand")
