@@ -9,8 +9,6 @@ import com.ainan.ecommforallbackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +25,6 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto register(UserAuthDto registrationDto) {
-        System.out.println(registrationDto);
         if (userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
@@ -38,7 +35,6 @@ public class AuthService {
         if (user.getRole() == null) {
             user.setRole(RoleName.USER);
         }
-        System.out.println("User: " + user);
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword())); // Encode password
         User savedUser = userRepository.save(user);
         return UserMapper.INSTANCE.UserToUserDto(savedUser);
