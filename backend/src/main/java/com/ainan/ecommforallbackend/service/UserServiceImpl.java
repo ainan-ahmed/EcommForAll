@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public UserAuthDto updateUser(UUID id, UserAuthDto userAuthDto) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -48,6 +50,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void deleteUser(UUID id) {
         User deletedUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(deletedUser);
@@ -67,6 +70,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    @Transactional
     public void changePassword(String username, String oldPassword, String newPassword) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
 
