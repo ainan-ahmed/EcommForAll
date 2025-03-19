@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -38,6 +39,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public BrandDto createBrand(BrandCreateDto brandDto) {
         if(brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
             throw new RuntimeException("Brand already exists with name: "+ brandDto.getName());
@@ -49,6 +51,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public BrandDto updateBrand(UUID id, BrandDto brandDto) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
         if(!brand.getName().equalsIgnoreCase(brandDto.getName()) &&brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
@@ -60,6 +63,7 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
+    @Transactional
     public void deleteBrand(UUID id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
         brand.setIsActive(false);
