@@ -21,7 +21,7 @@ public class ProductVariant {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "attribute_values", columnDefinition = "jsonb")
+    @Column(name = "attribute_values", columnDefinition = "jsonb", nullable = false)
     private String attributeValues; // {"color":"red","size":"XL"}
 
     @Column(nullable = false, unique = true)
@@ -33,7 +33,6 @@ public class ProductVariant {
     @Column(nullable = false)
     private int stock;
 
-    // In ProductVariant.java - replace variantImage field with:
     @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL)
     private List<VariantImage> images;
 
@@ -45,7 +44,6 @@ public class ProductVariant {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Many-to-one relationship with Product
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;

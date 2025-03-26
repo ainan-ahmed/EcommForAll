@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -67,8 +68,18 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        //  public endpoints
                         .requestMatchers("/api/auth/**","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/products/**",
+                                "/api/categories/**",
+                                "/api/brands/**",
+                                "/api/product-images/**",
+                                "/api/variant-images/**",
+                                "/api/variants/**").permitAll()
+                        //admin only endpoints
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        // all other requests require authentication
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(customUserDetailsService())

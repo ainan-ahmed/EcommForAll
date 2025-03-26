@@ -8,6 +8,7 @@ import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Setter
 public class AuthService {
