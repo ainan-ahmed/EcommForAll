@@ -27,7 +27,9 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
-
+aws:
+  s3:
+    bucket: ecommforall
 logging:
   level:
     org:
