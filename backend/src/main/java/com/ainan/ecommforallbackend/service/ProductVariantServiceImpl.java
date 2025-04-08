@@ -74,8 +74,8 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .substring(0, Math.min(3, productVariant.getProduct().getName().length()))
                 .toUpperCase();
 
-        String attributePrefix = productVariant.getAttributeValues()
-                .substring(0, Math.min(3, productVariant.getAttributeValues().length()))
+        String attributePrefix = productVariant.getAttributeValues().toString()
+                .substring(0, Math.min(3, productVariant.getAttributeValues().toString().length()))
                 .toUpperCase();
 
         String randomPart = String.format("%04d", (int)(Math.random() * 10000));
