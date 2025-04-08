@@ -3,7 +3,6 @@ package com.ainan.ecommforallbackend.controller;
 import com.ainan.ecommforallbackend.dto.ProductVariantCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductVariantDto;
 import com.ainan.ecommforallbackend.service.ProductVariantService;
-import com.ainan.ecommforallbackend.util.JsonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
