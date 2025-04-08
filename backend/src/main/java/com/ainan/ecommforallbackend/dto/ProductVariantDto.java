@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -18,8 +19,8 @@ public class ProductVariantDto {
     private UUID id;
     @NotNull(message = "Product ID is required")
     private UUID productId;
-    @NotBlank(message = "attribute values are required")
-    private String attributeValues;
+    @NotNull(message = "attribute values are required")
+    private Map<String, String> attributeValues;
     @NotBlank(message = "SKU is required")
     private String sku;
 

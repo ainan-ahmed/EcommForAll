@@ -1,13 +1,16 @@
 package com.ainan.ecommforallbackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -18,7 +21,7 @@ public class ProductVariantCreateDto {
     private UUID productId;
 
     @NotNull(message = "Attribute values are required")
-    private String attributeValues;
+    private Map<String, String> attributeValues;
 
     private String sku;
 

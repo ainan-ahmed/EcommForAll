@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -13,6 +11,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.util.UUID;
 
 @Service
@@ -41,13 +40,22 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public void deleteFile(String fileName) {
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
+    public void deleteFile(String fileUrl) {
+       try {
+           URI uri = URI.create(fileUrl);
+           String key = uri.getPath();
+           if (key.startsWith("/")) {
+               key = key.substring(1);
+           }
+           DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                   .bucket(bucketName)
+                   .key(key)
+                   .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
+           s3Client.deleteObject(deleteObjectRequest);
+       } catch (Exception e) {
+           throw new RuntimeException("Failed to delete file: " + fileUrl, e);
+       }
     }
 
 
