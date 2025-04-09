@@ -1,4 +1,5 @@
 package com.ainan.ecommforallbackend.entity;
+import com.ainan.ecommforallbackend.listener.VariantListener;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EntityListeners(VariantListener.class)
 @Table(name = "product_variant")
 public class ProductVariant {
     @Id

@@ -15,4 +15,5 @@ public interface ProductVariantService {
     ProductVariantDto createVariant(ProductVariantCreateDto createDto);
     ProductVariantDto updateVariant(UUID id, ProductVariantDto variantDto);
     void deleteVariant(UUID id);
+    void updateProductPrice(UUID productId);
 }
