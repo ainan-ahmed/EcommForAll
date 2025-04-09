@@ -74,7 +74,7 @@ docker-compose up --build
 - [ ]  Product Management
 	- [x] Implement product Categories and subcategories.
 	- [x] Add product attributes (size, color, brand)
-  - [ ] implement api endpoints
+  - [x] implement api endpoints
 	- [ ] Implement filtering and sorting for products
 - [ ]  Shopping Cart & Checkout
 	- [ ] Implement add/update/remove items in cart
