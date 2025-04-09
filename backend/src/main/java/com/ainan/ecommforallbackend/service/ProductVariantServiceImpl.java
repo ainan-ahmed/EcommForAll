@@ -10,6 +10,8 @@ import com.ainan.ecommforallbackend.repository.ProductVariantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     private final ProductRepository productRepository;
     private final ProductVariantMapper productVariantMapper;
     @Override
+    @Cacheable(value = "productVariants", key = "'variants' + #productId + #pageable")
     public Page<ProductVariantDto> getVariantsByProductId(UUID productId, Pageable pageable) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
         return productVariantRepository.findByProductId(product.getId(), pageable)
@@ -32,6 +35,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Cacheable(value = "productVariants", key = "'variant' + #id")
     public ProductVariantDto getVariantById(UUID id) {
         return productVariantMapper.productVariantToProductVariantDto(
                 productVariantRepository.findById(id).orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id))
@@ -39,11 +43,13 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Cacheable(value = "productVariants", key = "'variant' + #sku")
     public ProductVariantDto getVariantBySku(String sku) {
         return productVariantMapper.productVariantToProductVariantDto(productVariantRepository.findBySku(sku).orElseThrow(() -> new RuntimeException("Product variant not found with sku: " + sku)));
     }
 
     @Override
+    @CacheEvict(value = "productVariants", allEntries = true)
     public ProductVariantDto createVariant(ProductVariantCreateDto productVariantCreateDto) {
         Product product = productRepository.findById(productVariantCreateDto.getProductId()).orElseThrow(() -> new RuntimeException("Product not found with id: " + productVariantCreateDto.getProductId()));
         ProductVariant productVariant = productVariantMapper.productVariantCreateDtoToProductVariant(productVariantCreateDto);
@@ -54,6 +60,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @CacheEvict(value = "productVariants", allEntries = true)
     public ProductVariantDto updateVariant(UUID id, ProductVariantDto variantDto) {
         ProductVariant existingVariant = productVariantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));
@@ -66,6 +73,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @CacheEvict(value = "productVariants", allEntries = true)
     public void deleteVariant(UUID id) {
         ProductVariant existingVariant = productVariantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));
@@ -73,6 +81,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @CacheEvict(value = "productVariants", allEntries = true)
     public void updateProductPrice(UUID productId) {
         Optional<BigDecimal> minPriceOpt = productVariantRepository.findMinPriceByProductId(productId);
         Product product = productRepository.findById(productId)

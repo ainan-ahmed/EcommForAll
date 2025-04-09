@@ -7,6 +7,7 @@ import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import lombok.NoArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,6 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    @Override
-//    public UserAuthDto createUser(UserAuthDto userAuthDto) {
-//        User user = UserMapper.INSTANCE.UserAuthDtoToUser(userAuthDto);
-//        User savedUser = userRepository.save(user);
-//        return UserMapper.INSTANCE.UserToUserAuthDto(savedUser);
-//    }
-
     @Override
     public UserDto getUser(UUID id)
     {
@@ -38,6 +32,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public UserAuthDto updateUser(UUID id, UserAuthDto userAuthDto) {
 
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -51,6 +46,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", allEntries = true)
     public void deleteUser(UUID id) {
         User deletedUser = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(deletedUser);

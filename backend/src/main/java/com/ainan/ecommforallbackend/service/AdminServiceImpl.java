@@ -7,6 +7,8 @@ import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "users", key = "'allUsers' + #pageable")
     public UserDto updateUserRole(UUID userId, RoleName newRole) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
@@ -32,6 +35,7 @@ public class AdminServiceImpl implements AdminService {
         return UserMapper.INSTANCE.UserToUserDto(updatedUser);
     }
     @Override
+    @Cacheable(value = "users", key = "'allUsers' + #pageable")
     public Page<UserDto> getAllUsers(Pageable pageable) {
         Page<User> userPage = userRepository.findAll(pageable);
         return userPage.map(UserMapper.INSTANCE::UserToUserDto);
