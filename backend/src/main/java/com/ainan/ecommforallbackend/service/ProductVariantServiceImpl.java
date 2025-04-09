@@ -7,12 +7,15 @@ import com.ainan.ecommforallbackend.entity.ProductVariant;
 import com.ainan.ecommforallbackend.mapper.ProductVariantMapper;
 import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.repository.ProductVariantRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 @Data
 @RequiredArgsConstructor
@@ -68,6 +71,16 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));
         productVariantRepository.delete(existingVariant);
     }
+
+    @Override
+    public void updateProductPrice(UUID productId) {
+        Optional<BigDecimal> minPriceOpt = productVariantRepository.findMinPriceByProductId(productId);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+        product.setMinPrice(minPriceOpt.orElse(null)); // Set to null or a default value if no variants exist
+        productRepository.save(product);
+    }
+
     // Format: {ProductPrefix}-{AttributePrefix}-{RandomNumber}
     private String generateVariantSku(ProductVariant productVariant) {
         String productPrefix = productVariant.getProduct().getName()

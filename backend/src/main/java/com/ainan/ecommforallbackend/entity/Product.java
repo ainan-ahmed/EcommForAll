@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -33,8 +34,8 @@ public class Product {
     private Boolean isActive = true;
     @Column(nullable = false)
     private Boolean isFeatured = false;
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Column(nullable = true,name = "min_price")
+    private BigDecimal minPrice = BigDecimal.ZERO;
 
     @ManyToOne()
     @JoinColumn(name = "brand_id", nullable = false)

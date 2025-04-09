@@ -1,9 +1,9 @@
 package com.ainan.ecommforallbackend.controller;
 
-import com.ainan.ecommforallbackend.dto.ProductImageCreateDto;
-import com.ainan.ecommforallbackend.dto.ProductImageDto;
-import com.ainan.ecommforallbackend.service.ProductImageService;
+import com.ainan.ecommforallbackend.dto.VariantImageCreateDto;
+import com.ainan.ecommforallbackend.dto.VariantImageDto;
 import com.ainan.ecommforallbackend.service.S3Service;
+import com.ainan.ecommforallbackend.service.VariantImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,58 +17,58 @@ import java.io.IOException;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/products/{productId}/images")
+@RequestMapping("/api/products/{productId}/variants/{variantId}/images")
 @RequiredArgsConstructor
-public class ProductImageController {
-    private final ProductImageService productImageService;
+public class VariantImageController {
+
+    private final VariantImageService variantImageService;
     private final S3Service s3Service;
 
     @GetMapping
-    public ResponseEntity<Page<ProductImageDto>> getAllProductImages(
-            @PathVariable UUID productId,
-            Pageable pageable) {
-        return ResponseEntity.ok(productImageService.getImagesByProductId(productId, pageable));
+    public ResponseEntity<Page<VariantImageDto>> getAllVariantImages(@PathVariable UUID productId,@PathVariable UUID variantId, Pageable pageable) {
+        return ResponseEntity.ok(variantImageService.getImagesByVariantId(variantId, pageable));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductImageDto> getProductImage(
-            @PathVariable UUID productId,
+    public ResponseEntity<VariantImageDto> getVariantImage(
+            @PathVariable UUID productId
+            ,@PathVariable UUID variantId,
             @PathVariable UUID id) {
-        return ResponseEntity.ok(productImageService.getImageById(id));
+        return ResponseEntity.ok(variantImageService.getImageById(id));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductImageDto> createProductImage(
+    public ResponseEntity<VariantImageDto> createVariantImage(
             @PathVariable UUID productId,
+            @PathVariable UUID variantId,
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "altText", required = false) String altText,
-            @RequestParam(value = "sortOrder", defaultValue = "0") int sortOrder) throws IOException {
+            @RequestParam(value = "sortOrder", defaultValue = "0") int sortOrder) throws IOException
+    {
         String fileName = s3Service.uploadFile(file);
-        ProductImageCreateDto productImageCreateDto = new ProductImageCreateDto();
-        productImageCreateDto.setProductId(productId);
-        productImageCreateDto.setImageUrl(fileName);
-        productImageCreateDto.setAltText(altText);
-        productImageCreateDto.setSortOrder(sortOrder);
-            return new ResponseEntity<>(productImageService.createImage(productImageCreateDto), HttpStatus.CREATED);
+        VariantImageCreateDto variantImageCreateDto = new VariantImageCreateDto();
+        variantImageCreateDto.setVariantId(variantId);
+        variantImageCreateDto.setImageUrl(fileName);
+        variantImageCreateDto.setAltText(altText);
+        variantImageCreateDto.setSortOrder(sortOrder);
+        return new ResponseEntity<>(variantImageService.createImage(variantImageCreateDto), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ProductImageDto> updateProductImage(
+    public ResponseEntity<VariantImageDto> updateVariantImage(
             @PathVariable UUID productId,
+            @PathVariable UUID variantId,
             @PathVariable UUID id,
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "altText", required = false) String altText,
             @RequestParam(value = "sortOrder", required = false) Integer sortOrder) throws IOException {
-
-        ProductImageDto existingImage = productImageService.getImageById(id);
-
+            VariantImageDto existingImage = variantImageService.getImageById(id);
         // Update file if provided
         if (file != null && !file.isEmpty()) {
             s3Service.deleteFile(existingImage.getImageUrl());
             String newImageUrl = s3Service.uploadFile(file);
             existingImage.setImageUrl(newImageUrl);
         }
-
         // Update metadata if provided
         if (altText != null) {
             existingImage.setAltText(altText);
@@ -78,18 +78,21 @@ public class ProductImageController {
             existingImage.setSortOrder(sortOrder);
         }
 
-        return ResponseEntity.ok(productImageService.updateImage(id, existingImage));
+        return ResponseEntity.ok(variantImageService.updateImage(id, existingImage));
     }
+
+
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProductImage(
+    public ResponseEntity<Void> deleteVariantImage(
             @PathVariable UUID productId,
+            @PathVariable UUID variantId,
             @PathVariable UUID id) {
-        ProductImageDto image = productImageService.getImageById(id);
-        productImageService.deleteImage(id);
+        VariantImageDto image = variantImageService.getImageById(id);
+        variantImageService.deleteImage(id);
         if(image.getImageUrl() != null) {
             s3Service.deleteFile(image.getImageUrl());
         }
         return ResponseEntity.noContent().build();
     }
-
 }
