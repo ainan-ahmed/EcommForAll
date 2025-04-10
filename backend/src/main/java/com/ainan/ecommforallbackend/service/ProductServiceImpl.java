@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
 import java.util.List;
 import java.util.UUID;
 @Data
@@ -41,6 +40,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(pageable).map(productMapper::productToProductDto);
     }
 
+    @Override
+    public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
+        Specification<Product> spec = ProductSpecification.getSpecification(filter);
+        return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
+    }
     @Override
     public ProductDto getProductById(UUID id, List<String> includes) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
