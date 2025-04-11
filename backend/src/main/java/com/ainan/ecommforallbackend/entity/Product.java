@@ -35,7 +35,7 @@ public class Product {
     @Column(nullable = false)
     private Boolean isFeatured = false;
     @Column(nullable = true,name = "min_price")
-    private BigDecimal minPrice = BigDecimal.ZERO;
+    private BigDecimal minPrice;
 
     @ManyToOne()
     @JoinColumn(name = "brand_id", nullable = false)

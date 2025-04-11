@@ -22,32 +22,32 @@ public class ProductSpecification {
 
     private static Specification<Product> nameContains(String name) {
         return name == null ? null : (root, query, cb) ->
-            cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+                cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
     }
 
     private static Specification<Product> brandEquals(UUID brandId) {
         return brandId == null ? null : (root, query, cb) ->
-            cb.equal(root.get("brand").get("id"), brandId);
+                cb.equal(root.get("brand").get("id"), brandId);
     }
 
     private static Specification<Product> categoryEquals(UUID categoryId) {
         return categoryId == null ? null : (root, query, cb) ->
-            cb.equal(root.get("category").get("id"), categoryId);
+                cb.equal(root.get("category").get("id"), categoryId);
     }
 
     private static Specification<Product> sellerEquals(UUID sellerId) {
         return sellerId == null ? null : (root, query, cb) ->
-            cb.equal(root.get("seller").get("id"), sellerId);
+                cb.equal(root.get("seller").get("id"), sellerId);
     }
 
     private static Specification<Product> activeEquals(Boolean isActive) {
         return isActive == null ? null : (root, query, cb) ->
-            cb.equal(root.get("isActive"), isActive);
+                cb.equal(root.get("isActive"), isActive);
     }
 
     private static Specification<Product> featuredEquals(Boolean isFeatured) {
         return isFeatured == null ? null : (root, query, cb) ->
-            cb.equal(root.get("isFeatured"), isFeatured);
+                cb.equal(root.get("isFeatured"), isFeatured);
     }
 
     private static Specification<Product> priceBetween(BigDecimal minPrice, BigDecimal maxPrice) {

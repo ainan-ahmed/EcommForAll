@@ -68,6 +68,10 @@ public class ProductController {
     public ResponseEntity<Page<ProductDto>> getFeaturedProducts(Pageable pageable) {
         return ResponseEntity.ok(productService.getFeaturedProducts(pageable));
     }
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductDto>> filterProducts(@ModelAttribute ProductFilterDto filter, Pageable pageable) {
+        return ResponseEntity.ok(productService.getFilteredProducts(filter, pageable));
+    }
 
 
 

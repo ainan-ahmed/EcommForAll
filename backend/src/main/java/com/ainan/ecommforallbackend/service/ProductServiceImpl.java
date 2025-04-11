@@ -12,6 +12,8 @@ import com.ainan.ecommforallbackend.repository.CategoryRepository;
 import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import com.ainan.ecommforallbackend.specification.ProductSpecification;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -24,7 +26,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.io.Console;
 import java.util.List;
 import java.util.UUID;
 @Data
@@ -39,10 +40,12 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageService productImageService;
     private final ProductVariantService productVariantService;
     private final VariantImageService variantImageService;
-
+    @PersistenceContext
+    private EntityManager entityManager;
     @Override
     @Cacheable(value = "products", key = "'all:' + #pageable")
     public Page<ProductDto> getAllProducts(Pageable pageable) {
+        entityManager.clear();
         return productRepository.findAll(pageable).map(productMapper::productToProductDto);
     }
     @Cacheable(value = "filteredProducts", key = "'filter:' + #filter.toString() + ':' + #pageable")
@@ -52,6 +55,11 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
     }
     @Cacheable(value = "products", key = "'id:' + #id + ':includes:' + #includes")
+    @Override
+    public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
+        Specification<Product> spec = ProductSpecification.getSpecification(filter);
+        return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
+    }
     @Override
     public ProductDto getProductById(UUID id, List<String> includes) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));

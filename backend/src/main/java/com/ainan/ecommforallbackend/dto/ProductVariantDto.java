@@ -21,7 +21,7 @@ public class ProductVariantDto {
     private UUID productId;
     @NotNull(message = "attribute values are required")
     private Map<String, String> attributeValues;
-    @NotBlank(message = "SKU is required")
+
     private String sku;
 
     @NotNull(message = "Price is required")

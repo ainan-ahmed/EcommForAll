@@ -25,9 +25,8 @@ public class ProductCreateDto {
 
     private Boolean isFeatured = false;
 
-    @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")
-    private BigDecimal price;
+    private BigDecimal minPrice;
 
     @NotNull(message = "Brand is required")
     private UUID brandId;
