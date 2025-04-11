@@ -2,6 +2,7 @@ package com.ainan.ecommforallbackend.service;
 
 import com.ainan.ecommforallbackend.dto.ProductCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductDto;
+import com.ainan.ecommforallbackend.dto.ProductFilterDto;
 import com.ainan.ecommforallbackend.entity.Product;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,9 @@ import java.util.UUID;
 
 public interface ProductService {
     Page<ProductDto> getAllProducts(Pageable pageable);
+
+    Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable);
+
     ProductDto getProductById(UUID id, List<String> includes);
     ProductDto createProduct(ProductCreateDto productCreateDto);
     ProductDto updateProduct( UUID id, ProductDto productDto);

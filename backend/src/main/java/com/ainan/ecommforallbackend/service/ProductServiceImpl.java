@@ -11,10 +11,14 @@ import com.ainan.ecommforallbackend.repository.BrandRepository;
 import com.ainan.ecommforallbackend.repository.CategoryRepository;
 import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.repository.UserRepository;
+import com.ainan.ecommforallbackend.specification.ProductSpecification;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,9 +38,11 @@ public class ProductServiceImpl implements ProductService {
     private final ProductImageService productImageService;
     private final ProductVariantService productVariantService;
     private final VariantImageService variantImageService;
-
+    @PersistenceContext
+    private EntityManager entityManager;
     @Override
     public Page<ProductDto> getAllProducts(Pageable pageable) {
+        entityManager.clear();
         return productRepository.findAll(pageable).map(productMapper::productToProductDto);
     }
 

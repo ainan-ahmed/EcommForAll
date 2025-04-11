@@ -2,6 +2,7 @@ package com.ainan.ecommforallbackend.controller;
 
 import com.ainan.ecommforallbackend.dto.ProductCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductDto;
+import com.ainan.ecommforallbackend.dto.ProductFilterDto;
 import com.ainan.ecommforallbackend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -62,6 +63,10 @@ public class ProductController {
     @GetMapping("/featured")
     public ResponseEntity<Page<ProductDto>> getFeaturedProducts(Pageable pageable) {
         return ResponseEntity.ok(productService.getFeaturedProducts(pageable));
+    }
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductDto>> filterProducts(@ModelAttribute ProductFilterDto filter, Pageable pageable) {
+        return ResponseEntity.ok(productService.getFilteredProducts(filter, pageable));
     }
 
 
