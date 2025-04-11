@@ -24,6 +24,10 @@ public class ProductController {
     public ResponseEntity<Page<ProductDto>> getAllProducts(Pageable pageable) {
         return ResponseEntity.ok(productService.getAllProducts(pageable));
     }
+    @GetMapping("/filter")
+    public ResponseEntity<Page<ProductDto>> filterProducts(@ModelAttribute ProductFilterDto filter, Pageable pageable) {
+        return ResponseEntity.ok(productService.getFilteredProducts(filter, pageable));
+    }
     // GET /api/products/550e8400-e29b-41d4-a716-446655440000?include=images,variants,variantImages
     // GET /api/products/550e8400-e29b-41d4-a716-446655440000?include=images
     // GET /api/products/550e8400-e29b-41d4-a716-446655440000?include=variants etc.

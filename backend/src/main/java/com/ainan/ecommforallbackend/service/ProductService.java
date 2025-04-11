@@ -13,9 +13,7 @@ import java.util.UUID;
 
 public interface ProductService {
     Page<ProductDto> getAllProducts(Pageable pageable);
-
     Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable);
-
     ProductDto getProductById(UUID id, List<String> includes);
     ProductDto createProduct(ProductCreateDto productCreateDto);
     ProductDto updateProduct( UUID id, ProductDto productDto);
@@ -25,4 +23,5 @@ public interface ProductService {
     Page<ProductDto> getProductsBySellerId(UUID sellerId, Pageable pageable);
     Page<ProductDto> getActiveProducts(Pageable pageable);
     Page<ProductDto> getFeaturedProducts(Pageable pageable);
+
 }
