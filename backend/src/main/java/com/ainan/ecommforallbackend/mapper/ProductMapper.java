@@ -17,6 +17,7 @@ public interface ProductMapper {
     @Mapping(target = "brandId", source = "brand.id")
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "sellerId", source = "seller.id")
+    @Mapping(target = "minPrice", source = "minPrice")
     ProductDto productToProductDto(Product product);
 
     @Mapping(target = "brand.id", source = "brandId")

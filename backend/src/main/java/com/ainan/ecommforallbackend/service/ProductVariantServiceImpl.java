@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -61,6 +63,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + variantDto.getProductId()));
         productVariantMapper.productVariantDtoToProductVariant(variantDto, existingVariant);
         existingVariant.setProduct(product);
+        existingVariant.setSku(generateVariantSku(existingVariant)); // Generate new SKU if needed
         ProductVariant updatedVariant = productVariantRepository.save(existingVariant);
         return productVariantMapper.productVariantToProductVariantDto(updatedVariant);
     }
@@ -73,12 +76,14 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateProductPrice(UUID productId) {
-        Optional<BigDecimal> minPriceOpt = productVariantRepository.findMinPriceByProductId(productId);
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-        product.setMinPrice(minPriceOpt.orElse(null)); // Set to null or a default value if no variants exist
+        BigDecimal minPriceOpt = productVariantRepository.findMinPriceByProductId(productId).orElse(BigDecimal.ZERO);
+        product.setMinPrice(minPriceOpt);
         productRepository.save(product);
+        productRepository.flush();
     }
 
     // Format: {ProductPrefix}-{AttributePrefix}-{RandomNumber}

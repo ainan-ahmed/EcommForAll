@@ -23,7 +23,6 @@ public class ProductDto {
 
     private String description;
 
-    @NotBlank(message = "SKU is required")
     private String sku;
 
     @JsonAlias({"isActive", "active","is_active","status"})
@@ -31,9 +30,9 @@ public class ProductDto {
     @JsonAlias({"isFeatured", "featured","is_featured"})
     private Boolean isFeatured;
 
-    @NotNull(message = "Price is required")
     @Positive(message = "Price must be positive")
-    private BigDecimal price;
+    @JsonAlias({"minPrice", "min_price"})
+    private BigDecimal minPrice;
 
     @NotNull(message = "Brand is required")
     private UUID brandId;
