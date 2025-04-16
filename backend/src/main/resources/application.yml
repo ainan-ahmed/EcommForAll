@@ -2,7 +2,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/ecommforall
+    url: jdbc:postgresql://db:5432/ecommforall
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
@@ -12,7 +12,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+      show-sql: true
   security:
     user:
       name: admin
@@ -39,12 +39,3 @@ logging:
     org:
       springframework:
         security: DEBUG
-
-# Commented settings
-#logging:
-#  level:
-#    root: ERROR
-#    org:
-#      springframework: ERROR
-#  file:
-#    name: logs/spring-boot-application.log

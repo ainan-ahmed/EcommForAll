@@ -1,6 +1,8 @@
 services:
   backend:
     build: ./backend
+    env_file:
+      - ./backend/.env.aws
     ports:
       - "8080:8080"
     environment:
