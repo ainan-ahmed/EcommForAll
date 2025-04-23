@@ -3,7 +3,6 @@ spring:
     name: backend
   datasource:
     url: jdbc:postgresql://localhost:5433/ecommforall
-#    url: jdbc:postgresql://postgres:543/ecommforall
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres

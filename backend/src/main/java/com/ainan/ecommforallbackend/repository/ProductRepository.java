@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -17,4 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> , JpaSpe
     Page<Product> findBySellerId(UUID sellerId, Pageable pageable);
     Page<Product> findByBrandId(UUID brandId, Pageable pageable);
     Optional<Product> findBySkuAndSellerIdAndIsActive(String sku, UUID sellerId, Boolean isActive);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId")
+    long countByCategoryId(@Param("categoryId") UUID categoryId);
 }
