@@ -5,6 +5,7 @@ import com.ainan.ecommforallbackend.dto.CategoryDto;
 import com.ainan.ecommforallbackend.entity.Category;
 import com.ainan.ecommforallbackend.mapper.CategoryMapper;
 import com.ainan.ecommforallbackend.repository.CategoryRepository;
+import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.util.SlugUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,38 +23,41 @@ import java.util.stream.Collectors;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    private final ProductRepository productRepository;
 
     @Override
     @Cacheable(value = "categories", key = "'allCategories' + #pageable")
     public Page<CategoryDto> getAllCategories(Pageable pageable) {
-        return categoryRepository.findAll(pageable).map(categoryMapper::mapWithSubCategories);
+        return categoryRepository.findAll(pageable)
+                .map(category -> categoryMapper.mapWithSubCategories(category, productRepository));
     }
 
     @Override
     @Cacheable(value = "categories", key = "'rootCategories' + #pageable")
     public Page<CategoryDto> getRootCategories(Pageable pageable) {
-        return categoryRepository.findByParentIsNull(pageable).map(categoryMapper::mapWithSubCategories);
+        return categoryRepository.findByParentIsNull(pageable)
+                .map(category -> categoryMapper.mapWithSubCategories(category, productRepository));
     }
 
     @Override
     @Cacheable(value = "categories", key = "'category' + #id")
     public CategoryDto getCategoryById(UUID id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        return categoryMapper.mapWithSubCategories(category);
+        return categoryMapper.mapWithSubCategories(category, productRepository);
     }
 
     @Override
     @Cacheable(value = "categories", key = "'categoryBySlug' + #slug")
     public CategoryDto getCategoryBySlug(String slug) {
         Category category = categoryRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Category not found with slug: " + slug));
-        return categoryMapper.mapWithSubCategories(category);
+        return categoryMapper.mapWithSubCategories(category, productRepository);
     }
 
     @Override
     @Cacheable(value = "categories", key = "'categoryByName' + #name")
     public CategoryDto getCategoryByName(String name) {
         Category category = categoryRepository.findByNameIgnoreCase(name).orElseThrow(() -> new RuntimeException("Category not found with name: " + name));
-        return categoryMapper.mapWithSubCategories(category);
+        return categoryMapper.mapWithSubCategories(category, productRepository);
     }
 
     @Override
@@ -105,7 +109,7 @@ public class CategoryServiceImpl implements CategoryService {
             category.setParent(null);
         }
         Category updatedCategory = categoryRepository.save(category);
-        return categoryMapper.mapWithSubCategories(updatedCategory);
+        return categoryMapper.mapWithSubCategories(updatedCategory, productRepository);
     }
 
     @Override

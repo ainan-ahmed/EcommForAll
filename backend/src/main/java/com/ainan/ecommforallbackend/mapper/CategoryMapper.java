@@ -3,11 +3,14 @@ package com.ainan.ecommforallbackend.mapper;
 import com.ainan.ecommforallbackend.dto.CategoryCreateDto;
 import com.ainan.ecommforallbackend.dto.CategoryDto;
 import com.ainan.ecommforallbackend.entity.Category;
+import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.util.SlugUtil;
+import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static java.util.stream.Collectors.toList;
 
@@ -36,10 +39,11 @@ public interface CategoryMapper {
 
 
     
-    default CategoryDto mapWithSubCategories(Category category) {
+    default CategoryDto mapWithSubCategories(Category category, @Context ProductRepository productRepository) {
         if(category == null) {
             return null;
         }
+
 
         CategoryDto dto = categoryToCategoryDto(category);
         dto.setFullSlug(SlugUtil.buildFullSlug(category));
@@ -48,7 +52,23 @@ public interface CategoryMapper {
                     .map(Category::getId)
                     .collect(toList()));
         }
+//        int totalProduct = calculateTotalProductCount(category);
+        dto.setProductCount(calculateTotalProductCount(category, productRepository));
         return dto;
     }
+    default int calculateTotalProductCount(Category category, @Context ProductRepository productRepository) {
+        if (category == null) {
+            return 0;
+        }
+        long directCount = productRepository.countByCategoryId(category.getId());
+        long subcategoryCount = 0;
+        if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+            subcategoryCount = category.getSubCategories().stream()
+                    .mapToLong(cat -> calculateTotalProductCount(cat, productRepository))
+                    .sum();
+        }
+        return (int)(directCount + subcategoryCount);
+    }
+
 
 }

@@ -19,4 +19,5 @@ public class CategoryDto {
     private String description;
     private UUID parent;
     private List<UUID> subCategories;
+    private Integer productCount;
 }
