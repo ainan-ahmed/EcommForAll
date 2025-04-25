@@ -21,4 +21,5 @@ public interface CategoryRepository extends  JpaRepository<Category, UUID> {
     @Modifying
     @Query("UPDATE Category c SET c.parent = null WHERE c.parent.id = :id")
     void setChildrenParentToNull(@Param("id") UUID id);
+    List<Category> findByParentId(UUID parentId);
 }

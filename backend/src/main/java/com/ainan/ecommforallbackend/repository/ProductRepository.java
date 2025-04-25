@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,4 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> , JpaSpe
     Optional<Product> findBySkuAndSellerIdAndIsActive(String sku, UUID sellerId, Boolean isActive);
     @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId")
     long countByCategoryId(@Param("categoryId") UUID categoryId);
+    @Query("SELECT p FROM Product p WHERE p.category.id IN :categoryIds")
+    Page<Product> findByCategoryIdIn(@Param("categoryIds") List<UUID> categoryIds, Pageable pageable);
+
 }

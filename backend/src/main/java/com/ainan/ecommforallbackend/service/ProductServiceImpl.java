@@ -24,8 +24,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 @Data
 @RequiredArgsConstructor
 @Service
@@ -40,6 +42,7 @@ public class ProductServiceImpl implements ProductService {
     private final VariantImageService variantImageService;
     @PersistenceContext
     private EntityManager entityManager;
+
     @Override
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         entityManager.clear();
@@ -51,22 +54,21 @@ public class ProductServiceImpl implements ProductService {
         Specification<Product> spec = ProductSpecification.getSpecification(filter);
         return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
     }
+
     @Override
     public ProductDto getProductById(UUID id, List<String> includes) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         ProductDto productDto = productMapper.productToProductDto(product);
         if (includes != null && !includes.isEmpty()) {
-            if(includes.contains("images"))
-            {
+            if (includes.contains("images")) {
                 Page<ProductImageDto> imagesPage = productImageService.getImagesByProductId(id, Pageable.unpaged());
                 productDto.setImages(imagesPage.getContent());
             }
             if (includes.contains("variants")) {
-                // Convert Page to List
                 Page<ProductVariantDto> variantsPage = productVariantService.getVariantsByProductId(id, Pageable.unpaged());
                 productDto.setVariants(variantsPage.getContent());
 
-                // Optionally load variant images if requested
+                // load variant images if requested
                 if (includes.contains("variantImages") && productDto.getVariants() != null) {
                     for (ProductVariantDto variant : productDto.getVariants()) {
                         Page<VariantImageDto> variantImagesPage = variantImageService.getImagesByVariantId(
@@ -82,7 +84,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDto createProduct(ProductCreateDto productCreateDto) {
         Brand brand = brandRepository.findById(productCreateDto.getBrandId()).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + productCreateDto.getBrandId()));
-        Category category =  categoryRepository.findById(productCreateDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + productCreateDto.getCategoryId()));
+        Category category = categoryRepository.findById(productCreateDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + productCreateDto.getCategoryId()));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserName = authentication.getName();
 //        String authenticatedUserRole = authentication.getAuthorities().toString();
@@ -110,15 +112,15 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         checkAccessPermission(product);
         productMapper.productDtoToProduct(productDto, product);
-        if(productDto.getBrandId() != null) {
+        if (productDto.getBrandId() != null) {
             Brand brand = brandRepository.findById(productDto.getBrandId()).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + productDto.getBrandId()));
             product.setBrand(brand);
         }
-        if(productDto.getCategoryId() != null) {
+        if (productDto.getCategoryId() != null) {
             Category category = categoryRepository.findById(productDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + productDto.getCategoryId()));
             product.setCategory(category);
         }
-        if(productDto.getSellerId() != null) {
+        if (productDto.getSellerId() != null) {
             User seller = userRepository.findById(productDto.getSellerId()).orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + productDto.getSellerId()));
             product.setSeller(seller);
         }
@@ -128,15 +130,37 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(UUID id) {
-            Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
-            checkAccessPermission(product);
-            productRepository.delete(product);
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
+        checkAccessPermission(product);
+        productRepository.delete(product);
     }
 
     @Override
     public Page<ProductDto> getProductsByCategoryId(UUID categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
-        return productRepository.findByCategoryId(category.getId(), pageable).map(productMapper::productToProductDto);
+
+        // First try to get products from the specified category
+        Page<Product> productsPage = productRepository.findByCategoryId(category.getId(), pageable);
+
+        // If no products found, search through subcategories
+        if (productsPage.isEmpty()) {
+            // Find subcategories of this category
+            List<Category> subcategories = categoryRepository.findByParentId(categoryId);
+
+            if (!subcategories.isEmpty()) {
+                // Collect all subcategory IDs
+                List<UUID> subcategoryIds = new ArrayList<>();
+                for (Category subcat : subcategories) {
+                    subcategoryIds.add(subcat.getId());
+                    // You could extend this to get deeper levels of subcategories if needed
+                }
+
+                // Find products from all subcategories
+                productsPage = productRepository.findByCategoryIdIn(subcategoryIds, pageable);
+            }
+        }
+
+        return productsPage.map(productMapper::productToProductDto);
     }
 
     @Override
@@ -172,12 +196,13 @@ public class ProductServiceImpl implements ProductService {
             throw new AccessDeniedException("You do not have permission to access this product");
         }
     }
+
     // Format: {BrandPrefix}-{CategoryPrefix}-{ProductPrefix}-{RandomNumber}
     private String generateProductSku(Product product) {
         String brandPrefix = product.getBrand().getName().substring(0, Math.min(3, product.getBrand().getName().length())).toUpperCase();
         String categoryPrefix = product.getCategory().getName().substring(0, Math.min(3, product.getCategory().getName().length())).toUpperCase();
         String productPrefix = product.getName().substring(0, Math.min(3, product.getName().length())).toUpperCase();
-        String randomPart = String.format("%04d", (int)(Math.random() * 10000));
+        String randomPart = String.format("%04d", (int) (Math.random() * 10000));
 
         return String.format("%s-%s-%s-%s", brandPrefix, categoryPrefix, productPrefix, randomPart);
     }
