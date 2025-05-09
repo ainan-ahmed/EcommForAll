@@ -1,5 +1,6 @@
 package com.ainan.ecommforallbackend.service;
 
+import com.ainan.ecommforallbackend.dto.ImageSortOrderDto;
 import com.ainan.ecommforallbackend.dto.ProductImageCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductImageDto;
 import org.springframework.data.domain.Page;
@@ -14,4 +15,6 @@ public interface ProductImageService {
     ProductImageDto createImage(ProductImageCreateDto createDto);
     ProductImageDto updateImage(UUID id, ProductImageDto imageDto);
     void deleteImage(UUID id);
+
+    List<ProductImageDto> updateImagesOrder(UUID productId, List<ImageSortOrderDto> imageOrders);
 }

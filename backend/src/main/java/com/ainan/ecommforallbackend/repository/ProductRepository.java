@@ -1,6 +1,7 @@
 package com.ainan.ecommforallbackend.repository;
 
 import com.ainan.ecommforallbackend.entity.Product;
+import com.ainan.ecommforallbackend.entity.ProductImage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

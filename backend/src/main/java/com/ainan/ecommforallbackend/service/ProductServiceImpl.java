@@ -1,10 +1,7 @@
 package com.ainan.ecommforallbackend.service;
 
 import com.ainan.ecommforallbackend.dto.*;
-import com.ainan.ecommforallbackend.entity.Brand;
-import com.ainan.ecommforallbackend.entity.Category;
-import com.ainan.ecommforallbackend.entity.Product;
-import com.ainan.ecommforallbackend.entity.User;
+import com.ainan.ecommforallbackend.entity.*;
 import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import com.ainan.ecommforallbackend.mapper.ProductMapper;
 import com.ainan.ecommforallbackend.repository.BrandRepository;
@@ -17,6 +14,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
@@ -46,13 +44,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         entityManager.clear();
-        return productRepository.findAll(pageable).map(productMapper::productToProductDto);
+        Page<Product> products = productRepository.findAll(pageable);
+
+        // Convert to DTOs
+        Page<ProductDto> productDtos = addPrimaryImagesToProducts(products.map(productMapper::productToProductDto));
+
+        return productDtos;
     }
 
     @Override
     public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
-        Specification<Product> spec = ProductSpecification.getSpecification(filter);
-        return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
+        final Specification<Product> spec = ProductSpecification.getSpecification(filter);
+        Page<ProductDto> productDtos =  addPrimaryImagesToProducts(productRepository.findAll(spec, pageable).map(productMapper::productToProductDto));
+        return productDtos;
     }
 
     @Override
@@ -87,16 +91,9 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryRepository.findById(productCreateDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + productCreateDto.getCategoryId()));
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String authenticatedUserName = authentication.getName();
-//        String authenticatedUserRole = authentication.getAuthorities().toString();
-//        System.out.println(authenticatedUserRole);
-        boolean isSeller = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_SELLER"));
-
-        if (!isSeller) {
-            throw new AccessDeniedException("Only sellers can create products");
-        }
         User seller = userRepository.findByUsername(authenticatedUserName).orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + authenticatedUserName));
         Product product = productMapper.productCreateDtoToProduct(productCreateDto);
+        checkAccessPermission(product);
         product.setSeller(seller);
         product.setBrand(brand);
         product.setCategory(category);
@@ -139,7 +136,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDto> getProductsByCategoryId(UUID categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
 
-        // First try to get products from the specified category
+        // First, try to get products from the specified category
         Page<Product> productsPage = productRepository.findByCategoryId(category.getId(), pageable);
 
         // If no products found, search through subcategories
@@ -160,29 +157,34 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        return productsPage.map(productMapper::productToProductDto);
+        Page<ProductDto> productDtos = addPrimaryImagesToProducts(productsPage.map(productMapper::productToProductDto));
+        return productDtos;
     }
 
     @Override
     public Page<ProductDto> getProductsByBrandId(UUID brandId, Pageable pageable) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + brandId));
-        return productRepository.findByBrandId(brand.getId(), pageable).map(productMapper::productToProductDto);
+
+        Page<ProductDto> productDtos =  productRepository.findByBrandId(brand.getId(), pageable).map(productMapper::productToProductDto);
+        return addPrimaryImagesToProducts(productDtos);
     }
 
     @Override
     public Page<ProductDto> getProductsBySellerId(UUID sellerId, Pageable pageable) {
         User seller = userRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + sellerId));
-        return productRepository.findBySellerId(seller.getId(), pageable).map(productMapper::productToProductDto);
+
+        Page<ProductDto> productDtos =  productRepository.findBySellerId(seller.getId(), pageable).map(productMapper::productToProductDto);
+        return addPrimaryImagesToProducts(productDtos);
     }
 
     @Override
     public Page<ProductDto> getActiveProducts(Pageable pageable) {
-        return productRepository.findByIsActive(true, pageable).map(productMapper::productToProductDto);
+        return addPrimaryImagesToProducts(productRepository.findByIsActive(true, pageable).map(productMapper::productToProductDto));
     }
 
     @Override
     public Page<ProductDto> getFeaturedProducts(Pageable pageable) {
-        return productRepository.findByIsFeatured(true, pageable).map(productMapper::productToProductDto);
+        return addPrimaryImagesToProducts(productRepository.findByIsFeatured(true, pageable).map(productMapper::productToProductDto));
     }
 
     ///  HELPER FUNCTIONS
@@ -192,7 +194,9 @@ public class ProductServiceImpl implements ProductService {
         String authenticatedUserName = authentication.getName();
         boolean isSeller = authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals("ROLE_SELLER"));
-        if (!isSeller || !product.getSeller().getUsername().equals(authenticatedUserName)) {
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        if ((!isSeller || !product.getSeller().getUsername().equals(authenticatedUserName)) && !isAdmin) {
             throw new AccessDeniedException("You do not have permission to access this product");
         }
     }
@@ -205,5 +209,21 @@ public class ProductServiceImpl implements ProductService {
         String randomPart = String.format("%04d", (int) (Math.random() * 10000));
 
         return String.format("%s-%s-%s-%s", brandPrefix, categoryPrefix, productPrefix, randomPart);
+    }
+    private Page<ProductDto> addPrimaryImagesToProducts(Page<ProductDto> productDtos) {
+        productDtos.forEach(productDto -> {
+            Page<ProductImageDto> primaryImages = productImageService.getImagesByProductId(
+                    productDto.getId(),
+                    PageRequest.of(0, 1)
+            );
+
+            if (!primaryImages.getContent().isEmpty()) {
+                productDto.setPrimaryImage(primaryImages.getContent().get(0));
+            }
+            productDto.setImages(null);
+            productDto.setVariants(null);
+        });
+
+        return productDtos;
     }
 }

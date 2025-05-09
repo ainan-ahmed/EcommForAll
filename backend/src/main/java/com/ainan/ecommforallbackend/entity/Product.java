@@ -16,7 +16,12 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product")
+@Table(name = "product",
+        indexes = {
+                @Index(name = "idx_product_name", columnList = "name"),
+                @Index(name = "idx_product_sku", columnList = "sku"),
+                @Index(name = "idx_product_description", columnList = "description")
+        })
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,7 +39,7 @@ public class Product {
     private Boolean isActive = true;
     @Column(nullable = false)
     private Boolean isFeatured = false;
-    @Column(nullable = true,name = "min_price")
+    @Column(nullable = true, name = "min_price")
     private BigDecimal minPrice;
 
     @ManyToOne()

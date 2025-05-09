@@ -14,4 +14,5 @@ public class ProductFilterDto {
     private Boolean isFeatured;
     private BigDecimal minPrice;
     private BigDecimal maxPrice;
+//    private String search;
 }
