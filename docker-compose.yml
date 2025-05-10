@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommForAll
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommforall
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
     depends_on:
@@ -16,15 +16,15 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_DB: ecommForAll
+      POSTGRES_DB: ecommforall
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+     - "5433:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d ecommForAll"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ecommforall"]
       interval: 10s
       retries: 5
   frontend:
