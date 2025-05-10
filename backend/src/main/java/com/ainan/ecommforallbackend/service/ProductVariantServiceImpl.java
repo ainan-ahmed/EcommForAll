@@ -69,6 +69,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @CacheEvict(value = "productVariants", allEntries = true)
     public void deleteVariant(UUID id) {
         ProductVariant existingVariant = productVariantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));

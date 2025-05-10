@@ -21,4 +21,5 @@ public interface ProductService {
     Page<ProductDto> getProductsBySellerId(UUID sellerId, Pageable pageable);
     Page<ProductDto> getActiveProducts(Pageable pageable);
     Page<ProductDto> getFeaturedProducts(Pageable pageable);
+
 }

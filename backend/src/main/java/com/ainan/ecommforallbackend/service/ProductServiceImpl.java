@@ -13,6 +13,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
     private EntityManager entityManager;
 
     @Override
+    @Cacheable(value = "products", key = "'all:' + #pageable")
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         entityManager.clear();
         Page<Product> products = productRepository.findAll(pageable);
@@ -51,7 +54,13 @@ public class ProductServiceImpl implements ProductService {
 
         return productDtos;
     }
-
+    @Cacheable(value = "filteredProducts", key = "'filter:' + #filter.toString() + ':' + #pageable")
+    @Override
+    public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
+        Specification<Product> spec = ProductSpecification.getSpecification(filter);
+        return productRepository.findAll(spec, pageable).map(productMapper::productToProductDto);
+    }
+    @Cacheable(value = "products", key = "'id:' + #id + ':includes:' + #includes")
     @Override
     public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
         final Specification<Product> spec = ProductSpecification.getSpecification(filter);
@@ -86,6 +95,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "filteredProducts", "productByBrandId", "productByCategoryId", "productBySellerId"}, allEntries = true)
     public ProductDto createProduct(ProductCreateDto productCreateDto) {
         Brand brand = brandRepository.findById(productCreateDto.getBrandId()).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + productCreateDto.getBrandId()));
         Category category = categoryRepository.findById(productCreateDto.getCategoryId()).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + productCreateDto.getCategoryId()));
@@ -105,6 +115,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "filteredProducts", "productByBrandId", "productByCategoryId", "productBySellerId"}, allEntries = true)
     public ProductDto updateProduct(UUID id, ProductDto productDto) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         checkAccessPermission(product);
@@ -126,6 +137,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CacheEvict(value = {"products", "filteredProducts", "productByBrandId", "productByCategoryId", "productBySellerId"}, allEntries = true)
     public void deleteProduct(UUID id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
         checkAccessPermission(product);
@@ -133,6 +145,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productsByCategoryId", key = "'categoryId:' + #categoryId + ':pageable:' + #pageable")
     public Page<ProductDto> getProductsByCategoryId(UUID categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
 
@@ -162,6 +175,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productsByBrandId", key = "'brandId:' + #brandId + ':pageable:' + #pageable")
     public Page<ProductDto> getProductsByBrandId(UUID brandId, Pageable pageable) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + brandId));
 
@@ -170,6 +184,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "productsBySellerId", key = "'sellerId:' + #sellerId + ':pageable:' + #pageable")
     public Page<ProductDto> getProductsBySellerId(UUID sellerId, Pageable pageable) {
         User seller = userRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + sellerId));
 
@@ -178,11 +193,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "activeProducts", key = "'active:' + #pageable")
     public Page<ProductDto> getActiveProducts(Pageable pageable) {
         return addPrimaryImagesToProducts(productRepository.findByIsActive(true, pageable).map(productMapper::productToProductDto));
     }
 
     @Override
+    @Cacheable(value = "featuredProducts", key = "'featured:' + #pageable")
     public Page<ProductDto> getFeaturedProducts(Pageable pageable) {
         return addPrimaryImagesToProducts(productRepository.findByIsFeatured(true, pageable).map(productMapper::productToProductDto));
     }

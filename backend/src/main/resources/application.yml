@@ -17,6 +17,10 @@ spring:
     user:
       name: admin
       password: admin
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 jwt:
   secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
