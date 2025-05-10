@@ -7,7 +7,7 @@
 ## Tech Stack
 
 - **Backend**: Spring Boot, Spring Security, Spring Data JPA, PostgreSQL,
-- **Frontend**: React, Zustand, Tanstack Router,Tanstack Query, Mantine,
+- **Frontend**: React, Zustand, Tanstack Router,Tanstack Query, Mantine, Zod, 
 - **DevOps**: Docker
 
 ## Architecture
@@ -18,12 +18,12 @@
 
 ## Key Features
 
-- **Product Catalog**: Browse products with categories and filtering options.
-- **Shopping Cart**: Add, update, or remove items before checkout.
-- **Secure Checkout**: Integrated with Stripe and PayPal for safe transactions.
-- **User Accounts**: Register, login, and manage personal profiles.
-- **Admin Panel**: Manage products, orders, and user accounts.
-- **Blog System**: Create, edit, and categorize blog posts.
+- [x] **Product Catalog**: Browse products with categories and filtering options.
+- [ ] **Shopping Cart**: Add, update, or remove items before checkout.
+- [ ] **Secure Checkout**: Integrated with Stripe and PayPal for safe transactions.
+- [x] **User Accounts**: Register, login, and manage personal profiles.
+- [ ] **Admin Panel**: Manage products, orders, and user accounts.
+- [ ] **Blog System**: Create, edit, and categorize blog posts.
 ---
 ---
 ## Setup Instructions
@@ -77,62 +77,35 @@ docker-compose up --build
   - [x] implement api endpoints
 	- [x] Implement filtering and sorting for products
   - [x] develop UI's needed for products
+- [ ] Wishlist & Reviews
+	- [ ] Implement wishlist functionality
+	- [ ] Add product ratings and reviews
+- [ ] Admin Panel
+	- [ ] Implement Admin Panel.
+	- [ ] Implement user management in admin panel
+	- [ ] Implement product management in admin panel
+	- [ ] Implement order management in admin panel (have to implement **Shopping Cart & Checkout** first)
+	- [ ] Implement blog content management in admin panel (have to implement **Blog System** first)
 - [ ]  Shopping Cart & Checkout
 	- [ ] Implement add/update/remove items in cart
 	- [ ] Implement order processing
 	- [ ] Integrate payment gateways (Stripe, PayPal)
 - [ ] Blog System
-	- [ ]  Implement CRUD blog posts
-	- [ ]  Implement categories and tags for blogs
-	- [ ]  Integrate Markdown/WYSIWYG editor
-- [ ] Admin Panel
-	- [ ] Implement Admin Panel.
-	- [ ]  Implement user management in admin panel
-	- [ ]  Implement product management in admin panel
-	- [ ]  Implement order management in admin panel
-	- [ ]  Implement blog content management in admin panel
-- [ ]  Allow sellers to add/manage their products
-- [ ] Seller Management(Optional)
-	- [ ]  Create dashboard with sales and user metrics
-	- [ ]  Implement seller registration and login.
-	- [ ]  (Optional) Implement earnings and payouts for sellers
+	- [ ] Implement CRUD blog posts
+	- [ ] Implement categories and tags for blogs
+	- [ ] Integrate Markdown/WYSIWYG editor
+
 
 ### Phase 2: Advanced Features
-- [ ] Order Management System
-	- [ ] Implement order tracking
-	- [ ]  Set up automated email notifications for orders
 - [ ] User Profile & Address Management
 	- [ ] Allow users to save multiple addresses
 	- [ ] Implement order history view
 - [ ] Search & Filtering Optimization
 	- [ ] Integrate ElasticSearch for advanced search
-	- [ ] Implement faceted filtering
-- [ ] Multi-Language & Currency Support
-	- [ ] Implement internationalization (i18n)
-	- [ ] (Optional) Add support for multiple currencies.
 - [ ] Notifications System
 	- [ ] Set up email notifications
-	- [ ]  Implement push notifications
-- [ ] Wishlist & Reviews
-	- [ ] Implement wishlist functionality
-	- [ ]  Add product ratings and reviews
-- [ ] (Optional) Affiliate Marketing & Referral System
-	- [ ] Implement referral discounts
-	- [ ]  Set up affiliate links
-
-### Phase 3: Scaling & Enhancements
-- [ ] (Optional) Microservices Migration 
-	- [ ] (Optional) Evaluate and plan microservices architecture
-	- [ ]  (Optional) Migrate monolithic services to microservices if necessary
-- [ ] Real-time Chat Support
-	- [ ] Implement customer support chat system
-- [ ] Live Order Tracking
-	- [ ] Set up live order tracking for deliveries
-- [ ] Subscriptions & Memberships
-	- [ ] Implement subscription plans
-	- [ ] Add membership features
-- [ ] Multi-Vendor Marketplace Features
-	- [ ] Enhance vendor management for multi-vendor support
+- [ ] Chat Support
+	- [ ] Add ChatBot
 
 ---
 ---
