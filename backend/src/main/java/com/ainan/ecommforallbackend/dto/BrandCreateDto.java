@@ -11,4 +11,8 @@ public class BrandCreateDto {
     private String name;
     @NotNull(message = "Description is required")
     private String description;
+    private String imageUrl;
+    private String website;
+
+
 }

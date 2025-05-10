@@ -43,6 +43,21 @@ public class S3ServiceImpl implements S3Service {
         }
 
     }
+    @Override
+    public String uploadFile(MultipartFile file, String folder) throws IOException {
+        String fileName = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .contentType(file.getContentType())
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+            return getFileUrl(fileName);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to upload file to folder. Please retry.", e);
+        }
+    }
 
     @Override
     public void deleteFile(String fileUrl) {
@@ -88,4 +103,6 @@ public class S3ServiceImpl implements S3Service {
         return s3Presigner.presignGetObject(presignRequest).url().toString();
 
     }
+
+
 }
