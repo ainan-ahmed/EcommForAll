@@ -23,6 +23,8 @@ public class Category {
 
     @Column(nullable = false, unique = true)
     private String name;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(nullable = false, unique = true)
     private String slug;

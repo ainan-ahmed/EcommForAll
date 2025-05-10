@@ -8,31 +8,167 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as RegisterImport } from './routes/register'
-import { Route as LoginImport } from './routes/login'
-import { Route as IndexImport } from './routes/index'
+import { Route as registerImport } from './routes/register'
+import { Route as loginImport } from './routes/login'
+import { Route as indexImport } from './routes/index'
+import { Route as productsIndexImport } from './routes/products/index'
+import { Route as categoriesIndexImport } from './routes/categories/index'
+import { Route as brandsIndexImport } from './routes/brands/index'
+import { Route as productsNewImport } from './routes/products/new'
+import { Route as categoriesNewImport } from './routes/categories/new'
+import { Route as brandsNewImport } from './routes/brands/new'
+import { Route as productsProductIdIndexImport } from './routes/products/$productId/index'
+import { Route as categoriesCategorySlugIndexImport } from './routes/categories/$categorySlug/index'
+import { Route as brandsBrandIdIndexImport } from './routes/brands/$brandId/index'
+import { Route as productsProductIdEditImport } from './routes/products/$productId/edit'
+import { Route as categoriesCategorySlugEditImport } from './routes/categories/$categorySlug/edit'
+import { Route as brandsBrandIdEditImport } from './routes/brands/$brandId/edit'
+
+// Create Virtual Routes
+
+const ProductsImport = createFileRoute('/products')()
+const CategoriesImport = createFileRoute('/categories')()
+const BrandsImport = createFileRoute('/brands')()
+const ProductsProductIdImport = createFileRoute('/products/$productId')()
+const CategoriesCategorySlugImport = createFileRoute(
+  '/categories/$categorySlug',
+)()
+const BrandsBrandIdImport = createFileRoute('/brands/$brandId')()
 
 // Create/Update Routes
 
-const RegisterRoute = RegisterImport.update({
+const registerRoute = registerImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => rootRoute,
 } as any)
 
-const LoginRoute = LoginImport.update({
+const ProductsRoute = ProductsImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const loginRoute = loginImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const CategoriesRoute = CategoriesImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const BrandsRoute = BrandsImport.update({
+  id: '/brands',
+  path: '/brands',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const indexRoute = indexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const productsIndexRoute = productsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProductsRoute,
+} as any)
+
+const categoriesIndexRoute = categoriesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CategoriesRoute,
+} as any)
+
+const brandsIndexRoute = brandsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrandsRoute,
+} as any)
+
+const productsNewRoute = productsNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => ProductsRoute,
+} as any)
+
+const ProductsProductIdRoute = ProductsProductIdImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ProductsRoute,
+} as any)
+
+const categoriesNewRoute = categoriesNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => CategoriesRoute,
+} as any)
+
+const CategoriesCategorySlugRoute = CategoriesCategorySlugImport.update({
+  id: '/$categorySlug',
+  path: '/$categorySlug',
+  getParentRoute: () => CategoriesRoute,
+} as any)
+
+const brandsNewRoute = brandsNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => BrandsRoute,
+} as any)
+
+const BrandsBrandIdRoute = BrandsBrandIdImport.update({
+  id: '/$brandId',
+  path: '/$brandId',
+  getParentRoute: () => BrandsRoute,
+} as any)
+
+const productsProductIdIndexRoute = productsProductIdIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProductsProductIdRoute,
+} as any)
+
+const categoriesCategorySlugIndexRoute =
+  categoriesCategorySlugIndexImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => CategoriesCategorySlugRoute,
+  } as any)
+
+const brandsBrandIdIndexRoute = brandsBrandIdIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrandsBrandIdRoute,
+} as any)
+
+const productsProductIdEditRoute = productsProductIdEditImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => ProductsProductIdRoute,
+} as any)
+
+const categoriesCategorySlugEditRoute = categoriesCategorySlugEditImport.update(
+  {
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => CategoriesCategorySlugRoute,
+  } as any,
+)
+
+const brandsBrandIdEditRoute = brandsBrandIdEditImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => BrandsBrandIdRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -43,66 +179,394 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+      preLoaderRoute: typeof indexImport
+      parentRoute: typeof rootRoute
+    }
+    '/brands': {
+      id: '/brands'
+      path: '/brands'
+      fullPath: '/brands'
+      preLoaderRoute: typeof BrandsImport
+      parentRoute: typeof rootRoute
+    }
+    '/categories': {
+      id: '/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof CategoriesImport
       parentRoute: typeof rootRoute
     }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
+      preLoaderRoute: typeof loginImport
+      parentRoute: typeof rootRoute
+    }
+    '/products': {
+      id: '/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ProductsImport
       parentRoute: typeof rootRoute
     }
     '/register': {
       id: '/register'
       path: '/register'
       fullPath: '/register'
-      preLoaderRoute: typeof RegisterImport
+      preLoaderRoute: typeof registerImport
       parentRoute: typeof rootRoute
+    }
+    '/brands/$brandId': {
+      id: '/brands/$brandId'
+      path: '/$brandId'
+      fullPath: '/brands/$brandId'
+      preLoaderRoute: typeof BrandsBrandIdImport
+      parentRoute: typeof BrandsImport
+    }
+    '/brands/new': {
+      id: '/brands/new'
+      path: '/new'
+      fullPath: '/brands/new'
+      preLoaderRoute: typeof brandsNewImport
+      parentRoute: typeof BrandsImport
+    }
+    '/categories/$categorySlug': {
+      id: '/categories/$categorySlug'
+      path: '/$categorySlug'
+      fullPath: '/categories/$categorySlug'
+      preLoaderRoute: typeof CategoriesCategorySlugImport
+      parentRoute: typeof CategoriesImport
+    }
+    '/categories/new': {
+      id: '/categories/new'
+      path: '/new'
+      fullPath: '/categories/new'
+      preLoaderRoute: typeof categoriesNewImport
+      parentRoute: typeof CategoriesImport
+    }
+    '/products/$productId': {
+      id: '/products/$productId'
+      path: '/$productId'
+      fullPath: '/products/$productId'
+      preLoaderRoute: typeof ProductsProductIdImport
+      parentRoute: typeof ProductsImport
+    }
+    '/products/new': {
+      id: '/products/new'
+      path: '/new'
+      fullPath: '/products/new'
+      preLoaderRoute: typeof productsNewImport
+      parentRoute: typeof ProductsImport
+    }
+    '/brands/': {
+      id: '/brands/'
+      path: '/'
+      fullPath: '/brands/'
+      preLoaderRoute: typeof brandsIndexImport
+      parentRoute: typeof BrandsImport
+    }
+    '/categories/': {
+      id: '/categories/'
+      path: '/'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof categoriesIndexImport
+      parentRoute: typeof CategoriesImport
+    }
+    '/products/': {
+      id: '/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof productsIndexImport
+      parentRoute: typeof ProductsImport
+    }
+    '/brands/$brandId/edit': {
+      id: '/brands/$brandId/edit'
+      path: '/edit'
+      fullPath: '/brands/$brandId/edit'
+      preLoaderRoute: typeof brandsBrandIdEditImport
+      parentRoute: typeof BrandsBrandIdImport
+    }
+    '/categories/$categorySlug/edit': {
+      id: '/categories/$categorySlug/edit'
+      path: '/edit'
+      fullPath: '/categories/$categorySlug/edit'
+      preLoaderRoute: typeof categoriesCategorySlugEditImport
+      parentRoute: typeof CategoriesCategorySlugImport
+    }
+    '/products/$productId/edit': {
+      id: '/products/$productId/edit'
+      path: '/edit'
+      fullPath: '/products/$productId/edit'
+      preLoaderRoute: typeof productsProductIdEditImport
+      parentRoute: typeof ProductsProductIdImport
+    }
+    '/brands/$brandId/': {
+      id: '/brands/$brandId/'
+      path: '/'
+      fullPath: '/brands/$brandId/'
+      preLoaderRoute: typeof brandsBrandIdIndexImport
+      parentRoute: typeof BrandsBrandIdImport
+    }
+    '/categories/$categorySlug/': {
+      id: '/categories/$categorySlug/'
+      path: '/'
+      fullPath: '/categories/$categorySlug/'
+      preLoaderRoute: typeof categoriesCategorySlugIndexImport
+      parentRoute: typeof CategoriesCategorySlugImport
+    }
+    '/products/$productId/': {
+      id: '/products/$productId/'
+      path: '/'
+      fullPath: '/products/$productId/'
+      preLoaderRoute: typeof productsProductIdIndexImport
+      parentRoute: typeof ProductsProductIdImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface BrandsBrandIdRouteChildren {
+  brandsBrandIdEditRoute: typeof brandsBrandIdEditRoute
+  brandsBrandIdIndexRoute: typeof brandsBrandIdIndexRoute
+}
+
+const BrandsBrandIdRouteChildren: BrandsBrandIdRouteChildren = {
+  brandsBrandIdEditRoute: brandsBrandIdEditRoute,
+  brandsBrandIdIndexRoute: brandsBrandIdIndexRoute,
+}
+
+const BrandsBrandIdRouteWithChildren = BrandsBrandIdRoute._addFileChildren(
+  BrandsBrandIdRouteChildren,
+)
+
+interface BrandsRouteChildren {
+  BrandsBrandIdRoute: typeof BrandsBrandIdRouteWithChildren
+  brandsNewRoute: typeof brandsNewRoute
+  brandsIndexRoute: typeof brandsIndexRoute
+}
+
+const BrandsRouteChildren: BrandsRouteChildren = {
+  BrandsBrandIdRoute: BrandsBrandIdRouteWithChildren,
+  brandsNewRoute: brandsNewRoute,
+  brandsIndexRoute: brandsIndexRoute,
+}
+
+const BrandsRouteWithChildren =
+  BrandsRoute._addFileChildren(BrandsRouteChildren)
+
+interface CategoriesCategorySlugRouteChildren {
+  categoriesCategorySlugEditRoute: typeof categoriesCategorySlugEditRoute
+  categoriesCategorySlugIndexRoute: typeof categoriesCategorySlugIndexRoute
+}
+
+const CategoriesCategorySlugRouteChildren: CategoriesCategorySlugRouteChildren =
+  {
+    categoriesCategorySlugEditRoute: categoriesCategorySlugEditRoute,
+    categoriesCategorySlugIndexRoute: categoriesCategorySlugIndexRoute,
+  }
+
+const CategoriesCategorySlugRouteWithChildren =
+  CategoriesCategorySlugRoute._addFileChildren(
+    CategoriesCategorySlugRouteChildren,
+  )
+
+interface CategoriesRouteChildren {
+  CategoriesCategorySlugRoute: typeof CategoriesCategorySlugRouteWithChildren
+  categoriesNewRoute: typeof categoriesNewRoute
+  categoriesIndexRoute: typeof categoriesIndexRoute
+}
+
+const CategoriesRouteChildren: CategoriesRouteChildren = {
+  CategoriesCategorySlugRoute: CategoriesCategorySlugRouteWithChildren,
+  categoriesNewRoute: categoriesNewRoute,
+  categoriesIndexRoute: categoriesIndexRoute,
+}
+
+const CategoriesRouteWithChildren = CategoriesRoute._addFileChildren(
+  CategoriesRouteChildren,
+)
+
+interface ProductsProductIdRouteChildren {
+  productsProductIdEditRoute: typeof productsProductIdEditRoute
+  productsProductIdIndexRoute: typeof productsProductIdIndexRoute
+}
+
+const ProductsProductIdRouteChildren: ProductsProductIdRouteChildren = {
+  productsProductIdEditRoute: productsProductIdEditRoute,
+  productsProductIdIndexRoute: productsProductIdIndexRoute,
+}
+
+const ProductsProductIdRouteWithChildren =
+  ProductsProductIdRoute._addFileChildren(ProductsProductIdRouteChildren)
+
+interface ProductsRouteChildren {
+  ProductsProductIdRoute: typeof ProductsProductIdRouteWithChildren
+  productsNewRoute: typeof productsNewRoute
+  productsIndexRoute: typeof productsIndexRoute
+}
+
+const ProductsRouteChildren: ProductsRouteChildren = {
+  ProductsProductIdRoute: ProductsProductIdRouteWithChildren,
+  productsNewRoute: productsNewRoute,
+  productsIndexRoute: productsIndexRoute,
+}
+
+const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
+  ProductsRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
+  '/': typeof indexRoute
+  '/brands': typeof BrandsRouteWithChildren
+  '/categories': typeof CategoriesRouteWithChildren
+  '/login': typeof loginRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/register': typeof registerRoute
+  '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
+  '/brands/new': typeof brandsNewRoute
+  '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
+  '/categories/new': typeof categoriesNewRoute
+  '/products/$productId': typeof ProductsProductIdRouteWithChildren
+  '/products/new': typeof productsNewRoute
+  '/brands/': typeof brandsIndexRoute
+  '/categories/': typeof categoriesIndexRoute
+  '/products/': typeof productsIndexRoute
+  '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
+  '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
+  '/products/$productId/edit': typeof productsProductIdEditRoute
+  '/brands/$brandId/': typeof brandsBrandIdIndexRoute
+  '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
+  '/products/$productId/': typeof productsProductIdIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
+  '/': typeof indexRoute
+  '/login': typeof loginRoute
+  '/register': typeof registerRoute
+  '/brands/new': typeof brandsNewRoute
+  '/categories/new': typeof categoriesNewRoute
+  '/products/new': typeof productsNewRoute
+  '/brands': typeof brandsIndexRoute
+  '/categories': typeof categoriesIndexRoute
+  '/products': typeof productsIndexRoute
+  '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
+  '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
+  '/products/$productId/edit': typeof productsProductIdEditRoute
+  '/brands/$brandId': typeof brandsBrandIdIndexRoute
+  '/categories/$categorySlug': typeof categoriesCategorySlugIndexRoute
+  '/products/$productId': typeof productsProductIdIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
+  '/': typeof indexRoute
+  '/brands': typeof BrandsRouteWithChildren
+  '/categories': typeof CategoriesRouteWithChildren
+  '/login': typeof loginRoute
+  '/products': typeof ProductsRouteWithChildren
+  '/register': typeof registerRoute
+  '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
+  '/brands/new': typeof brandsNewRoute
+  '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
+  '/categories/new': typeof categoriesNewRoute
+  '/products/$productId': typeof ProductsProductIdRouteWithChildren
+  '/products/new': typeof productsNewRoute
+  '/brands/': typeof brandsIndexRoute
+  '/categories/': typeof categoriesIndexRoute
+  '/products/': typeof productsIndexRoute
+  '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
+  '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
+  '/products/$productId/edit': typeof productsProductIdEditRoute
+  '/brands/$brandId/': typeof brandsBrandIdIndexRoute
+  '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
+  '/products/$productId/': typeof productsProductIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/brands'
+    | '/categories'
+    | '/login'
+    | '/products'
+    | '/register'
+    | '/brands/$brandId'
+    | '/brands/new'
+    | '/categories/$categorySlug'
+    | '/categories/new'
+    | '/products/$productId'
+    | '/products/new'
+    | '/brands/'
+    | '/categories/'
+    | '/products/'
+    | '/brands/$brandId/edit'
+    | '/categories/$categorySlug/edit'
+    | '/products/$productId/edit'
+    | '/brands/$brandId/'
+    | '/categories/$categorySlug/'
+    | '/products/$productId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register'
-  id: '__root__' | '/' | '/login' | '/register'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/brands/new'
+    | '/categories/new'
+    | '/products/new'
+    | '/brands'
+    | '/categories'
+    | '/products'
+    | '/brands/$brandId/edit'
+    | '/categories/$categorySlug/edit'
+    | '/products/$productId/edit'
+    | '/brands/$brandId'
+    | '/categories/$categorySlug'
+    | '/products/$productId'
+  id:
+    | '__root__'
+    | '/'
+    | '/brands'
+    | '/categories'
+    | '/login'
+    | '/products'
+    | '/register'
+    | '/brands/$brandId'
+    | '/brands/new'
+    | '/categories/$categorySlug'
+    | '/categories/new'
+    | '/products/$productId'
+    | '/products/new'
+    | '/brands/'
+    | '/categories/'
+    | '/products/'
+    | '/brands/$brandId/edit'
+    | '/categories/$categorySlug/edit'
+    | '/products/$productId/edit'
+    | '/brands/$brandId/'
+    | '/categories/$categorySlug/'
+    | '/products/$productId/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  LoginRoute: typeof LoginRoute
-  RegisterRoute: typeof RegisterRoute
+  indexRoute: typeof indexRoute
+  BrandsRoute: typeof BrandsRouteWithChildren
+  CategoriesRoute: typeof CategoriesRouteWithChildren
+  loginRoute: typeof loginRoute
+  ProductsRoute: typeof ProductsRouteWithChildren
+  registerRoute: typeof registerRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  LoginRoute: LoginRoute,
-  RegisterRoute: RegisterRoute,
+  indexRoute: indexRoute,
+  BrandsRoute: BrandsRouteWithChildren,
+  CategoriesRoute: CategoriesRouteWithChildren,
+  loginRoute: loginRoute,
+  ProductsRoute: ProductsRouteWithChildren,
+  registerRoute: registerRoute,
 }
 
 export const routeTree = rootRoute
@@ -116,18 +580,117 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/brands",
+        "/categories",
         "/login",
+        "/products",
         "/register"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/brands": {
+      "filePath": "",
+      "children": [
+        "/brands/$brandId",
+        "/brands/new",
+        "/brands/"
+      ]
+    },
+    "/categories": {
+      "filePath": "",
+      "children": [
+        "/categories/$categorySlug",
+        "/categories/new",
+        "/categories/"
+      ]
+    },
     "/login": {
       "filePath": "login.tsx"
     },
+    "/products": {
+      "filePath": "",
+      "children": [
+        "/products/$productId",
+        "/products/new",
+        "/products/"
+      ]
+    },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/brands/$brandId": {
+      "filePath": "",
+      "parent": "/brands",
+      "children": [
+        "/brands/$brandId/edit",
+        "/brands/$brandId/"
+      ]
+    },
+    "/brands/new": {
+      "filePath": "brands/new.tsx",
+      "parent": "/brands"
+    },
+    "/categories/$categorySlug": {
+      "filePath": "",
+      "parent": "/categories",
+      "children": [
+        "/categories/$categorySlug/edit",
+        "/categories/$categorySlug/"
+      ]
+    },
+    "/categories/new": {
+      "filePath": "categories/new.tsx",
+      "parent": "/categories"
+    },
+    "/products/$productId": {
+      "filePath": "",
+      "parent": "/products",
+      "children": [
+        "/products/$productId/edit",
+        "/products/$productId/"
+      ]
+    },
+    "/products/new": {
+      "filePath": "products/new.tsx",
+      "parent": "/products"
+    },
+    "/brands/": {
+      "filePath": "brands/index.tsx",
+      "parent": "/brands"
+    },
+    "/categories/": {
+      "filePath": "categories/index.tsx",
+      "parent": "/categories"
+    },
+    "/products/": {
+      "filePath": "products/index.tsx",
+      "parent": "/products"
+    },
+    "/brands/$brandId/edit": {
+      "filePath": "brands/$brandId/edit.tsx",
+      "parent": "/brands/$brandId"
+    },
+    "/categories/$categorySlug/edit": {
+      "filePath": "categories/$categorySlug/edit.tsx",
+      "parent": "/categories/$categorySlug"
+    },
+    "/products/$productId/edit": {
+      "filePath": "products/$productId/edit.tsx",
+      "parent": "/products/$productId"
+    },
+    "/brands/$brandId/": {
+      "filePath": "brands/$brandId/index.tsx",
+      "parent": "/brands/$brandId"
+    },
+    "/categories/$categorySlug/": {
+      "filePath": "categories/$categorySlug/index.tsx",
+      "parent": "/categories/$categorySlug"
+    },
+    "/products/$productId/": {
+      "filePath": "products/$productId/index.tsx",
+      "parent": "/products/$productId"
     }
   }
 }

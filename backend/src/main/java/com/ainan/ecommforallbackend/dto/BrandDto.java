@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -17,7 +16,7 @@ public class BrandDto {
     private String name;
     @NotNull(message = "Description is required")
     private String description;
-    private String logoUrl;
+    private String imageUrl;
     @NotNull(message = "Website is required")
     private String website;
     @JsonAlias({"isActive", "active","is_active","status"})
@@ -26,4 +25,5 @@ public class BrandDto {
     private LocalDateTime createdAt;
     @JsonAlias({"updatedAt", "updated_at"})
     private LocalDateTime updatedAt;
+    private Integer productCount;
 }

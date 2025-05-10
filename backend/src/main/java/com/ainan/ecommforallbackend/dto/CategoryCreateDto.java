@@ -13,4 +13,6 @@ public class CategoryCreateDto {
     @NotNull(message = "Category name is required")
     private String name;
     private UUID parent;
+    private String description;
+    private String imageUrl;
 }

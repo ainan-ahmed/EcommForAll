@@ -13,6 +13,7 @@ public class CategoryDto {
     private UUID id;
     @NotNull(message = "Category name is required")
     private String name;
+    private String imageUrl;
     @NotNull(message = "Slug is required")
     private String slug;
     private String fullSlug;

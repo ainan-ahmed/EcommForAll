@@ -44,4 +44,6 @@ public class ProductDto {
 
     private List<ProductImageDto> images;
     private List<ProductVariantDto> variants;
+
+    private ProductImageDto primaryImage;
 }

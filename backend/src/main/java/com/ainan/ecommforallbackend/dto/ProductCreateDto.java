@@ -36,4 +36,5 @@ public class ProductCreateDto {
 
     @NotNull(message = "Seller is required")
     private UUID sellerId;
+
 }

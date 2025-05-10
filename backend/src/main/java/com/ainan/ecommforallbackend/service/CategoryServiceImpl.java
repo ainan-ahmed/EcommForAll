@@ -15,49 +15,61 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final ProductRepository productRepository;
+    private final S3Service s3Service;
 
     @Override
     @Cacheable(value = "categories", key = "'allCategories' + #pageable")
     public Page<CategoryDto> getAllCategories(Pageable pageable) {
         return categoryRepository.findAll(pageable)
-                .map(category -> categoryMapper.mapWithSubCategories(category, productRepository));
+                .map(category -> {
+                    CategoryDto dto = categoryMapper.mapWithSubCategories(category, productRepository);
+                    return convertImageToPresignedUrl(dto);
+                });
     }
 
     @Override
     @Cacheable(value = "categories", key = "'rootCategories' + #pageable")
     public Page<CategoryDto> getRootCategories(Pageable pageable) {
         return categoryRepository.findByParentIsNull(pageable)
-                .map(category -> categoryMapper.mapWithSubCategories(category, productRepository));
+                .map(category -> {
+                    CategoryDto categoryDto = categoryMapper.mapWithSubCategories(category, productRepository);
+                    return convertImageToPresignedUrl(categoryDto);
+                });
     }
 
     @Override
     @Cacheable(value = "categories", key = "'category' + #id")
     public CategoryDto getCategoryById(UUID id) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
-        return categoryMapper.mapWithSubCategories(category, productRepository);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        CategoryDto dto = categoryMapper.mapWithSubCategories(category, productRepository);
+        return convertImageToPresignedUrl(dto);
     }
 
     @Override
     @Cacheable(value = "categories", key = "'categoryBySlug' + #slug")
     public CategoryDto getCategoryBySlug(String slug) {
-        Category category = categoryRepository.findBySlug(slug).orElseThrow(() -> new RuntimeException("Category not found with slug: " + slug));
-        return categoryMapper.mapWithSubCategories(category, productRepository);
+        Category category = categoryRepository.findBySlug(slug)
+                .orElseThrow(() -> new RuntimeException("Category not found with slug: " + slug));
+        CategoryDto dto = categoryMapper.mapWithSubCategories(category, productRepository);
+        return convertImageToPresignedUrl(dto);
     }
 
     @Override
     @Cacheable(value = "categories", key = "'categoryByName' + #name")
     public CategoryDto getCategoryByName(String name) {
-        Category category = categoryRepository.findByNameIgnoreCase(name).orElseThrow(() -> new RuntimeException("Category not found with name: " + name));
-        return categoryMapper.mapWithSubCategories(category, productRepository);
+        Category category = categoryRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> new RuntimeException("Category not found with name: " + name));
+        CategoryDto dto = categoryMapper.mapWithSubCategories(category, productRepository);
+        return convertImageToPresignedUrl(dto);
     }
 
     @Override
@@ -83,7 +95,8 @@ public class CategoryServiceImpl implements CategoryService {
         }
         category.setSlug(uniqueSlug);
         Category savedCategory = categoryRepository.save(category);
-        return categoryMapper.categoryToCategoryDto(savedCategory);
+        CategoryDto categoryDto = categoryMapper.categoryToCategoryDto(savedCategory);
+        return convertImageToPresignedUrl(categoryDto);
     }
 
     @Override
@@ -109,7 +122,8 @@ public class CategoryServiceImpl implements CategoryService {
             category.setParent(null);
         }
         Category updatedCategory = categoryRepository.save(category);
-        return categoryMapper.mapWithSubCategories(updatedCategory, productRepository);
+        CategoryDto dto = categoryMapper.mapWithSubCategories(updatedCategory, productRepository);
+        return convertImageToPresignedUrl(dto);
     }
 
     @Override
@@ -120,5 +134,20 @@ public class CategoryServiceImpl implements CategoryService {
         categoryRepository.setChildrenParentToNull(category.getId());
         categoryRepository.delete(category);
 
+    }
+    private CategoryDto convertImageToPresignedUrl(CategoryDto categoryDto) {
+        if (categoryDto != null && categoryDto.getImageUrl() != null) {
+            String imageUrl = categoryDto.getImageUrl();
+            URI uri = URI.create(imageUrl);
+            String key = uri.getPath();
+            if (key.startsWith("/")) {
+                key = key.substring(1);
+            }
+
+            // Generate a pre-signed URL with 1-hour expiration
+            String presignedUrl = s3Service.generatePresignedDownloadUrl(key, 60);
+            categoryDto.setImageUrl(presignedUrl);
+        }
+        return categoryDto;
     }
 }

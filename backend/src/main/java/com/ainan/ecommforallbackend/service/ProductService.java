@@ -3,8 +3,6 @@ package com.ainan.ecommforallbackend.service;
 import com.ainan.ecommforallbackend.dto.ProductCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductDto;
 import com.ainan.ecommforallbackend.dto.ProductFilterDto;
-import com.ainan.ecommforallbackend.entity.Product;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

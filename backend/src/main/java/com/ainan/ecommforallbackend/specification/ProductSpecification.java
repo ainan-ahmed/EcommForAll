@@ -3,6 +3,7 @@ package com.ainan.ecommforallbackend.specification;
 import com.ainan.ecommforallbackend.dto.ProductFilterDto;
 import com.ainan.ecommforallbackend.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -11,6 +12,7 @@ public class ProductSpecification {
 
     public static Specification<Product> getSpecification(ProductFilterDto filter) {
         return Specification
+//                .where(searchAcrossFields(filter.getSearch()))
                 .where(nameContains(filter.getName()))
                 .and(brandEquals(filter.getBrandId()))
                 .and(categoryEquals(filter.getCategoryId()))
@@ -19,6 +21,17 @@ public class ProductSpecification {
                 .and(featuredEquals(filter.getIsFeatured()))
                 .and(priceBetween(filter.getMinPrice(), filter.getMaxPrice()));
     }
+    // not working for now, will work on it later
+//    private static Specification<Product> searchAcrossFields(String searchTerm) {
+//        return (searchTerm == null || searchTerm.isEmpty()) ? null : (root, query, cb) -> {
+//            String likePattern = "%" + searchTerm.toLowerCase() + "%";
+//            return cb.or(
+//                    cb.like(cb.lower(root.get("name")), likePattern),
+//                    cb.like(cb.lower(root.get("description")), likePattern),
+//                    cb.like(cb.lower(root.get("sku")), likePattern)
+//            );
+//        };
+//    }
 
     private static Specification<Product> nameContains(String name) {
         return name == null ? null : (root, query, cb) ->
