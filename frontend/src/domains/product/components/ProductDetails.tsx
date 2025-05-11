@@ -19,6 +19,8 @@ import {
     SimpleGrid,
     LoadingOverlay,
     Alert,
+    Box,
+    Tooltip,
 } from "@mantine/core";
 import {
     IconShoppingCart,
@@ -26,13 +28,14 @@ import {
     IconTruck,
     IconEdit,
 } from "@tabler/icons-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { notifications } from "@mantine/notifications";
 import { Carousel } from "@mantine/carousel";
 import { authStore } from "../../../stores/authStore";
 import { useStore } from "zustand/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useProduct } from "../hooks/useProduct";
+import DOMPurify from "dompurify";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
@@ -46,11 +49,37 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
     const { user, isAuthenticated } = useStore(authStore);
+    const navigate = useNavigate();
+
+    // Move sortedImages calculation and useMemo here, before early returns
+    // Sort images by sortOrder before rendering
+    const sortedImages = useMemo(() => {
+        return product?.images
+            ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
+            : [];
+    }, [product?.images]);
+
+    // Create a combined and sorted image array
+    const combinedImages = useMemo(() => {
+        if (!selectedVariant || !product) return sortedImages;
+
+        const variantObj = product.variants.find(
+            (v) => v.id === selectedVariant
+        );
+        const variantImages = variantObj?.images || [];
+
+        // Combine variant images (with a flag) and product images
+        return [
+            ...variantImages.map((img) => ({ ...img, isVariantImage: true })),
+            ...sortedImages.filter(
+                (img) => !variantImages.some((vImg) => vImg.id === img.id)
+            ),
+        ];
+    }, [selectedVariant, sortedImages, product?.variants]);
 
     // Check if product exists before accessing its properties
     const isProductOwner =
         isAuthenticated && product && user?.id === product.sellerId;
-    const navigate = useNavigate();
 
     // Handle loading state
     if (isLoading) {
@@ -100,17 +129,12 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     const price = currentVariant?.price || product.minPrice;
     const isInStock = currentVariant ? currentVariant.stock > 0 : true;
 
-    // Sort images by sortOrder before rendering
-    const sortedImages = product?.images
-        ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
-        : [];
-    console.log("Sorted Images:", sortedImages);
     return (
         <Container size="lg" py="xl">
             <Grid gutter="xl">
                 {/* Product Images */}
                 <Grid.Col span={{ base: 12, md: 6 }}>
-                    {sortedImages && sortedImages.length > 0 ? (
+                    {combinedImages && combinedImages.length > 0 ? (
                         <>
                             <Carousel
                                 withIndicators
@@ -119,14 +143,36 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 loop
                                 align="center"
                             >
-                                {sortedImages.map((image, index) => (
+                                {combinedImages.map((image, index) => (
                                     <Carousel.Slide key={image.id || index}>
-                                        <Image
-                                            src={image.imageUrl}
-                                            height={400}
-                                            fit="contain"
-                                            alt={image.altText || product.name}
-                                        />
+                                        <Box pos="relative">
+                                            <Image
+                                                src={image.imageUrl}
+                                                height={400}
+                                                fit="contain"
+                                                alt={
+                                                    image.altText ||
+                                                    product.name
+                                                }
+                                                style={
+                                                    image.isVariantImage
+                                                        ? {
+                                                              border: "2px solid skyblue",
+                                                          }
+                                                        : {}
+                                                }
+                                            />
+                                            {image.isVariantImage && (
+                                                <Badge
+                                                    top={10}
+                                                    right={10}
+                                                    variant="filled"
+                                                    color="blue"
+                                                >
+                                                    Variant Image
+                                                </Badge>
+                                            )}
+                                        </Box>
                                     </Carousel.Slide>
                                 ))}
                             </Carousel>
@@ -189,6 +235,21 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 {isInStock ? "In Stock" : "Out of Stock"}
                             </Badge>
 
+                            {selectedVariant && currentVariant && (
+                                <Badge
+                                    color={
+                                        currentVariant.stock <= 5
+                                            ? "orange"
+                                            : "blue"
+                                    }
+                                    size="lg"
+                                >
+                                    {currentVariant.stock <= 5
+                                        ? `Only ${currentVariant.stock} left`
+                                        : `${currentVariant.stock} in stock`}
+                                </Badge>
+                            )}
+
                             <Badge color="blue" size="lg">
                                 SKU: {currentVariant?.sku || product.sku}
                             </Badge>
@@ -197,8 +258,6 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                         <Title order={2} c="blue" mt="md">
                             ${price.toFixed(2)}
                         </Title>
-
-                        <Text mt="md">{product.description}</Text>
 
                         <Divider my="md" />
 
@@ -227,16 +286,35 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
                         {/* Add to Cart */}
                         <Group mt="xl">
-                            <Button
-                                size="lg"
-                                leftSection={<IconShoppingCart size={20} />}
-                                disabled={!isInStock}
-                                onClick={handleAddToCart}
-                                fullWidth
-                                variant="filled"
+                            <Tooltip
+                                label={
+                                    product.variants &&
+                                    product.variants.length > 1 &&
+                                    !selectedVariant
+                                        ? "Please select a variant first"
+                                        : !isInStock
+                                          ? "This product is out of stock"
+                                          : ""
+                                }
+                                position="top"
+                                withArrow
                             >
-                                Add to Cart
-                            </Button>
+                                <Button
+                                    size="lg"
+                                    leftSection={<IconShoppingCart size={20} />}
+                                    data-disabled={
+                                        !isInStock ||
+                                        (product.variants &&
+                                            product.variants.length > 1 &&
+                                            !selectedVariant)
+                                    }
+                                    onClick={handleAddToCart}
+                                    fullWidth
+                                    variant="filled"
+                                >
+                                    Add to Cart
+                                </Button>
+                            </Tooltip>
 
                             <Button
                                 size="lg"
@@ -277,7 +355,12 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
                 <Tabs.Panel value="description" pt="xl">
                     <Paper p="md">
-                        <Text>{product.description}</Text>
+                        <Box
+                            className="product-description"
+                            dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(product.description),
+                            }}
+                        />
                     </Paper>
                 </Tabs.Panel>
 

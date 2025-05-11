@@ -4,6 +4,8 @@ export interface ProductImage {
     imageUrl: string;
     altText: string;
     sortOrder: number;
+    file?: File; // optional property for client-side use
+    isVariantImage?: boolean; // optional property for client-side use
 }
 
 export interface VariantImage {
@@ -12,6 +14,7 @@ export interface VariantImage {
     imageUrl: string;
     altText: string;
     sortOrder: number;
+    file?: File; // optional property for client-side use
 }
 
 export interface ProductVariant {
@@ -21,7 +24,7 @@ export interface ProductVariant {
     sku: string;
     price: number;
     stock: number;
-    images: VariantImage[];
+    images?: VariantImage[];
 }
 
 export interface Product {

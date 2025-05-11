@@ -59,7 +59,7 @@ export async function fetchProducts(
 
 export async function fetchProductById(productId: string): Promise<Product> {
     const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}?includes=images`
+        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}?includes=images,variants,variantImages`
     );
 
     if (!response.ok) {
@@ -170,7 +170,7 @@ export async function uploadProductTempImages(
         if (img.file) {
             try {
                 await uploadProductImage(productId, img.file);
-            } catch (error) {
+            } catch (error: any) {
                 console.error("Failed to upload product image:", error);
                 throw new Error(`Failed to upload image: ${error.message}`);
             }
@@ -190,31 +190,60 @@ export async function updateProductVariants(
 ): Promise<Product> {
     const token = localStorage.getItem("authToken");
 
-    // Filter out temp images from variants
-    const variantsToSend = variants.map((variant) => ({
-        ...variant,
-        images: variant.images.filter((img) => !img.id.startsWith("temp-")),
-    }));
+    // Process existing variants first (non-temporary IDs)
+    for (const variant of variants.filter((v) => !v.id.startsWith("temp-"))) {
+        console.log(`Updating existing variant ${variant.id}`);
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/variants`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(variantsToSend),
-        }
-    );
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to update product variants: ${response.status}`
+        const response = await fetch(
+            `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/variants/${variant.id}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(variant),
+            }
         );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+                `Failed to update variant ${variant.id}: ${response.status} - ${errorText}`
+            );
+        }
     }
 
-    return response.json();
+    // Then create new variants (with temporary IDs)
+    for (const variant of variants.filter((v) => v.id.startsWith("temp-"))) {
+        console.log(`Creating new variant from ${variant.id}`);
+
+        // Remove the temporary ID for new variants
+        const { id, ...variantData } = variant;
+
+        const response = await fetch(
+            `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/variants`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    ...variantData,
+                    productId, // Ensure product ID is set correctly
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+                `Failed to create new variant: ${response.status} - ${errorText}`
+            );
+        }
+    }
+    return refreshProductData(productId);
 }
 
 /**

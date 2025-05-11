@@ -84,7 +84,7 @@ export function VariantsTab({
                     </Button>
                 </Paper>
             ) : (
-                <Accordion multiple>
+                <Accordion multiple variant="contained" radius="md">
                     {variants.map((variant, variantIndex) => (
                         <Accordion.Item key={variant.id} value={variant.id}>
                             <Accordion.Control>

@@ -18,11 +18,13 @@ import { BasicInfoTab } from "./basicInfoTab";
 import { BasicImagesTab } from "./basicImagesTab";
 import { VariantsTab } from "./variantsTab";
 import { useProductFormState } from "../hooks/useProductFormState";
+import { Brand } from "../../brand/types";
+import { Category } from "../../category/types";
 
 interface ProductFormProps {
     initialData?: Product;
-    categories: { id: string; name: string }[];
-    brands: { id: string; name: string }[];
+    categories: Category[];
+    brands: Brand[];
     onSubmit: (values: Product) => void;
     isLoading: boolean;
     onCancel?: () => void;
