@@ -7,8 +7,6 @@ import com.ainan.ecommforallbackend.mapper.BrandMapper;
 import com.ainan.ecommforallbackend.repository.BrandRepository;
 import com.ainan.ecommforallbackend.repository.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,7 +22,6 @@ public class BrandServiceImpl implements BrandService {
     private final ProductRepository productRepository;
     private final S3Service s3Service;
     @Override
-    @Cacheable(value = "brands", key = "'allBrands' + #pageable")
     public Page<BrandDto> getAllBrands(Pageable pageable) {
         Page<BrandDto> brands = brandRepository.findAll(pageable)
                 .map(brand -> {
@@ -35,7 +32,6 @@ public class BrandServiceImpl implements BrandService {
         return brands;
     }
     @Override
-    @Cacheable(value = "brands", key = "'allActiveBrands' + #pageable")
     public Page<BrandDto> getAllActiveBrands(Pageable pageable) {
         Page<BrandDto> brands = brandRepository.findByIsActiveTrue(pageable)
                 .map(brand -> {
@@ -47,7 +43,6 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    @Cacheable(value = "brands", key = "'brandById' + #id")
     public BrandDto getBrandById(UUID id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
         BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
@@ -55,7 +50,6 @@ public class BrandServiceImpl implements BrandService {
         return convertImageToPresignedUrl(dto);
     }
     @Override
-    @Cacheable(value = "brands", key = "'brandByName' + #name")
     public BrandDto getBrandByName(String name) {
         Brand brand = brandRepository.findByNameIgnoreCase(name).orElseThrow(() -> new RuntimeException("Brand not found with name: "+ name));
         BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
@@ -65,7 +59,6 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "brands", allEntries = true)
     public BrandDto createBrand(BrandCreateDto brandDto) {
         if(brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
             throw new RuntimeException("Brand already exists with name: "+ brandDto.getName());
@@ -79,7 +72,6 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "brands", allEntries = true)
     public BrandDto updateBrand(UUID id, BrandDto brandDto) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
         if(!brand.getName().equalsIgnoreCase(brandDto.getName()) &&brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
@@ -94,7 +86,6 @@ public class BrandServiceImpl implements BrandService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "brands", allEntries = true)
     public void deleteBrand(UUID id) {
         Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
         brand.setIsActive(false);

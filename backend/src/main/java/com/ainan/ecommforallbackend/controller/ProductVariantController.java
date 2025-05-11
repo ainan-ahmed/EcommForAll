@@ -3,14 +3,13 @@ package com.ainan.ecommforallbackend.controller;
 import com.ainan.ecommforallbackend.dto.ProductVariantCreateDto;
 import com.ainan.ecommforallbackend.dto.ProductVariantDto;
 import com.ainan.ecommforallbackend.service.ProductVariantService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -53,6 +52,7 @@ public class ProductVariantController {
             @PathVariable UUID productId,
             @PathVariable UUID id,
             @Valid @RequestBody ProductVariantDto variantDto) {
+
         variantDto.setAttributeValues(sanitizeAttributeMap(variantDto.getAttributeValues()));
         variantDto.setProductId(productId);
         return ResponseEntity.ok(productVariantService.updateVariant(id,variantDto));

@@ -10,6 +10,7 @@ import com.ainan.ecommforallbackend.repository.ProductVariantRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Transactional
     public ProductVariantDto createVariant(ProductVariantCreateDto productVariantCreateDto) {
         Product product = productRepository.findById(productVariantCreateDto.getProductId()).orElseThrow(() -> new RuntimeException("Product not found with id: " + productVariantCreateDto.getProductId()));
         ProductVariant productVariant = productVariantMapper.productVariantCreateDtoToProductVariant(productVariantCreateDto);
@@ -56,6 +58,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    @Transactional
     public ProductVariantDto updateVariant(UUID id, ProductVariantDto variantDto) {
         ProductVariant existingVariant = productVariantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));
@@ -63,13 +66,12 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + variantDto.getProductId()));
         productVariantMapper.productVariantDtoToProductVariant(variantDto, existingVariant);
         existingVariant.setProduct(product);
-        existingVariant.setSku(generateVariantSku(existingVariant)); // Generate new SKU if needed
+        existingVariant.setSku(generateVariantSku(existingVariant));
         ProductVariant updatedVariant = productVariantRepository.save(existingVariant);
         return productVariantMapper.productVariantToProductVariantDto(updatedVariant);
     }
 
     @Override
-    @CacheEvict(value = "productVariants", allEntries = true)
     public void deleteVariant(UUID id) {
         ProductVariant existingVariant = productVariantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product variant not found with id: " + id));
