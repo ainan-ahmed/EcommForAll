@@ -1,5 +1,5 @@
 import { API } from "../../../config/api";
-import { ProductImage } from "../types";
+import { ProductImage, VariantImage } from "../types";
 
 export async function uploadProductImage(
     productId: string,
@@ -89,7 +89,7 @@ export async function updateProductImagesOrder(
     // Create the array of ImageSortOrderDto objects
     const imageSortOrders = imageIds.map((id, index) => ({
         id: id,
-        sortOrder: index ,
+        sortOrder: index,
     }));
 
     const response = await fetch(
@@ -106,6 +106,38 @@ export async function updateProductImagesOrder(
 
     if (!response.ok) {
         throw new Error(`Failed to reorder images: ${response.status}`);
+    }
+
+    return response.json();
+}
+
+/**
+ * Uploads an image for a product variant
+ * @param productId Product ID
+ * @param variantId Variant ID
+ * @param file The image file to upload
+ */
+export async function uploadVariantImage(
+    productId: string,
+    variantId: string,
+    file: File
+): Promise<VariantImage> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch(
+        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/variants/${variantId}/images`,
+        {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+            body: formData,
+        }
+    );
+
+    if (!response.ok) {
+        throw new Error(`Failed to upload variant image: ${response.status}`);
     }
 
     return response.json();

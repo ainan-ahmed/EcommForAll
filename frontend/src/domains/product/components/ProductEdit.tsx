@@ -1,4 +1,4 @@
-import { Container, Alert, Button, LoadingOverlay, Paper } from "@mantine/core";
+import { Container, Alert, LoadingOverlay, Paper } from "@mantine/core";
 import { useProduct } from "../hooks/useProduct";
 import { useCategories } from "../../category/hooks/useCategories";
 import { useBrands } from "../../brand/hooks/useBrands";
@@ -9,7 +9,12 @@ import { ProductForm } from "./ProductForm";
 import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useStore } from "zustand/react";
 import { authStore } from "../../../stores/authStore";
-import { updateProductImagesOrder, uploadProductImage } from "../api/productImageApi";
+import {
+    updateProductImagesOrder,
+    uploadProductImage,
+    uploadVariantImage,
+} from "../api/productImageApi";
+import { updateProductVariants } from "../api/productApi";
 
 interface ProductEditProps {
     id: string; // Accept ID instead of product
@@ -56,30 +61,69 @@ export function ProductEdit({ id }: ProductEditProps) {
 
             // Update basic product info first
             await updateProductMutation.mutateAsync({
-                ...productData,
+                ...basicProductData,
                 variants: [], // Empty arrays to remove them from request
                 images: [],
             });
 
             // Track which steps succeeded and which failed
             let variantsSuccess = true;
+            let variantImagesSuccess = true;
             let imagesSuccess = true;
             let errors = [];
 
             // Step 2: Handle variants update in try-catch to isolate errors
             try {
-                // if (productData.variants && productData.variants.length > 0) {
-                //     await updateProductVariants(
-                //         productData.id,
-                //         productData.variants
-                //     );
-                // }
+                if (productData.variants && productData.variants.length > 0) {
+                    // Remove images array entirely from variants using destructuring
+                    const basicVariantsData = productData.variants.map(
+                        ({ images, ...variant }) => variant
+                    );
+
+                    console.log("Basic variants data:", basicVariantsData);
+                    await updateProductVariants(
+                        productData.id,
+                        basicVariantsData
+                    );
+
+                    // The rest of your variant image upload code remains the same
+                    try {
+                        // Step 2b: Upload any temporary variant images
+                        for (const variant of productData.variants) {
+                            // Find temporary images with files
+                            const tempVariantImages = variant.images?.filter(
+                                (img) => img.id.startsWith("temp-") && img.file
+                            );
+
+                            // Upload each temporary image
+                            for (const img of tempVariantImages!) {
+                                if (img.file) {
+                                    try {
+                                        await uploadVariantImage(
+                                            productData.id,
+                                            variant.id,
+                                            img.file
+                                        );
+                                    } catch (imageError: any) {
+                                        errors.push(
+                                            `Variant Image Upload: ${imageError.message}`
+                                        );
+                                        // Continue with other images
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error: any) {
+                        variantImagesSuccess = false;
+                        errors.push(`Variant Images: ${error.message}`);
+                    }
+                }
             } catch (error: any) {
                 variantsSuccess = false;
                 errors.push(`Variants: ${error.message}`);
             }
 
-            // Step 3: Handle images separately
+            // Step 3: Handle product images separately
             try {
                 // Step 3a: Upload any new images
                 const tempImages = productData.images.filter((img) =>
@@ -107,7 +151,7 @@ export function ProductEdit({ id }: ProductEditProps) {
             }
 
             // Determine overall success message
-            if (variantsSuccess && imagesSuccess) {
+            if (variantsSuccess && imagesSuccess && variantImagesSuccess) {
                 notifications.show({
                     title: "Product Updated",
                     message: "The product has been successfully updated",
@@ -133,7 +177,9 @@ export function ProductEdit({ id }: ProductEditProps) {
             });
         }
     };
-
+    const handleCancel = () => {
+        navigate({ to: "/products/$productId", params: { productId: id } });
+    };
     if (!isAuthenticated) {
         notifications.show({
             title: "Unauthorized",
@@ -194,6 +240,7 @@ export function ProductEdit({ id }: ProductEditProps) {
                 categories={categories}
                 brands={brands}
                 onSubmit={handleSubmit}
+                onCancel={handleCancel}
                 isLoading={updateProductMutation.isPending}
             />
         </Container>

@@ -1,11 +1,14 @@
 import { Grid, TextInput, Textarea, NumberInput, Select, Switch } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { Product } from "../types";
+import { Brand } from "../../brand/types";
+import { Category } from "../../category/types";
+import { RichTextEditorField } from "../../../shared/RichTextEditorField";
 
 interface BasicInfoTabProps {
     form: UseFormReturnType<Omit<Product, "variants" | "images">>;
-    categories: { id: string; name: string }[];
-    brands: { id: string; name: string }[];
+    categories: Category[];
+    brands: Brand[];
 }
 export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
     return (
@@ -20,11 +23,14 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
             </Grid.Col>
 
             <Grid.Col span={12}>
-                <Textarea
-                    label="Description"
-                    placeholder="Enter product description"
-                    minRows={4}
-                    {...form.getInputProps("description")}
+                <RichTextEditorField
+                    form={form}
+                    name="description"
+                    label="Product Description"
+                    description="Describe your product with rich formatting"
+                    required
+                    minHeight={250}
+                    placeholder="Enter detailed product information..."
                 />
             </Grid.Col>
 
@@ -53,7 +59,7 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                     label="Category"
                     placeholder="Select a category"
                     data={categories.map((cat) => ({
-                        value: cat.id,
+                        value: cat.id!,
                         label: cat.name,
                     }))}
                     required
@@ -66,7 +72,7 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                     label="Brand"
                     placeholder="Select a brand"
                     data={brands.map((brand) => ({
-                        value: brand.id,
+                        value: brand.id!,    // assert non-null so value is string
                         label: brand.name,
                     }))}
                     {...form.getInputProps("brandId")}

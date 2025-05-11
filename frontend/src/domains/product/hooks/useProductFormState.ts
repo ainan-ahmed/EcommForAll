@@ -28,64 +28,22 @@ export function useProductFormState(initialData?: Product) {
     // Handle image uploads for product
     const handleProductImageUpload = useCallback(
         async (files: File[]) => {
-            if (!initialData?.id) {
-                // If no product ID yet (new product being created), use local URLs
-                const newImages = files.map((file, index) => ({
-                    id: `temp-${Date.now()}-${index}`,
-                    productId: "",
-                    imageUrl: URL.createObjectURL(file),
-                    altText: file.name,
-                    sortOrder: productImages.length + index + 1,
-                    // Store the file for later upload when the product is saved
-                    file: file,
-                }));
+            // Always store files locally first with temporary IDs
+            // This applies to both new and existing products
+            const newImages = files.map((file, index) => ({
+                id: `temp-${Date.now()}-${index}`,
+                productId: initialData?.id || "",
+                imageUrl: URL.createObjectURL(file),
+                altText: file.name,
+                sortOrder: productImages.length + index + 1,
+                // Store the file for later upload when the product is saved
+                file: file,
+            }));
 
-                setProductImages([...productImages, ...newImages]);
-                return;
-            }
+            setProductImages([...productImages, ...newImages]);
 
-            setIsUploading(true);
-
-            try {
-                // Upload each file and collect results
-                const uploadPromises = files.map((file) =>
-                    uploadProductImage(initialData.id!, file)
-                );
-
-                const results = await Promise.allSettled(uploadPromises);
-
-                // Process results
-                const successfulUploads: ProductImage[] = [];
-                results.forEach((result, index) => {
-                    if (result.status === "fulfilled") {
-                        successfulUploads.push(result.value);
-                    } else {
-                        notifications.show({
-                            title: "Upload Failed",
-                            message: `Failed to upload ${files[index].name}: ${result.reason}`,
-                            color: "red",
-                        });
-                    }
-                });
-
-                if (successfulUploads.length > 0) {
-                    setProductImages([...productImages, ...successfulUploads]);
-                    notifications.show({
-                        title: "Upload Successful",
-                        message: `Successfully uploaded ${successfulUploads.length} image(s)`,
-                        color: "green",
-                    });
-                }
-            } catch (error) {
-                console.error("Image upload error:", error);
-                notifications.show({
-                    title: "Upload Error",
-                    message: "An error occurred while uploading images",
-                    color: "red",
-                });
-            } finally {
-                setIsUploading(false);
-            }
+            // No immediate upload - all uploads will happen during form submission
+            // in the handleSubmit function
         },
         [productImages, initialData?.id]
     );
@@ -191,30 +149,6 @@ export function useProductFormState(initialData?: Product) {
                 );
                 return;
             }
-
-            // For server images, call the API
-            if (initialData?.id) {
-                try {
-                    const updatedImage = await updateProductImage(
-                        initialData.id,
-                        imageId,
-                        { altText }
-                    );
-
-                    setProductImages(
-                        productImages.map((img) =>
-                            img.id === imageId ? { ...updatedImage } : img
-                        )
-                    );
-                } catch (error) {
-                    console.error("Failed to update image alt text:", error);
-                    notifications.show({
-                        title: "Error",
-                        message: "Failed to update the image alt text",
-                        color: "red",
-                    });
-                }
-            }
         },
         [productImages, initialData?.id]
     );
@@ -222,7 +156,8 @@ export function useProductFormState(initialData?: Product) {
     // Handle image uploads for variants
     const handleVariantImageUpload = useCallback(
         (files: File[], variantId: string) => {
-            // In a real implementation, you would upload to your server/S3
+            // Always store files locally with temporary IDs
+            // This applies to both new and existing variants
             const newImages = files.map((file, index) => ({
                 id: `temp-${Date.now()}-${index}`,
                 variantId: variantId,
@@ -233,6 +168,8 @@ export function useProductFormState(initialData?: Product) {
                         0) +
                     index +
                     1,
+                // Store the file for later upload when the product is saved
+                file: file,
             }));
 
             setVariants(
