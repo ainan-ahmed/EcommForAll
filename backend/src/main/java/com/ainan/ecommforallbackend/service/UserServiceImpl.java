@@ -3,29 +3,27 @@ package com.ainan.ecommforallbackend.service;
 import com.ainan.ecommforallbackend.dto.UserAuthDto;
 import com.ainan.ecommforallbackend.dto.UserDto;
 import com.ainan.ecommforallbackend.entity.User;
+import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
-import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
     @Override
-    public UserDto getUser(UUID id)
-    {
+    public UserDto getUser(UUID id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         return UserMapper.INSTANCE.UserToUserDto(user);
     }
@@ -55,8 +53,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserDto getUserByUsername(String username) {
-       User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-         return UserMapper.INSTANCE.UserToUserDto(user);
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return UserMapper.INSTANCE.UserToUserDto(user);
     }
 
     @Override

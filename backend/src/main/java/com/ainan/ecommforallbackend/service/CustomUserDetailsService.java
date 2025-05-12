@@ -1,9 +1,8 @@
 package com.ainan.ecommforallbackend.service;
+
 import com.ainan.ecommforallbackend.entity.User;
 import com.ainan.ecommforallbackend.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))        );
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
     }
 }

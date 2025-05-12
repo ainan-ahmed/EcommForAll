@@ -9,12 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,7 +52,7 @@ public class ProductVariantController {
 
         variantDto.setAttributeValues(sanitizeAttributeMap(variantDto.getAttributeValues()));
         variantDto.setProductId(productId);
-        return ResponseEntity.ok(productVariantService.updateVariant(id,variantDto));
+        return ResponseEntity.ok(productVariantService.updateVariant(id, variantDto));
     }
 
     @DeleteMapping("/{id}")
@@ -65,12 +62,13 @@ public class ProductVariantController {
         productVariantService.deleteVariant(id);
         return ResponseEntity.noContent().build();
     }
-    private Map<String, String> sanitizeAttributeMap(Map<java.lang.String, java.lang.String> attributes) {
+
+    private Map<String, String> sanitizeAttributeMap(Map<String, String> attributes) {
         if (attributes == null) {
             return new HashMap<>();
         }
 
-        Map<java.lang.String, java.lang.String> sanitizedMap = new HashMap<>();
+        Map<String, String> sanitizedMap = new HashMap<>();
         attributes.forEach((k, v) ->
                 sanitizedMap.put(k.trim().toLowerCase(), v != null ? v.trim() : ""));
         return sanitizedMap;
