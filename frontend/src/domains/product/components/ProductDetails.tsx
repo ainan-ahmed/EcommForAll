@@ -21,14 +21,16 @@ import {
     Alert,
     Box,
     Tooltip,
+    Menu,
 } from "@mantine/core";
 import {
     IconShoppingCart,
     IconHeart,
     IconTruck,
     IconEdit,
+    IconChevronDown,
 } from "@tabler/icons-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { Carousel } from "@mantine/carousel";
 import { authStore } from "../../../stores/authStore";
@@ -36,6 +38,9 @@ import { useStore } from "zustand/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useProduct } from "../hooks/useProduct";
 import DOMPurify from "dompurify";
+import { useUserWishlists, useIsProductInWishlist } from "../hooks/useWishlist";
+import { addToWishlist, removeFromWishlist } from "../api/wishlistApi";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
@@ -50,6 +55,29 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     const [quantity, setQuantity] = useState(1);
     const { user, isAuthenticated } = useStore(authStore);
     const navigate = useNavigate();
+
+    // Wishlist states and hooks
+    const [activeWishlistId, setActiveWishlistId] = useState<string | null>(
+        null
+    );
+    const { data: wishlists = [] } = useUserWishlists();
+    const queryClient = useQueryClient();
+
+    // Check if product is in favorites wishlist
+    const { data: isInFavorites = false, isLoading: isCheckingFavorites } =
+        useIsProductInWishlist(activeWishlistId || undefined, id);
+    //use memo to avoid unnecessary re-renders
+    useEffect(() => {
+        // Find if product exists in any wishlist
+        const wishlistWithProduct = wishlists.find((wishlist) =>
+            wishlist.products?.some((product) => product.id === id)
+        );
+
+        if (wishlistWithProduct) {
+            console.log("Product is in wishlist:", wishlistWithProduct.name);
+            setActiveWishlistId(wishlistWithProduct.id);
+        }
+    }, [wishlists, id]);
 
     // Move sortedImages calculation and useMemo here, before early returns
     // Sort images by sortOrder before rendering
@@ -111,6 +139,73 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         });
     };
 
+    // Handler for adding to specific wishlist
+    const handleAddToWishlist = async (wishlistId: string) => {
+        if (!isAuthenticated) {
+            notifications.show({
+                title: "Please Sign In",
+                message:
+                    "You need to be logged in to add items to your wishlist",
+                color: "blue",
+            });
+            navigate({ to: "/login", search: { redirect: `/products/${id}` } });
+            return;
+        }
+
+        try {
+            await addToWishlist(wishlistId, id);
+
+            // Manually invalidate the queries to refresh the data
+            queryClient.invalidateQueries({
+                queryKey: ["wishlist", wishlistId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["wishlist", wishlistId, "product", id],
+            });
+        } catch (error: unknown) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : "Failed to add product to wishlist";
+
+            notifications.show({
+                title: "Error",
+                message: errorMessage,
+                color: "red",
+            });
+        }
+    };
+    // Handler for removing from wishlist
+    const handleRemoveFromWishlist = async (wishlistId: string) => {
+        if (!isAuthenticated) {
+            notifications.show({
+                title: "Please Sign In",
+                message:
+                    "You need to be logged in to remove items from your wishlist",
+                color: "blue",
+            });
+            navigate({ to: "/login", search: { redirect: `/products/${id}` } });
+            return;
+        }
+        try {
+            // Use the API function directly instead of creating a new hook
+            await removeFromWishlist(wishlistId, id);
+            // Manually invalidate the queries to refresh the data
+            queryClient.invalidateQueries({
+                queryKey: ["wishlist", wishlistId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["wishlist", wishlistId, "product", id],
+            });
+        } catch (error) {
+            notifications.show({
+                title: "Error",
+                message: "Failed to remove product from wishlist",
+                color: "red",
+            });
+        }
+    };
+
     // Get variant options
     const variantOptions =
         product.variants?.map((variant) => ({
@@ -142,7 +237,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 slideGap="md"
                                 emblaOptions={{
                                     loop: true,
-                                    align: "center"
+                                    align: "center",
                                 }}
                             >
                                 {combinedImages.map((image, index) => (
@@ -318,13 +413,100 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 </Button>
                             </Tooltip>
 
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                leftSection={<IconHeart size={20} />}
-                            >
-                                Add to Wishlist
-                            </Button>
+                            <Menu>
+                                <Menu.Target>
+                                    {isInFavorites ? (
+                                        <Button
+                                            size="lg"
+                                            variant="outline"
+                                            leftSection={
+                                                <IconHeart size={20} />
+                                            }
+                                            rightSection={
+                                                <IconChevronDown size={16} />
+                                            }
+                                        >
+                                            In Favorites
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            size="lg"
+                                            variant="filled"
+                                            leftSection={
+                                                <IconHeart size={20} />
+                                            }
+                                            rightSection={
+                                                <IconChevronDown size={16} />
+                                            }
+                                        >
+                                            Add to Wishlist
+                                        </Button>
+                                    )}
+                                </Menu.Target>
+
+                                <Menu.Dropdown>
+                                    <Menu.Label>Save to Wishlist</Menu.Label>
+                                    {wishlists.length === 0 ? (
+                                        <Menu.Item disabled>
+                                            No wishlists found. Create one in
+                                            your profile.
+                                        </Menu.Item>
+                                    ) : (
+                                        wishlists.map((wishlist) => {
+                                            const isActive =
+                                                activeWishlistId ===
+                                                    wishlist.id || false;
+
+                                            return (
+                                                <Menu.Item
+                                                    key={wishlist.id}
+                                                    rightSection={
+                                                        isActive ? (
+                                                            <IconHeart
+                                                                size={16}
+                                                                color="green"
+                                                            />
+                                                        ) : (
+                                                            <IconHeart
+                                                                size={16}
+                                                                color="gray"
+                                                            />
+                                                        )
+                                                    }
+                                                    onClick={() => {
+                                                        isActive
+                                                            ? handleRemoveFromWishlist(
+                                                                  wishlist.id
+                                                              )
+                                                            : handleAddToWishlist(
+                                                                  wishlist.id
+                                                              );
+                                                        setActiveWishlistId(
+                                                            isActive
+                                                                ? null
+                                                                : wishlist.id
+                                                        );
+
+                                                        notifications.show({
+                                                            title: "Success",
+                                                            message: `Product ${
+                                                                isActive
+                                                                    ? "removed from"
+                                                                    : "added to"
+                                                            } ${wishlist.name}`,
+                                                            color: isInFavorites
+                                                                ? "blue"
+                                                                : "green",
+                                                        });
+                                                    }}
+                                                >
+                                                    {wishlist.name}
+                                                </Menu.Item>
+                                            );
+                                        })
+                                    )}
+                                </Menu.Dropdown>
+                            </Menu>
                         </Group>
 
                         {/* Shipping Info */}
