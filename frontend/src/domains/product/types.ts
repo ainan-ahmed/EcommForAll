@@ -84,3 +84,21 @@ export interface ProductQueryParams {
     isActive?: boolean;
     isFeatured?: boolean;
 }
+export interface WishlistProductSummary {
+    id: string;
+    name: string;
+    sku: string;
+    isActive: boolean;
+    minPrice: number;
+    primaryImage?: ProductImage;
+    brand: string;
+}
+
+export interface Wishlist {
+    id: string;
+    name: string;
+    userId: string;
+    products: WishlistProductSummary[];
+    createdAt: string;
+    updatedAt: string;
+}

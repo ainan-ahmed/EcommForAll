@@ -1,4 +1,4 @@
-import { Container, Alert, LoadingOverlay, Paper } from "@mantine/core";
+import { Container, LoadingOverlay, Paper } from "@mantine/core";
 import { useCategories } from "../../category/hooks/useCategories";
 import { useBrands } from "../../brand/hooks/useBrands";
 import { notifications } from "@mantine/notifications";
@@ -33,7 +33,7 @@ export function ProductCreate() {
     const createProductMutation = useCreateProduct();
 
     const handleSubmit = async (productData: Product) => {
-        console.log("Product data to create:", productData);
+        // console.log("Product data to create:", productData);
         try {
             // Set seller ID to current user
             productData.sellerId = user?.id || "";
@@ -44,9 +44,9 @@ export function ProductCreate() {
                 variants: productData.variants.map((variant) => ({
                     ...variant,
                     // Remove temporary images from variants when sending to API
-                    images: variant.images.filter(
+                    images: variant.images?.filter(
                         (img) => !img.id.startsWith("temp-")
-                    ),
+                    ) ?? [],
                 })),
                 // Remove temporary images when sending to API
                 images: productData.images.filter(

@@ -16,12 +16,14 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as registerImport } from './routes/register'
 import { Route as loginImport } from './routes/login'
 import { Route as indexImport } from './routes/index'
+import { Route as wishlistsIndexImport } from './routes/wishlists/index'
 import { Route as productsIndexImport } from './routes/products/index'
 import { Route as categoriesIndexImport } from './routes/categories/index'
 import { Route as brandsIndexImport } from './routes/brands/index'
 import { Route as productsNewImport } from './routes/products/new'
 import { Route as categoriesNewImport } from './routes/categories/new'
 import { Route as brandsNewImport } from './routes/brands/new'
+import { Route as wishlistsWishlistIdIndexImport } from './routes/wishlists/$wishlistId/index'
 import { Route as productsProductIdIndexImport } from './routes/products/$productId/index'
 import { Route as categoriesCategorySlugIndexImport } from './routes/categories/$categorySlug/index'
 import { Route as brandsBrandIdIndexImport } from './routes/brands/$brandId/index'
@@ -31,9 +33,11 @@ import { Route as brandsBrandIdEditImport } from './routes/brands/$brandId/edit'
 
 // Create Virtual Routes
 
+const WishlistsImport = createFileRoute('/wishlists')()
 const ProductsImport = createFileRoute('/products')()
 const CategoriesImport = createFileRoute('/categories')()
 const BrandsImport = createFileRoute('/brands')()
+const WishlistsWishlistIdImport = createFileRoute('/wishlists/$wishlistId')()
 const ProductsProductIdImport = createFileRoute('/products/$productId')()
 const CategoriesCategorySlugImport = createFileRoute(
   '/categories/$categorySlug',
@@ -41,6 +45,12 @@ const CategoriesCategorySlugImport = createFileRoute(
 const BrandsBrandIdImport = createFileRoute('/brands/$brandId')()
 
 // Create/Update Routes
+
+const WishlistsRoute = WishlistsImport.update({
+  id: '/wishlists',
+  path: '/wishlists',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const registerRoute = registerImport.update({
   id: '/register',
@@ -78,6 +88,12 @@ const indexRoute = indexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const wishlistsIndexRoute = wishlistsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WishlistsRoute,
+} as any)
+
 const productsIndexRoute = productsIndexImport.update({
   id: '/',
   path: '/',
@@ -94,6 +110,12 @@ const brandsIndexRoute = brandsIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BrandsRoute,
+} as any)
+
+const WishlistsWishlistIdRoute = WishlistsWishlistIdImport.update({
+  id: '/$wishlistId',
+  path: '/$wishlistId',
+  getParentRoute: () => WishlistsRoute,
 } as any)
 
 const productsNewRoute = productsNewImport.update({
@@ -130,6 +152,12 @@ const BrandsBrandIdRoute = BrandsBrandIdImport.update({
   id: '/$brandId',
   path: '/$brandId',
   getParentRoute: () => BrandsRoute,
+} as any)
+
+const wishlistsWishlistIdIndexRoute = wishlistsWishlistIdIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => WishlistsWishlistIdRoute,
 } as any)
 
 const productsProductIdIndexRoute = productsProductIdIndexImport.update({
@@ -217,6 +245,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof registerImport
       parentRoute: typeof rootRoute
     }
+    '/wishlists': {
+      id: '/wishlists'
+      path: '/wishlists'
+      fullPath: '/wishlists'
+      preLoaderRoute: typeof WishlistsImport
+      parentRoute: typeof rootRoute
+    }
     '/brands/$brandId': {
       id: '/brands/$brandId'
       path: '/$brandId'
@@ -259,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof productsNewImport
       parentRoute: typeof ProductsImport
     }
+    '/wishlists/$wishlistId': {
+      id: '/wishlists/$wishlistId'
+      path: '/$wishlistId'
+      fullPath: '/wishlists/$wishlistId'
+      preLoaderRoute: typeof WishlistsWishlistIdImport
+      parentRoute: typeof WishlistsImport
+    }
     '/brands/': {
       id: '/brands/'
       path: '/'
@@ -279,6 +321,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/products/'
       preLoaderRoute: typeof productsIndexImport
       parentRoute: typeof ProductsImport
+    }
+    '/wishlists/': {
+      id: '/wishlists/'
+      path: '/'
+      fullPath: '/wishlists/'
+      preLoaderRoute: typeof wishlistsIndexImport
+      parentRoute: typeof WishlistsImport
     }
     '/brands/$brandId/edit': {
       id: '/brands/$brandId/edit'
@@ -321,6 +370,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/products/$productId/'
       preLoaderRoute: typeof productsProductIdIndexImport
       parentRoute: typeof ProductsProductIdImport
+    }
+    '/wishlists/$wishlistId/': {
+      id: '/wishlists/$wishlistId/'
+      path: '/'
+      fullPath: '/wishlists/$wishlistId/'
+      preLoaderRoute: typeof wishlistsWishlistIdIndexImport
+      parentRoute: typeof WishlistsWishlistIdImport
     }
   }
 }
@@ -417,6 +473,31 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
   ProductsRouteChildren,
 )
 
+interface WishlistsWishlistIdRouteChildren {
+  wishlistsWishlistIdIndexRoute: typeof wishlistsWishlistIdIndexRoute
+}
+
+const WishlistsWishlistIdRouteChildren: WishlistsWishlistIdRouteChildren = {
+  wishlistsWishlistIdIndexRoute: wishlistsWishlistIdIndexRoute,
+}
+
+const WishlistsWishlistIdRouteWithChildren =
+  WishlistsWishlistIdRoute._addFileChildren(WishlistsWishlistIdRouteChildren)
+
+interface WishlistsRouteChildren {
+  WishlistsWishlistIdRoute: typeof WishlistsWishlistIdRouteWithChildren
+  wishlistsIndexRoute: typeof wishlistsIndexRoute
+}
+
+const WishlistsRouteChildren: WishlistsRouteChildren = {
+  WishlistsWishlistIdRoute: WishlistsWishlistIdRouteWithChildren,
+  wishlistsIndexRoute: wishlistsIndexRoute,
+}
+
+const WishlistsRouteWithChildren = WishlistsRoute._addFileChildren(
+  WishlistsRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof indexRoute
   '/brands': typeof BrandsRouteWithChildren
@@ -424,21 +505,25 @@ export interface FileRoutesByFullPath {
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
   '/register': typeof registerRoute
+  '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
   '/brands/new': typeof brandsNewRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
   '/categories/new': typeof categoriesNewRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
+  '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
   '/products/': typeof productsIndexRoute
+  '/wishlists/': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId/': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
   '/products/$productId/': typeof productsProductIdIndexRoute
+  '/wishlists/$wishlistId/': typeof wishlistsWishlistIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -451,12 +536,14 @@ export interface FileRoutesByTo {
   '/brands': typeof brandsIndexRoute
   '/categories': typeof categoriesIndexRoute
   '/products': typeof productsIndexRoute
+  '/wishlists': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug': typeof categoriesCategorySlugIndexRoute
   '/products/$productId': typeof productsProductIdIndexRoute
+  '/wishlists/$wishlistId': typeof wishlistsWishlistIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -467,21 +554,25 @@ export interface FileRoutesById {
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
   '/register': typeof registerRoute
+  '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
   '/brands/new': typeof brandsNewRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
   '/categories/new': typeof categoriesNewRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
+  '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
   '/products/': typeof productsIndexRoute
+  '/wishlists/': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId/': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
   '/products/$productId/': typeof productsProductIdIndexRoute
+  '/wishlists/$wishlistId/': typeof wishlistsWishlistIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -493,21 +584,25 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/register'
+    | '/wishlists'
     | '/brands/$brandId'
     | '/brands/new'
     | '/categories/$categorySlug'
     | '/categories/new'
     | '/products/$productId'
     | '/products/new'
+    | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
     | '/products/'
+    | '/wishlists/'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
     | '/products/$productId/edit'
     | '/brands/$brandId/'
     | '/categories/$categorySlug/'
     | '/products/$productId/'
+    | '/wishlists/$wishlistId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -519,12 +614,14 @@ export interface FileRouteTypes {
     | '/brands'
     | '/categories'
     | '/products'
+    | '/wishlists'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
     | '/products/$productId/edit'
     | '/brands/$brandId'
     | '/categories/$categorySlug'
     | '/products/$productId'
+    | '/wishlists/$wishlistId'
   id:
     | '__root__'
     | '/'
@@ -533,21 +630,25 @@ export interface FileRouteTypes {
     | '/login'
     | '/products'
     | '/register'
+    | '/wishlists'
     | '/brands/$brandId'
     | '/brands/new'
     | '/categories/$categorySlug'
     | '/categories/new'
     | '/products/$productId'
     | '/products/new'
+    | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
     | '/products/'
+    | '/wishlists/'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
     | '/products/$productId/edit'
     | '/brands/$brandId/'
     | '/categories/$categorySlug/'
     | '/products/$productId/'
+    | '/wishlists/$wishlistId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -558,6 +659,7 @@ export interface RootRouteChildren {
   loginRoute: typeof loginRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   registerRoute: typeof registerRoute
+  WishlistsRoute: typeof WishlistsRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -567,6 +669,7 @@ const rootRouteChildren: RootRouteChildren = {
   loginRoute: loginRoute,
   ProductsRoute: ProductsRouteWithChildren,
   registerRoute: registerRoute,
+  WishlistsRoute: WishlistsRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -584,7 +687,8 @@ export const routeTree = rootRoute
         "/categories",
         "/login",
         "/products",
-        "/register"
+        "/register",
+        "/wishlists"
       ]
     },
     "/": {
@@ -619,6 +723,13 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/wishlists": {
+      "filePath": "",
+      "children": [
+        "/wishlists/$wishlistId",
+        "/wishlists/"
+      ]
     },
     "/brands/$brandId": {
       "filePath": "",
@@ -656,6 +767,13 @@ export const routeTree = rootRoute
       "filePath": "products/new.tsx",
       "parent": "/products"
     },
+    "/wishlists/$wishlistId": {
+      "filePath": "",
+      "parent": "/wishlists",
+      "children": [
+        "/wishlists/$wishlistId/"
+      ]
+    },
     "/brands/": {
       "filePath": "brands/index.tsx",
       "parent": "/brands"
@@ -667,6 +785,10 @@ export const routeTree = rootRoute
     "/products/": {
       "filePath": "products/index.tsx",
       "parent": "/products"
+    },
+    "/wishlists/": {
+      "filePath": "wishlists/index.tsx",
+      "parent": "/wishlists"
     },
     "/brands/$brandId/edit": {
       "filePath": "brands/$brandId/edit.tsx",
@@ -691,6 +813,10 @@ export const routeTree = rootRoute
     "/products/$productId/": {
       "filePath": "products/$productId/index.tsx",
       "parent": "/products/$productId"
+    },
+    "/wishlists/$wishlistId/": {
+      "filePath": "wishlists/$wishlistId/index.tsx",
+      "parent": "/wishlists/$wishlistId"
     }
   }
 }

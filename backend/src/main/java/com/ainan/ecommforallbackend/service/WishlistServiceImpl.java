@@ -121,6 +121,26 @@ public class WishlistServiceImpl implements WishlistService {
         return wishlistMapper.toDto(updatedWishlist);
     }
 
+    @Override
+    @Transactional
+    public boolean createDefaultWishlistIfNotExists(String userId) {
+        UUID userUuid = UUID.fromString(userId);
+        List<Wishlist> existingWishlists = wishlistRepository.findAllByUserId(userUuid);
+        if (existingWishlists.isEmpty()) {
+            User user = userRepository.findById(userUuid)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+            WishlistCreateDto defaultWishlist = new WishlistCreateDto();
+            defaultWishlist.setName("Favorites");
+
+            Wishlist wishlist = wishlistMapper.toEntity(defaultWishlist);
+            wishlist.setUser(user);
+            wishlistRepository.save(wishlist);
+            return true;
+        }
+        return false;
+    }
+
     @Transactional(readOnly = true)
     public boolean isProductInUserWishlists(String userId, String productId, String wishlistId) {
         UUID userUUID = UUID.fromString(userId);

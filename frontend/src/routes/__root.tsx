@@ -46,7 +46,7 @@ export function RootComponent(): JSX.Element {
         getInitialValueInEffect: true,
     });
     const logout = useLogout();
-
+    
     return (
         <>
             <header className={classes.header}>
@@ -61,6 +61,15 @@ export function RootComponent(): JSX.Element {
                             <Button variant="subtle" component={Link} to="/categories">Categories</Button>
                             <Button variant="subtle" component={Link} to="/brands">Brands</Button>
                             <Button variant="subtle" component={Link} to="/" activeOptions={{ exact: true }}>About</Button>
+                            {isAuthenticated && (
+                                <Button
+                                    variant="subtle"
+                                    component={Link}
+                                    to="/wishlists"
+                                >
+                                    My Wishlists
+                                </Button>
+                            )}
                         </Group>
                         {/* right section */}
                         <Group justify="flex-end">

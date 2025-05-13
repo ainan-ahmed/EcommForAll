@@ -34,6 +34,11 @@ export const routes = rootRoute("__root.tsx", [
             index("brands/$brandId/index.tsx"),
             route("/edit", "brands/$brandId/edit.tsx"),
         ])
+    ]),
+    route("/wishlists", [
+        index("wishlists/index.tsx"),
+        route("/$wishlistId", [
+            index("wishlists/$wishlistId/index.tsx")
+        ])
     ])
-
 ]);

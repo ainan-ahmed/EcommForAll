@@ -25,6 +25,7 @@ public class WishlistController {
     @GetMapping
     public ResponseEntity<List<WishlistDto>> getUserWishlists(Principal principal) {
         String userId = getCurrentUserId(principal);
+        System.out.println("User wishlist: " + userId);
         return ResponseEntity.ok(wishlistService.getUserWishlists(userId));
     }
 
@@ -86,7 +87,17 @@ public class WishlistController {
     }
 
     private String getCurrentUserId(Principal principal) {
+        if (principal == null) {
+            throw new IllegalArgumentException("User is not authenticated");
+        }
+
         String username = principal.getName();
-        return userService.getUserByUsername(username).getId().toString();
+        try {
+            return userService.getUserByUsername(username)
+                    .getId()
+                    .toString();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get user ID for username: " + username, e);
+        }
     }
 }
