@@ -140,8 +140,10 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 withIndicators
                                 height={400}
                                 slideGap="md"
-                                loop
-                                align="center"
+                                emblaOptions={{
+                                    loop: true,
+                                    align: "center"
+                                }}
                             >
                                 {combinedImages.map((image, index) => (
                                     <Carousel.Slide key={image.id || index}>

@@ -6,7 +6,6 @@ import com.ainan.ecommforallbackend.entity.RoleName;
 import com.ainan.ecommforallbackend.entity.User;
 import com.ainan.ecommforallbackend.mapper.UserMapper;
 import com.ainan.ecommforallbackend.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+
     @CacheEvict(value = "users", allEntries = true)
     public UserDto register(UserAuthDto registrationDto) {
         if (userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {

@@ -12,7 +12,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-      show-sql: true
+    show-sql: true
   security:
     user:
       name: admin
@@ -30,6 +30,7 @@ springdoc:
 aws:
   s3:
     bucket: ecommforall
+  region: eu-north-1
 logging:
   level:
     org:

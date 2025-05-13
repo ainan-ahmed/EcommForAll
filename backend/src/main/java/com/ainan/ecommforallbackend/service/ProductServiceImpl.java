@@ -1,7 +1,10 @@
 package com.ainan.ecommforallbackend.service;
 
 import com.ainan.ecommforallbackend.dto.*;
-import com.ainan.ecommforallbackend.entity.*;
+import com.ainan.ecommforallbackend.entity.Brand;
+import com.ainan.ecommforallbackend.entity.Category;
+import com.ainan.ecommforallbackend.entity.Product;
+import com.ainan.ecommforallbackend.entity.User;
 import com.ainan.ecommforallbackend.exception.ResourceNotFoundException;
 import com.ainan.ecommforallbackend.mapper.ProductMapper;
 import com.ainan.ecommforallbackend.repository.BrandRepository;
@@ -13,8 +16,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,18 +48,13 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDto> getAllProducts(Pageable pageable) {
         entityManager.clear();
         Page<Product> products = productRepository.findAll(pageable);
-
-        // Convert to DTOs
-        Page<ProductDto> productDtos = addPrimaryImagesToProducts(products.map(productMapper::productToProductDto));
-
-        return productDtos;
+        return addPrimaryImagesToProducts(products.map(productMapper::productToProductDto));
     }
 
     @Override
     public Page<ProductDto> getFilteredProducts(ProductFilterDto filter, Pageable pageable) {
         final Specification<Product> spec = ProductSpecification.getSpecification(filter);
-        Page<ProductDto> productDtos =  addPrimaryImagesToProducts(productRepository.findAll(spec, pageable).map(productMapper::productToProductDto));
-        return productDtos;
+        return addPrimaryImagesToProducts(productRepository.findAll(spec, pageable).map(productMapper::productToProductDto));
     }
 
     @Override
@@ -159,15 +155,14 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 
-        Page<ProductDto> productDtos = addPrimaryImagesToProducts(productsPage.map(productMapper::productToProductDto));
-        return productDtos;
+        return addPrimaryImagesToProducts(productsPage.map(productMapper::productToProductDto));
     }
 
     @Override
     public Page<ProductDto> getProductsByBrandId(UUID brandId, Pageable pageable) {
         Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ResourceNotFoundException("Brand not found with id: " + brandId));
 
-        Page<ProductDto> productDtos =  productRepository.findByBrandId(brand.getId(), pageable).map(productMapper::productToProductDto);
+        Page<ProductDto> productDtos = productRepository.findByBrandId(brand.getId(), pageable).map(productMapper::productToProductDto);
         return addPrimaryImagesToProducts(productDtos);
     }
 
@@ -175,7 +170,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDto> getProductsBySellerId(UUID sellerId, Pageable pageable) {
         User seller = userRepository.findById(sellerId).orElseThrow(() -> new ResourceNotFoundException("Seller not found with id: " + sellerId));
 
-        Page<ProductDto> productDtos =  productRepository.findBySellerId(seller.getId(), pageable).map(productMapper::productToProductDto);
+        Page<ProductDto> productDtos = productRepository.findBySellerId(seller.getId(), pageable).map(productMapper::productToProductDto);
         return addPrimaryImagesToProducts(productDtos);
     }
 
@@ -212,6 +207,7 @@ public class ProductServiceImpl implements ProductService {
 
         return String.format("%s-%s-%s-%s", brandPrefix, categoryPrefix, productPrefix, randomPart);
     }
+
     private Page<ProductDto> addPrimaryImagesToProducts(Page<ProductDto> productDtos) {
         productDtos.forEach(productDto -> {
             Page<ProductImageDto> primaryImages = productImageService.getImagesByProductId(
