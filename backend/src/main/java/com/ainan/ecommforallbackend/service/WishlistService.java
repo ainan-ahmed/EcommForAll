@@ -22,4 +22,6 @@ public interface WishlistService {
     WishlistDto removeProductFromWishlist(String wishlistId, String productId, String userId);
 
     boolean isProductInUserWishlists(String userId, String productId, String wishlistId);
+
+    boolean createDefaultWishlistIfNotExists(String userId);
 }
