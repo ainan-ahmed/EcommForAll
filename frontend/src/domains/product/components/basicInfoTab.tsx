@@ -1,9 +1,9 @@
-import { Grid, TextInput, Textarea, NumberInput, Select, Switch } from "@mantine/core";
+import { Grid, TextInput, NumberInput, Select, Switch } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { Product } from "../types";
 import { Brand } from "../../brand/types";
 import { Category } from "../../category/types";
-import { RichTextEditorField } from "../../../shared/RichTextEditorField";
+import { RichTextEditorField } from "../../../shared/components/RichTextEditorField";
 
 interface BasicInfoTabProps {
     form: UseFormReturnType<Omit<Product, "variants" | "images">>;
@@ -72,7 +72,7 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                     label="Brand"
                     placeholder="Select a brand"
                     data={brands.map((brand) => ({
-                        value: brand.id!,    // assert non-null so value is string
+                        value: brand.id!, // assert non-null so value is string
                         label: brand.name,
                     }))}
                     {...form.getInputProps("brandId")}
@@ -99,5 +99,5 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                 />
             </Grid.Col>
         </Grid>
-    )
+    );
 }

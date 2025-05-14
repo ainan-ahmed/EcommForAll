@@ -1,0 +1,51 @@
+/* Add or update these styles */
+
+/* Hero Carousel */
+.heroCarousel {
+    margin-top: -50px; /* Offset header margin */
+    width: 100%;
+    overflow: hidden; /* Ensure no overflow */
+}
+
+.carouselRoot {
+    width: 100vw; /* Make carousel full viewport width */
+    margin-left: calc(-50vw + 50%); /* Center the carousel */
+}
+
+.carouselFullSlide {
+    width: 100vw; /* Full width slides */
+}
+
+.carouselSlide {
+    height: 600px; /* Increased from 500px */
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+}
+
+.carouselContent {
+    max-width: 600px;
+    color: white;
+    padding: 0 20px; /* Add some padding for mobile */
+}
+
+.carouselTitle {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.carouselDescription {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.carouselButton {
+    padding-left: 2rem;
+    padding-right: 2rem;
+}

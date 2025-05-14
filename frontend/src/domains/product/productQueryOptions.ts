@@ -4,7 +4,7 @@ import {
     fetchProducts,
     fetchProductsByCategoryId,
 } from "./api/productApi";
-import { Product, ProductQueryParams, ProductsResponse } from "./types";
+import { ProductQueryParams } from "./types";
 
 /**
  * Query options for fetching a single product by ID

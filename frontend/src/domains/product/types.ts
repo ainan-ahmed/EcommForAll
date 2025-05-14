@@ -94,11 +94,4 @@ export interface WishlistProductSummary {
     brand: string;
 }
 
-export interface Wishlist {
-    id: string;
-    name: string;
-    userId: string;
-    products: WishlistProductSummary[];
-    createdAt: string;
-    updatedAt: string;
-}
+

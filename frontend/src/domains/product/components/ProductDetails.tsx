@@ -38,9 +38,13 @@ import { useStore } from "zustand/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useProduct } from "../hooks/useProduct";
 import DOMPurify from "dompurify";
-import { useUserWishlists, useIsProductInWishlist } from "../hooks/useWishlist";
-import { addToWishlist, removeFromWishlist } from "../api/wishlistApi";
+import {
+    useUserWishlists,
+    useIsProductInWishlist,
+} from "../../user/hooks/useWishlist";
+import { addToWishlist, removeFromWishlist } from "../../user/api/wishlistApi";
 import { useQueryClient } from "@tanstack/react-query";
+import { WishlistProductSummary } from "../types";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
@@ -70,7 +74,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     useEffect(() => {
         // Find if product exists in any wishlist
         const wishlistWithProduct = wishlists.find((wishlist) =>
-            wishlist.products?.some((product) => product.id === id)
+            wishlist.products?.some((product: WishlistProductSummary) => product.id === id)
         );
 
         if (wishlistWithProduct) {

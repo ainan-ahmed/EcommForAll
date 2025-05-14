@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { User } from "../domains/auth/types";
+import { User } from "../domains/user/types";
 
 interface AuthState {
     user: User | null;
     isAuthenticated: boolean;
+    setUser: (user: User) => void;
     login: (user: User) => void;
     logout: () => void;
 }
@@ -14,6 +15,7 @@ export const authStore = create<AuthState>()(
         (set) => ({
             user: null,
             isAuthenticated: false,
+            setUser: (user) => set({ user }),
             login: (user) => set({ user, isAuthenticated: true }),
             logout: () => set({ user: null, isAuthenticated: false }),
         }),
