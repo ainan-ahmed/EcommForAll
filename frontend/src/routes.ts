@@ -2,6 +2,7 @@ import { rootRoute, route, index } from "@tanstack/virtual-file-routes";
 
 export const routes = rootRoute("__root.tsx", [
     // Main routes
+    route("/about", "about.tsx"),
     index("index.tsx"),
     route("/login", "login.tsx"),
     route("/register", "register.tsx"),
@@ -35,10 +36,17 @@ export const routes = rootRoute("__root.tsx", [
             route("/edit", "brands/$brandId/edit.tsx"),
         ])
     ]),
+    // wishlists section
     route("/wishlists", [
         index("wishlists/index.tsx"),
         route("/$wishlistId", [
             index("wishlists/$wishlistId/index.tsx")
         ])
-    ])
+    ]),
+    // profile section
+    route("/profile", [
+        index("profile/index.tsx"),
+        route("/edit", "profile/edit.tsx"),
+    ]),
+
 ]);

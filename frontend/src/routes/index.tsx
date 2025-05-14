@@ -1,8 +1,6 @@
-import {createFileRoute} from '@tanstack/react-router'
-function HomePage() {
-    return <div>Hello "/"!</div>
-}
+import { createFileRoute } from "@tanstack/react-router";
+import { HomePage } from "../shared/components/HomePage";
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
     component: HomePage,
-})
+});

@@ -4,10 +4,16 @@ import { Container, Paper, Text, Title } from "@mantine/core";
 import { RegisterFormValues } from "../domains/auth/types.ts";
 import { RegisterForm } from "../domains/auth/components/RegisterForm.tsx";
 import { useRegister } from "../domains/auth/hooks/useRegister.ts";
+import { notifications } from "@mantine/notifications";
 
 export const Route = createFileRoute("/register")({
     beforeLoad: ({ location }) => {
         if (authStore.getState().isAuthenticated) {
+            notifications.show({
+                title: "Already logged in",
+                message: "You are already logged in. Redirecting to home page.",
+                color: "green",
+            });
             throw redirect({
                 to: "/",
                 search: {

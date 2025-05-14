@@ -1,19 +1,9 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { ProductEdit } from "../../../domains/product/components/ProductEdit";
-import { authStore } from "../../../stores/authStore";
-import { Product } from "../../../domains/product/types";
+import { sellerGuard } from "../../../shared/utils/authGuard";
 
 export const Route = createFileRoute("/products/$productId/edit")({
-    beforeLoad: ({ location }) => {
-        // Check authentication first
-        if (!authStore.getState().isAuthenticated) {
-            throw redirect({
-                to: "/login",
-                search: { redirect: location.href },
-                replace: true,
-            });
-        }
-    },
+    beforeLoad: sellerGuard,
     component: ProductEditRoute,
 });
 

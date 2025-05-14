@@ -19,7 +19,7 @@ import {
 import { Navigate, useNavigate, Link } from "@tanstack/react-router";
 import { useStore } from "zustand";
 import { authStore } from "../../../stores/authStore";
-import { IconShoppingCart, IconTrash, IconX } from "@tabler/icons-react";
+import { IconShoppingCart, IconTrash } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import {
     useWishlistById,
@@ -29,11 +29,11 @@ import {
 // Remove this import: import { modals } from "@mantine/modals";
 import { useDisclosure } from "@mantine/hooks"; // Add this import
 
-interface WishlistDetailsPageProps {
+interface WishlistDetailsProps {
     wishlistId: string;
 }
 
-export function WishlistDetailsPage({ wishlistId }: WishlistDetailsPageProps) {
+export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
     const { isAuthenticated } = useStore(authStore);
     const navigate = useNavigate();
 

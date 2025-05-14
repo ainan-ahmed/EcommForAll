@@ -1,15 +1,14 @@
 import { Badge, Button, Card, Group, Stack, Image, Text } from "@mantine/core";
 import { IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
-import { Product, WishlistProductSummary } from "../types";
+import { Product } from "../types";
 
 
 interface ProductCardProps {
-    product: Product | WishlistProductSummary;
+    product: Product ;
     showAddToCart?: boolean;
 }
 export function ProductCard({ product, showAddToCart = true }: ProductCardProps) {
-    console.log("ProductCard", product);
     return (
         <Card
             shadow="sm"

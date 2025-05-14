@@ -15,11 +15,14 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as registerImport } from './routes/register'
 import { Route as loginImport } from './routes/login'
+import { Route as aboutImport } from './routes/about'
 import { Route as indexImport } from './routes/index'
 import { Route as wishlistsIndexImport } from './routes/wishlists/index'
+import { Route as profileIndexImport } from './routes/profile/index'
 import { Route as productsIndexImport } from './routes/products/index'
 import { Route as categoriesIndexImport } from './routes/categories/index'
 import { Route as brandsIndexImport } from './routes/brands/index'
+import { Route as profileEditImport } from './routes/profile/edit'
 import { Route as productsNewImport } from './routes/products/new'
 import { Route as categoriesNewImport } from './routes/categories/new'
 import { Route as brandsNewImport } from './routes/brands/new'
@@ -34,6 +37,7 @@ import { Route as brandsBrandIdEditImport } from './routes/brands/$brandId/edit'
 // Create Virtual Routes
 
 const WishlistsImport = createFileRoute('/wishlists')()
+const ProfileImport = createFileRoute('/profile')()
 const ProductsImport = createFileRoute('/products')()
 const CategoriesImport = createFileRoute('/categories')()
 const BrandsImport = createFileRoute('/brands')()
@@ -55,6 +59,12 @@ const WishlistsRoute = WishlistsImport.update({
 const registerRoute = registerImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProfileRoute = ProfileImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -82,6 +92,12 @@ const BrandsRoute = BrandsImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const aboutRoute = aboutImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const indexRoute = indexImport.update({
   id: '/',
   path: '/',
@@ -92,6 +108,12 @@ const wishlistsIndexRoute = wishlistsIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => WishlistsRoute,
+} as any)
+
+const profileIndexRoute = profileIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ProfileRoute,
 } as any)
 
 const productsIndexRoute = productsIndexImport.update({
@@ -116,6 +138,12 @@ const WishlistsWishlistIdRoute = WishlistsWishlistIdImport.update({
   id: '/$wishlistId',
   path: '/$wishlistId',
   getParentRoute: () => WishlistsRoute,
+} as any)
+
+const profileEditRoute = profileEditImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => ProfileRoute,
 } as any)
 
 const productsNewRoute = productsNewImport.update({
@@ -210,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof indexImport
       parentRoute: typeof rootRoute
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof aboutImport
+      parentRoute: typeof rootRoute
+    }
     '/brands': {
       id: '/brands'
       path: '/brands'
@@ -236,6 +271,13 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/products'
       preLoaderRoute: typeof ProductsImport
+      parentRoute: typeof rootRoute
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileImport
       parentRoute: typeof rootRoute
     }
     '/register': {
@@ -294,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof productsNewImport
       parentRoute: typeof ProductsImport
     }
+    '/profile/edit': {
+      id: '/profile/edit'
+      path: '/edit'
+      fullPath: '/profile/edit'
+      preLoaderRoute: typeof profileEditImport
+      parentRoute: typeof ProfileImport
+    }
     '/wishlists/$wishlistId': {
       id: '/wishlists/$wishlistId'
       path: '/$wishlistId'
@@ -321,6 +370,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/products/'
       preLoaderRoute: typeof productsIndexImport
       parentRoute: typeof ProductsImport
+    }
+    '/profile/': {
+      id: '/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof profileIndexImport
+      parentRoute: typeof ProfileImport
     }
     '/wishlists/': {
       id: '/wishlists/'
@@ -473,6 +529,19 @@ const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
   ProductsRouteChildren,
 )
 
+interface ProfileRouteChildren {
+  profileEditRoute: typeof profileEditRoute
+  profileIndexRoute: typeof profileIndexRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  profileEditRoute: profileEditRoute,
+  profileIndexRoute: profileIndexRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
+
 interface WishlistsWishlistIdRouteChildren {
   wishlistsWishlistIdIndexRoute: typeof wishlistsWishlistIdIndexRoute
 }
@@ -500,10 +569,12 @@ const WishlistsRouteWithChildren = WishlistsRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof indexRoute
+  '/about': typeof aboutRoute
   '/brands': typeof BrandsRouteWithChildren
   '/categories': typeof CategoriesRouteWithChildren
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
+  '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
   '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
@@ -512,10 +583,12 @@ export interface FileRoutesByFullPath {
   '/categories/new': typeof categoriesNewRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
+  '/profile/edit': typeof profileEditRoute
   '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
   '/products/': typeof productsIndexRoute
+  '/profile/': typeof profileIndexRoute
   '/wishlists/': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
@@ -528,14 +601,17 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof indexRoute
+  '/about': typeof aboutRoute
   '/login': typeof loginRoute
   '/register': typeof registerRoute
   '/brands/new': typeof brandsNewRoute
   '/categories/new': typeof categoriesNewRoute
   '/products/new': typeof productsNewRoute
+  '/profile/edit': typeof profileEditRoute
   '/brands': typeof brandsIndexRoute
   '/categories': typeof categoriesIndexRoute
   '/products': typeof productsIndexRoute
+  '/profile': typeof profileIndexRoute
   '/wishlists': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
@@ -549,10 +625,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof indexRoute
+  '/about': typeof aboutRoute
   '/brands': typeof BrandsRouteWithChildren
   '/categories': typeof CategoriesRouteWithChildren
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
+  '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
   '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
@@ -561,10 +639,12 @@ export interface FileRoutesById {
   '/categories/new': typeof categoriesNewRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
+  '/profile/edit': typeof profileEditRoute
   '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
   '/products/': typeof productsIndexRoute
+  '/profile/': typeof profileIndexRoute
   '/wishlists/': typeof wishlistsIndexRoute
   '/brands/$brandId/edit': typeof brandsBrandIdEditRoute
   '/categories/$categorySlug/edit': typeof categoriesCategorySlugEditRoute
@@ -579,10 +659,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/brands'
     | '/categories'
     | '/login'
     | '/products'
+    | '/profile'
     | '/register'
     | '/wishlists'
     | '/brands/$brandId'
@@ -591,10 +673,12 @@ export interface FileRouteTypes {
     | '/categories/new'
     | '/products/$productId'
     | '/products/new'
+    | '/profile/edit'
     | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
     | '/products/'
+    | '/profile/'
     | '/wishlists/'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
@@ -606,14 +690,17 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/login'
     | '/register'
     | '/brands/new'
     | '/categories/new'
     | '/products/new'
+    | '/profile/edit'
     | '/brands'
     | '/categories'
     | '/products'
+    | '/profile'
     | '/wishlists'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
@@ -625,10 +712,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/brands'
     | '/categories'
     | '/login'
     | '/products'
+    | '/profile'
     | '/register'
     | '/wishlists'
     | '/brands/$brandId'
@@ -637,10 +726,12 @@ export interface FileRouteTypes {
     | '/categories/new'
     | '/products/$productId'
     | '/products/new'
+    | '/profile/edit'
     | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
     | '/products/'
+    | '/profile/'
     | '/wishlists/'
     | '/brands/$brandId/edit'
     | '/categories/$categorySlug/edit'
@@ -654,20 +745,24 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   indexRoute: typeof indexRoute
+  aboutRoute: typeof aboutRoute
   BrandsRoute: typeof BrandsRouteWithChildren
   CategoriesRoute: typeof CategoriesRouteWithChildren
   loginRoute: typeof loginRoute
   ProductsRoute: typeof ProductsRouteWithChildren
+  ProfileRoute: typeof ProfileRouteWithChildren
   registerRoute: typeof registerRoute
   WishlistsRoute: typeof WishlistsRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   indexRoute: indexRoute,
+  aboutRoute: aboutRoute,
   BrandsRoute: BrandsRouteWithChildren,
   CategoriesRoute: CategoriesRouteWithChildren,
   loginRoute: loginRoute,
   ProductsRoute: ProductsRouteWithChildren,
+  ProfileRoute: ProfileRouteWithChildren,
   registerRoute: registerRoute,
   WishlistsRoute: WishlistsRouteWithChildren,
 }
@@ -683,16 +778,21 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/about",
         "/brands",
         "/categories",
         "/login",
         "/products",
+        "/profile",
         "/register",
         "/wishlists"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/about": {
+      "filePath": "about.tsx"
     },
     "/brands": {
       "filePath": "",
@@ -719,6 +819,13 @@ export const routeTree = rootRoute
         "/products/$productId",
         "/products/new",
         "/products/"
+      ]
+    },
+    "/profile": {
+      "filePath": "",
+      "children": [
+        "/profile/edit",
+        "/profile/"
       ]
     },
     "/register": {
@@ -767,6 +874,10 @@ export const routeTree = rootRoute
       "filePath": "products/new.tsx",
       "parent": "/products"
     },
+    "/profile/edit": {
+      "filePath": "profile/edit.tsx",
+      "parent": "/profile"
+    },
     "/wishlists/$wishlistId": {
       "filePath": "",
       "parent": "/wishlists",
@@ -785,6 +896,10 @@ export const routeTree = rootRoute
     "/products/": {
       "filePath": "products/index.tsx",
       "parent": "/products"
+    },
+    "/profile/": {
+      "filePath": "profile/index.tsx",
+      "parent": "/profile"
     },
     "/wishlists/": {
       "filePath": "wishlists/index.tsx",

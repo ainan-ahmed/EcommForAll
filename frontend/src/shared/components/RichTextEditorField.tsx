@@ -16,7 +16,7 @@ export function RichTextEditorField({
   name,
   ...props
 }: RichTextEditorFieldProps) {
-  const { value, onChange, error } = form.getInputProps(name);
+  const { value, error } = form.getInputProps(name);
   
   return (
     <RichTextEditor

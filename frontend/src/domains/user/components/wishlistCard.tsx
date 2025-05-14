@@ -10,7 +10,6 @@ interface WishlistCardProps {
 
 export function WishlistCard({ wishlist }: WishlistCardProps) {
     const navigate = useNavigate();
-    console.log("WishlistCard", wishlist);
 
     return (
         <Card
