@@ -78,7 +78,7 @@ docker-compose up --build
 	- [x] Implement filtering and sorting for products
   - [x] develop UI's needed for products
 - [ ] Wishlist & Reviews
-	- [ ] Implement wishlist functionality
+	- [x] Implement wishlist functionality
 	- [ ] Add product ratings and reviews
 - [ ] Admin Panel
 	- [ ] Implement Admin Panel.
@@ -93,11 +93,12 @@ docker-compose up --build
 - [ ] Blog System
 	- [ ] Implement CRUD blog posts
 	- [ ] Implement categories and tags for blogs
-	- [ ] Integrate Markdown/WYSIWYG editor
+	- [x] Integrate Markdown/WYSIWYG editor
 
 
 ### Phase 2: Advanced Features
 - [ ] User Profile & Address Management
+  - [x] User Profile and Edit Profile
 	- [ ] Allow users to save multiple addresses
 	- [ ] Implement order history view
 - [ ] Search & Filtering Optimization
@@ -111,8 +112,8 @@ docker-compose up --build
 ---
 ## Contributing
 
-Pick a task from the phases above and submit a pull request. For more details, see [CONTRIBUTING.md](CONTRIBUTING.md) (to be added).
+Pick a task from the phases above and submit a pull request. For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the MIT License (to be added).
+This project is licensed under the MIT License [LICENSE].
