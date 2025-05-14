@@ -68,7 +68,7 @@ This project features a combination of modern tools and practices for web develo
 * **Dark Mode Support:** With Dark Mode/Light Mode toggle.
 
 ## Project Structure
-See [Project Structure](https://github.com/ainan-ahmed/EcommForAll/blob/main/PROJECT_STRUCTURE.md)
+See [Project Structure](https://github.com/ainan-ahmed/EcommForAll/blob/main/PROJECT-STRUCTURE.MD)
 
 ## 🚀 Getting Started
 
