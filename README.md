@@ -186,8 +186,9 @@ This project is licensed under the MIT License - see the [LICENSE.md](https://gi
 * [Zustand](https://github.com/pmndrs/zustand)
 * [Spring Boot](https://spring.io/projects/spring-boot)
 * [Vite](https://vitejs.dev/)
+* [Mantine Admin](https://github.com/jotyy/Mantine-Admin/blob/main/README.md) for Readme Template.
 * And other great open-source libraries used.
 
 ---
 
-Built with ❤️ by [Ainan]
+Built with ❤️ by [Ainan]k
