@@ -69,18 +69,19 @@ export function HomePage() {
     const featuredProducts = featuredProductsData || [];
     const brands = brandsData?.content || [];
     // Promotional banner data
-    const heroSlides = categoriesData?.content?.map((category) => ({
-        id: category.id,
-        imageUrl: category.imageUrl,
-        title: category.name,
-        description: `Explore our ${category.name} collection`,
-        buttonText: "Shop Now",
-        buttonLink: `/categories/${category.slug}`,
-        color: "blue",
-    })) || [];
+    const heroSlides =
+        categoriesData?.content?.map((category) => ({
+            id: category.id,
+            imageUrl: category.imageUrl,
+            title: category.name,
+            description: `Explore our ${category.name} collection`,
+            buttonText: "Shop Now",
+            buttonLink: `/categories/${category.slug}`,
+            color: "blue",
+        })) || [];
 
     // Featured categories with icons
-   
+
     const featuredCategories = categoriesData?.content
         .filter((category) => category.productCount! > 0)
         .slice(0, 4);
@@ -133,13 +134,12 @@ export function HomePage() {
     const CategorySkeletons = () => (
         <>
             {Array.from({ length: 4 }).map((_, i) => (
-                <Grid.Col key={i} span={{ base: 6, xs: 4, sm: 4, md: 2 }}>
+                <div key={i}>
                     <Skeleton height={100} radius="md" />
-                </Grid.Col>
+                </div>
             ))}
         </>
     );
-
 
     return (
         <>
@@ -229,7 +229,8 @@ export function HomePage() {
                                         {category.name}
                                     </Text>
                                 </Card>
-                            )))}
+                            ))
+                        )}
                     </SimpleGrid>
                 </div>
 

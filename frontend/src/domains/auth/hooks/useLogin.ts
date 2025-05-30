@@ -18,7 +18,7 @@ export function useLogin(options: UseLoginOptions = {}) {
         mutationFn: (data: LoginFormValues) => login(data),
         onSuccess: (response) => {
             const { user, token } = response;
-           // console.log(response);
+            // console.log(response);
             localStorage.setItem("authToken", token);
             setAuth(user); // Update global auth state
             onSuccess?.(response); // Call optional callback
