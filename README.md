@@ -27,7 +27,7 @@ This project serves as a personal learning endeavor and a portfolio piece to sho
 This project features a combination of modern tools and practices for web development.
 
 ### Core Functionality (Implemented / In Progress):
-* **User Authentication:** Secure registration and login (JWT-based likely, details TBD).
+* **User Authentication:** Secure registration and login (JWT-based).
 * **Product Management:**
     * Product listing with pagination and filtering.
     * Detailed product view.
@@ -191,4 +191,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](https://gi
 
 ---
 
-Built with ❤️ by [Ainan]k
+Built with ❤️ by **Ainan**
