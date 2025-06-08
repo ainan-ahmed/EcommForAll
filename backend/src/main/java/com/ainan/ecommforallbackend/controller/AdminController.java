@@ -2,9 +2,13 @@ package com.ainan.ecommforallbackend.controller;
 
 import com.ainan.ecommforallbackend.dto.RoleUpdateDto;
 import com.ainan.ecommforallbackend.dto.UserDto;
+import com.ainan.ecommforallbackend.dto.WishlistCreateDto;
 import com.ainan.ecommforallbackend.service.AdminService;
+import com.ainan.ecommforallbackend.service.ShoppingCartService;
 import com.ainan.ecommforallbackend.service.WishlistService;
-import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,15 +23,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 @RequestMapping("/api/admin")
 @PreAuthorize("hasRole('ADMIN')")
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class AdminController {
 
     private final AdminService adminService;
     private final WishlistService wishlistService;
+    private final ShoppingCartService shoppingCartService;
 
     @GetMapping("/users")
     public ResponseEntity<Page<UserDto>> getAllUsers(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sort,
             @RequestParam(defaultValue = "asc") String direction) {
@@ -46,29 +52,67 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateUserRole(userId, roleUpdateDto.getRole()));
     }
 
-    @PostMapping("/create-default-wishlists")
-    public ResponseEntity<String> createDefaultWishlistsForAllUsers() {
-        AtomicInteger count = new AtomicInteger(0);
+    @PostMapping("/create-default-wishlists-and-carts")
+    public ResponseEntity<String> createDefaultWishlistsAndCartsForAllUsers() {
+        try {
+            log.info("Starting creation of default wishlists and shopping carts for all users");
 
-        // Use pagination to get all users
-        int page = 0;
-        int size = 100;
-        Page<UserDto> userPage;
+            AtomicInteger wishlistCount = new AtomicInteger(0);
+            AtomicInteger cartCount = new AtomicInteger(0);
 
-        do {
-            Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "id");
-            userPage = adminService.getAllUsers(pageable);
+            int page = 0;
+            int size = 100;
+            Page<UserDto> userPage;
 
-            userPage.getContent().forEach(user -> {
-                boolean isCreated = wishlistService.createDefaultWishlistIfNotExists(user.getId().toString());
-                if (isCreated) {
-                    count.incrementAndGet();
-                }
-            });
+            do {
+                Pageable pageable = PageRequest.of(page, size, Sort.Direction.ASC, "id");
+                userPage = adminService.getAllUsers(pageable);
 
-            page++;
-        } while (page < userPage.getTotalPages());
+                userPage.getContent().forEach(user -> {
+                    try {
+                        String userId = user.getId().toString();
+                        log.debug("Processing user: {}", userId);
 
-        return ResponseEntity.ok("Created default wishlists for " + count.get() + " users");
+                        // Create default wishlist
+                        try {
+                            WishlistCreateDto defaultWishlist = new WishlistCreateDto();
+                            defaultWishlist.setName("Favorites");
+                            wishlistService.createWishlist(defaultWishlist, userId);
+                            wishlistCount.incrementAndGet();
+                            log.debug("Created wishlist for user: {}", userId);
+                        } catch (Exception e) {
+                            log.warn("Failed to create wishlist for user {}: {}", userId, e.getMessage());
+                        }
+
+                        // Create shopping cart
+                        try {
+                            shoppingCartService.createShoppingCartIfNotExists(userId);
+                            cartCount.incrementAndGet();
+                            log.debug("Processed shopping cart for user: {}", userId);
+                        } catch (Exception e) {
+                            log.warn("Failed to create shopping cart for user {}: {}", userId, e.getMessage());
+                        }
+
+                    } catch (Exception e) {
+                        log.error("Failed to process user {}: {}", user.getId(), e.getMessage());
+                    }
+                });
+
+                page++;
+                log.info("Processed page {} of {}", page, userPage.getTotalPages());
+
+            } while (page < userPage.getTotalPages());
+
+            String message = String.format(
+                    "Successfully processed %d users. Created %d wishlists and %d shopping carts",
+                    userPage.getTotalElements(), wishlistCount.get(), cartCount.get());
+            log.info(message);
+
+            return ResponseEntity.ok(message);
+
+        } catch (Exception e) {
+            log.error("Error in createDefaultWishlistsAndCartsForAllUsers: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body("Error creating defaults: " + e.getMessage());
+        }
     }
 }
