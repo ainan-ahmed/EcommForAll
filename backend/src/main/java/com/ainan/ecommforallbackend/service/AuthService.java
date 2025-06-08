@@ -9,7 +9,6 @@ import com.ainan.ecommforallbackend.repository.UserRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,7 +27,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    @CacheEvict(value = "users", allEntries = true)
     public UserDto register(UserAuthDto registrationDto) {
         if (userRepository.findByUsername(registrationDto.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
