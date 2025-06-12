@@ -1,5 +1,6 @@
 package com.ainan.ecommforallbackend.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 public class CartItemCreateDto {
     @NotNull(message = "Product ID is required")
     private String productId;
+    private String variantId;
     @NotNull(message = "Quantity is required")
+    @Min(1)
     private int quantity;
 
 }

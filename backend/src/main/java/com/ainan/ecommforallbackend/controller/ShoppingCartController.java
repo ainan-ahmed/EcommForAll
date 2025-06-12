@@ -32,8 +32,9 @@ public class ShoppingCartController {
     public ResponseEntity<CartItemDto> addProductToShoppingCart(@RequestBody CartItemCreateDto request, Principal principal) {
         String userId = getCurrentUserId(principal);
         String productId = request.getProductId();
+        String variantId = request.getVariantId();
         int quantity = request.getQuantity();
-        CartItemDto cartItemDto = shoppingCartService.addItemToCart(userId, productId, quantity);
+        CartItemDto cartItemDto = shoppingCartService.addItemToCart(userId, productId, variantId, quantity);
         return ResponseEntity.status(HttpStatus.CREATED).body(cartItemDto);
     }
 

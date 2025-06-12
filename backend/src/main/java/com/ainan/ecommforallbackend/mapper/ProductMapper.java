@@ -6,18 +6,18 @@ import com.ainan.ecommforallbackend.entity.Product;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring",
-        uses = {ProductImageMapper.class, ProductVariantMapper.class},
-        nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", uses = {ProductImageMapper.class,
+        ProductVariantMapper.class}, nullValuePropertyMappingStrategy = org.mapstruct.NullValuePropertyMappingStrategy.IGNORE)
 public interface ProductMapper {
-    ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
     @Mapping(target = "brandId", source = "brand.id")
     @Mapping(target = "categoryId", source = "category.id")
     @Mapping(target = "sellerId", source = "seller.id")
-    @Mapping(target = "minPrice", source = "minPrice")
+    @Mapping(target = "effectivePrice", expression = "java(product.getEffectivePrice())")
+    @Mapping(target = "effectiveStock", expression = "java(product.getEffectiveStock())")
+    @Mapping(target = "hasVariants", expression = "java(product.hasVariants())")
+    @Mapping(target = "inStock", expression = "java(product.isInStock())")
     ProductDto productToProductDto(Product product);
 
     @Mapping(target = "brand.id", source = "brandId")
@@ -25,15 +25,21 @@ public interface ProductMapper {
     @Mapping(target = "seller.id", source = "sellerId")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "effectivePrice", ignore = true)
+    @Mapping(target = "effectiveStock", ignore = true)
+    @Mapping(target = "variants", ignore = true)
+    @Mapping(target = "stock", ignore = true)
     void productDtoToProduct(ProductDto productDto, @MappingTarget Product product);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "brand.id", source = "brandId")
-    @Mapping(target = "category.id", source = "categoryId")
-    @Mapping(target = "seller.id", source = "sellerId")
+    @Mapping(target = "brand", ignore = true)
+    @Mapping(target = "category", ignore = true)
+    @Mapping(target = "seller", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "images", ignore = true)
     @Mapping(target = "variants", ignore = true)
+    @Mapping(target = "images", ignore = true)
+    @Mapping(target = "minPrice", ignore = true)
+    @Mapping(target = "sku", ignore = true)
     Product productCreateDtoToProduct(ProductCreateDto productCreateDto);
 }
