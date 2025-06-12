@@ -1,8 +1,10 @@
 package com.ainan.ecommforallbackend.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,22 +21,23 @@ public class ProductCreateDto {
 
     private String description;
 
-    private String sku;
+    @JsonAlias({ "isActive", "active", "is_active", "status" })
+    private Boolean isActive;
 
-    private Boolean isActive = true;
+    @JsonAlias({ "isFeatured", "featured", "is_featured" })
+    private Boolean isFeatured;
 
-    private Boolean isFeatured = false;
-
+    // Price for products without variants - required if no variants will be added
     @Positive(message = "Price must be positive")
-    private BigDecimal minPrice;
+    private BigDecimal price;
+
+    // Stock for products without variants - required if no variants will be added
+    @PositiveOrZero(message = "Stock must be non-negative")
+    private Integer stock;
 
     @NotNull(message = "Brand is required")
     private UUID brandId;
 
     @NotNull(message = "Category is required")
     private UUID categoryId;
-
-    @NotNull(message = "Seller is required")
-    private UUID sellerId;
-
 }

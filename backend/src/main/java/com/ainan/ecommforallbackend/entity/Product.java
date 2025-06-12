@@ -1,6 +1,7 @@
 package com.ainan.ecommforallbackend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,58 +19,95 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "product",
-        indexes = {
-                @Index(name = "idx_product_name", columnList = "name"),
-                @Index(name = "idx_product_sku", columnList = "sku"),
-                @Index(name = "idx_product_description", columnList = "description")
-        })
+@Table(name = "product")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "Product name is required")
     private String name;
 
-    @Column(columnDefinition = "TEXT", length = 3000)
     private String description;
 
     @Column(unique = true)
     private String sku;
-    @Column(nullable = false)
+
+    @Column(name = "is_active")
     private Boolean isActive = true;
-    @Column(nullable = false)
+
+    @Column(name = "is_featured")
     private Boolean isFeatured = false;
-    @Column(nullable = true, name = "min_price")
+
+    // Price for products without variants
+    @Column(name = "price", precision = 10, scale = 2)
+    private BigDecimal price;
+
+    // Stock for products without variants
+    private Integer stock = 0;
+
+    // Calculated minimum price from variants
+    @Column(name = "min_price", precision = 10, scale = 2)
     private BigDecimal minPrice;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
 
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private User seller;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductVariant> variants;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> images;
+
     @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Each product is associated with a user who is a seller.
-    @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private User seller;
+    // Helper method to get effective price
+    public BigDecimal getEffectivePrice() {
+        if (hasVariants()) {
+            return minPrice;
+        } else {
+            return price;
+        }
+    }
 
-    // Many-to-many relationship with categories via a join table.
-    @ManyToOne
-    @JoinColumn(name = "category_id", nullable = false)
-    private Category category;
-    // One-to-many relationship with ProductVariant
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductVariant> variants;
-    // One-to-many relationship with ProductImage
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private List<ProductImage> images;
+    // Helper method to get effective stock
+    public Integer getEffectiveStock() {
+        if (hasVariants()) {
+            return variants.stream()
+                    .mapToInt(variant -> variant.getStock() != null ? variant.getStock() : 0)
+                    .sum();
+        } else {
+            return stock;
+        }
+    }
 
+    // Helper method to check if the product has variants
+    public boolean hasVariants() {
+        return variants != null && !variants.isEmpty();
+    }
+
+    // Helper method to check if a product is in stock
+    public boolean isInStock() {
+        if (hasVariants()) {
+            return variants.stream()
+                    .anyMatch(variant -> variant.getStock() != null && variant.getStock() > 0);
+        } else {
+            return stock != null && stock > 0;
+        }
+    }
 }

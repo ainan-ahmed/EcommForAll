@@ -1,8 +1,12 @@
 package com.ainan.ecommforallbackend.entity;
+
 import com.ainan.ecommforallbackend.listener.VariantListener;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -36,7 +40,7 @@ public class ProductVariant {
     private BigDecimal price;
 
     @Column(nullable = false)
-    private int stock;
+    private Integer stock;
 
     @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL)
     private List<VariantImage> images;
