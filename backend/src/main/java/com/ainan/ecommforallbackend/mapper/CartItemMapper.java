@@ -7,12 +7,12 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface CartItemMapper {
-    @Mapping(target = "productId", source = "cartItem.product.id")
-    @Mapping(target = "productName", source = "cartItem.product.name")
-    @Mapping(target = "productDescription", source = "cartItem.product.description")
-    @Mapping(target = "variantId", source = "cartItem.variant.id")
-    @Mapping(target = "variantSku", source = "cartItem.variant.sku")
-    @Mapping(target = "variantAttributes", source = "cartItem.variant.attributeValues")
+    @Mapping(target = "productId", source = "product.id")
+    @Mapping(target = "productName", source = "product.name")
+    @Mapping(target = "productDescription", source = "product.description")
+    @Mapping(target = "variantId", expression = "java(cartItem.getVariant() != null ? cartItem.getVariant().getId() : null)")
+    @Mapping(target = "sku", expression = "java(getEffectiveSku(cartItem))")
+    @Mapping(target = "variantAttributes", expression = "java(cartItem.getVariant() != null ? cartItem.getVariant().getAttributeValues() : null)")
     @Mapping(target = "inStock", expression = "java(isInStock(cartItem))")
     CartItemDto toDto(CartItem cartItem);
 
@@ -32,6 +32,15 @@ public interface CartItemMapper {
         } else {
             Integer productStock = cartItem.getProduct().getStock();
             return productStock != null && productStock > 0;
+        }
+    }
+
+    default String getEffectiveSku(CartItem cartItem) {
+        System.out.println(cartItem.getProduct().getSku());
+        if (cartItem.getVariant() != null) {
+            return cartItem.getVariant().getSku();
+        } else {
+            return cartItem.getProduct().getSku();
         }
     }
 }

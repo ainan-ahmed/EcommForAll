@@ -17,8 +17,8 @@ public class CartItemDto {
     private UUID productId;
     private String productName;
     private String productDescription;
-    private String variantId;
-    private String variantSku;
+    private UUID variantId;
+    private String sku;
     private Map<String, String> variantAttributes;
     private ProductImageDto imageUrl;
     private BigDecimal unitPrice;
