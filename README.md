@@ -35,7 +35,7 @@ This project features a combination of modern tools and practices for web develo
 * **Category & Brand Management:** 
 	* Display products by category and brand.
 	* CRUD operations for Category and Brand.
-* **Shopping Cart (Planned):** Functionality for adding, removing, and updating items in a cart.
+* **Shopping Cart**: Functionality for adding, removing, and updating items in a cart.
 * **Order Management (Planned):** Checkout process and order history.
 
 ### Frontend Stack:
@@ -146,7 +146,7 @@ The easiest way to run the entire application stack is using Docker Compose:
 	- [ ] Implement order management in admin panel (have to implement **Shopping Cart & Checkout** first)
 	- [ ] Implement blog content management in admin panel (have to implement **Blog System** first)
 - [ ]  Shopping Cart & Checkout
-	- [ ] Implement add/update/remove items in cart
+	- [x] Implement add/update/remove items in cart
 	- [ ] Implement order processing
 	- [ ] Integrate payment gateways (Stripe, PayPal)
 - [ ] Blog System
