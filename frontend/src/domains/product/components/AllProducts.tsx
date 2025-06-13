@@ -3,7 +3,6 @@ import {
     Container,
     Grid,
     Text,
-    Badge,
     Group,
     Title,
     Select,
@@ -28,13 +27,13 @@ import {
     IconSearch,
     IconAdjustments,
     IconX,
-    IconChevronRight,
     IconSquarePlus,
 } from "@tabler/icons-react";
 import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../../category/hooks/useCategories";
 import { ProductCard } from "./ProductCard";
 import { Product } from "../types";
+import { Category } from "../../category/types";
 
 export function AllProducts() {
     const searchInputRef = useRef<HTMLInputElement>(null);
@@ -82,6 +81,7 @@ export function AllProducts() {
     const { data, isLoading, isError, error } = useProducts(queryParams);
     const products = data?.content || [];
     const totalPages = data?.totalPages || 0;
+    console.log("Products data:", data);
 
     // Reset to first page when filters change
     useEffect(() => {
@@ -129,7 +129,7 @@ export function AllProducts() {
                 placeholder="All Categories"
                 data={[
                     { value: "", label: "All Categories" },
-                    ...categories.map((cat) => ({
+                    ...categories.map((cat: Category) => ({
                         value: cat.id,
                         label: cat.name,
                     })),

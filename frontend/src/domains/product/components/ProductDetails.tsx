@@ -45,53 +45,48 @@ import {
 import { addToWishlist, removeFromWishlist } from "../../user/api/wishlistApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { WishlistProductSummary } from "../types";
+import { useAddToCart } from "../../cart/hooks/useCart";
+import { AddToCartRequest } from "../../cart/types";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
 }
 
 export function ProductDetails({ id }: ProductDetailsProps) {
-    // Fetch product data using hook
+    // ✅ ALWAYS call ALL hooks at the top level, before any early returns
+
+    // 1. Fetch product data using hook
     const { data: product, isLoading, isError } = useProduct(id);
 
-    // State for variant selection and quantity
+    // 2. State hooks
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
-    const { user, isAuthenticated } = useStore(authStore);
-    const navigate = useNavigate();
-
-    // Wishlist states and hooks
     const [activeWishlistId, setActiveWishlistId] = useState<string | null>(
         null
     );
-    const { data: wishlists = [] } = useUserWishlists();
+
+    // 3. Store hooks
+    const { user, isAuthenticated } = useStore(authStore);
+
+    // 4. Navigation hooks
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
 
-    // Check if product is in favorites wishlist
+    // 5. Wishlist hooks
+    const { data: wishlists = [] } = useUserWishlists();
     const { data: isInFavorites = false, isLoading: isCheckingFavorites } =
         useIsProductInWishlist(activeWishlistId || undefined, id);
-    //use memo to avoid unnecessary re-renders
-    useEffect(() => {
-        // Find if product exists in any wishlist
-        const wishlistWithProduct = wishlists.find((wishlist) =>
-            wishlist.products?.some((product: WishlistProductSummary) => product.id === id)
-        );
 
-        if (wishlistWithProduct) {
-            console.log("Product is in wishlist:", wishlistWithProduct.name);
-            setActiveWishlistId(wishlistWithProduct.id);
-        }
-    }, [wishlists, id]);
+    // 6. Cart hooks
+    const addToCartMutation = useAddToCart();
 
-    // Move sortedImages calculation and useMemo here, before early returns
-    // Sort images by sortOrder before rendering
+    // 7. All useMemo and useEffect hooks
     const sortedImages = useMemo(() => {
         return product?.images
             ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
             : [];
     }, [product?.images]);
 
-    // Create a combined and sorted image array
     const combinedImages = useMemo(() => {
         if (!selectedVariant || !product) return sortedImages;
 
@@ -100,7 +95,6 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         );
         const variantImages = variantObj?.images || [];
 
-        // Combine variant images (with a flag) and product images
         return [
             ...variantImages.map((img) => ({ ...img, isVariantImage: true })),
             ...sortedImages.filter(
@@ -109,9 +103,41 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         ];
     }, [selectedVariant, sortedImages, product?.variants]);
 
-    // Check if product exists before accessing its properties
+    // 8. useEffect hooks
+    useEffect(() => {
+        const wishlistWithProduct = wishlists.find((wishlist) =>
+            wishlist.products?.some(
+                (product: WishlistProductSummary) => product.id === id
+            )
+        );
+
+        if (wishlistWithProduct) {
+            console.log("Product is in wishlist:", wishlistWithProduct.name);
+            setActiveWishlistId(wishlistWithProduct.id);
+        }
+    }, [wishlists, id]);
+
+    // 9. Computed values that depend on hooks
     const isProductOwner =
         isAuthenticated && product && user?.id === product.sellerId;
+
+    const variantOptions =
+        product?.variants?.map((variant) => ({
+            value: variant.id,
+            label: Object.entries(variant.attributeValues)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join(", "),
+            disabled: variant.stock <= 0,
+        })) || [];
+
+    const currentVariant = selectedVariant
+        ? product?.variants?.find((v) => v.id === selectedVariant)
+        : product?.variants?.[0];
+
+    const price = currentVariant?.price || product?.minPrice || 0;
+    const isInStock = currentVariant ? currentVariant.stock > 0 : true;
+
+    // ✅ NOW we can have conditional returns AFTER all hooks are called
 
     // Handle loading state
     if (isLoading) {
@@ -133,17 +159,58 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         );
     }
 
-    // Handle adding to cart
-    const handleAddToCart = () => {
-        // Add to cart logic here
-        notifications.show({
-            title: "Added to Cart",
-            message: `${product.name} (Qty: ${quantity}) added to your cart`,
-            color: "green",
-        });
+    // ✅ All event handlers can be defined here (after hooks, before JSX)
+    const handleAddToCart = async () => {
+        if (!isAuthenticated) {
+            notifications.show({
+                title: "Please Sign In",
+                message: "You need to be logged in to add items to cart",
+                color: "blue",
+            });
+            navigate({ to: "/login", search: { redirect: `/products/${id}` } });
+            return;
+        }
+
+        if (
+            product.variants &&
+            product.variants.length > 1 &&
+            !selectedVariant
+        ) {
+            notifications.show({
+                title: "Please Select Variant",
+                message:
+                    "Please select a product variant before adding to cart",
+                color: "orange",
+            });
+            return;
+        }
+
+        if (!isInStock) {
+            notifications.show({
+                title: "Out of Stock",
+                message: "This product is currently out of stock",
+                color: "red",
+            });
+            return;
+        }
+
+        try {
+            const cartItemData: AddToCartRequest = {
+                variantId: selectedVariant || product.variants?.[0]?.id,
+                productId: product.id,
+                quantity: quantity,
+            };
+
+            await addToCartMutation.mutateAsync(cartItemData);
+        } catch (error) {
+            notifications.show({
+                title: "Error",
+                message: "Failed to add product to cart",
+                color: "red",
+            });
+        }
     };
 
-    // Handler for adding to specific wishlist
     const handleAddToWishlist = async (wishlistId: string) => {
         if (!isAuthenticated) {
             notifications.show({
@@ -158,8 +225,6 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
         try {
             await addToWishlist(wishlistId, id);
-
-            // Manually invalidate the queries to refresh the data
             queryClient.invalidateQueries({
                 queryKey: ["wishlist", wishlistId],
             });
@@ -179,7 +244,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             });
         }
     };
-    // Handler for removing from wishlist
+
     const handleRemoveFromWishlist = async (wishlistId: string) => {
         if (!isAuthenticated) {
             notifications.show({
@@ -191,10 +256,9 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             navigate({ to: "/login", search: { redirect: `/products/${id}` } });
             return;
         }
+
         try {
-            // Use the API function directly instead of creating a new hook
             await removeFromWishlist(wishlistId, id);
-            // Manually invalidate the queries to refresh the data
             queryClient.invalidateQueries({
                 queryKey: ["wishlist", wishlistId],
             });
@@ -210,24 +274,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         }
     };
 
-    // Get variant options
-    const variantOptions =
-        product.variants?.map((variant) => ({
-            value: variant.id,
-            label: Object.entries(variant.attributeValues)
-                .map(([key, value]) => `${key}: ${value}`)
-                .join(", "),
-            disabled: variant.stock <= 0,
-        })) || [];
-
-    // Current price based on selected variant or default price
-    const currentVariant = selectedVariant
-        ? product.variants?.find((v) => v.id === selectedVariant)
-        : product.variants?.[0];
-
-    const price = currentVariant?.price || product.minPrice;
-    const isInStock = currentVariant ? currentVariant.stock > 0 : true;
-
+    // ✅ JSX render comes last
     return (
         <Container size="lg" py="xl">
             <Grid gutter="xl">
@@ -403,12 +450,14 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 <Button
                                     size="lg"
                                     leftSection={<IconShoppingCart size={20} />}
-                                    data-disabled={
+                                    disabled={
                                         !isInStock ||
                                         (product.variants &&
                                             product.variants.length > 1 &&
-                                            !selectedVariant)
+                                            !selectedVariant) ||
+                                        addToCartMutation.isPending
                                     }
+                                    loading={addToCartMutation.isPending}
                                     onClick={handleAddToCart}
                                     fullWidth
                                     variant="filled"

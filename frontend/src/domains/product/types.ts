@@ -34,7 +34,13 @@ export interface Product {
     sku: string;
     isActive: boolean;
     isFeatured: boolean;
+    price: number;
+    stock: number;
     minPrice: number;
+    effectivePrice: number;
+    effectiveStock: number;
+    hasVariants: boolean;
+    inStock: boolean;
     brandId: string;
     categoryId: string;
     sellerId: string;
@@ -93,5 +99,3 @@ export interface WishlistProductSummary {
     primaryImage?: ProductImage;
     brand: string;
 }
-
-
