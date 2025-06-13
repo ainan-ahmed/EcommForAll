@@ -18,6 +18,7 @@ export async function fetchProducts(
         isActive,
         isFeatured,
     } = params;
+
     let isFiltering =
         nameSearch ||
         categoryId ||
@@ -32,10 +33,14 @@ export async function fetchProducts(
     const queryParams = new URLSearchParams();
     queryParams.append("page", page.toString());
     queryParams.append("size", size.toString());
-    console.log(sort);
+
+    // ✅ ADD THIS: Include variant data in the main products fetch
+    queryParams.append("includes", "images,variants,variantImages");
+
     if (sort) {
         queryParams.append("sort", sort);
     }
+
     if (isFiltering) {
         if (nameSearch) queryParams.append("name", nameSearch);
         if (categoryId) queryParams.append("categoryId", categoryId);
@@ -48,12 +53,15 @@ export async function fetchProducts(
         if (isActive) queryParams.append("isActive", isActive.toString());
         if (isFeatured) queryParams.append("isFeatured", isFeatured.toString());
     }
+
     const url = `${baseUrl}?${queryParams.toString()}`;
-    console.log("Fetching products from URL:", url); // Debugging line
+    console.log("Fetching products from URL:", url);
+
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`Failed to fetch products: ${response.status}`);
     }
+
     return response.json();
 }
 
@@ -74,7 +82,8 @@ export async function fetchProductsByCategoryId(
     size: number = 10,
     sort: string = ""
 ): Promise<ProductsResponse> {
-    let url = `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/category/${categoryId}?page=${page}&size=${size}&sort=${sort}`;
+    // ✅ Add includes parameter
+    let url = `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/category/${categoryId}?page=${page}&size=${size}&sort=${sort}&includes=images,variants,variantImages`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -89,7 +98,8 @@ export async function fetchProductsByBrandId(
     size: number = 10,
     sort: string = ""
 ): Promise<ProductsResponse> {
-    let url = `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/brand/${brandId}?page=${page}&size=${size}&sort=${sort}`;
+    // ✅ Add includes parameter
+    let url = `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/brand/${brandId}?page=${page}&size=${size}&sort=${sort}&includes=images,variants,variantImages`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -132,7 +142,7 @@ export async function createProduct(product: Product): Promise<Product> {
         images: product.images.filter((img) => !img.id.startsWith("temp-")),
         variants: product.variants.map((variant) => ({
             ...variant,
-            images: variant.images.filter((img) => !img.id.startsWith("temp-")),
+            images: variant.images?.filter((img) => !img.id.startsWith("temp-")),
         })),
     };
 

@@ -9,6 +9,7 @@ import {
     ActionIcon,
     useComputedColorScheme,
     useMantineColorScheme,
+    Badge,
 } from "@mantine/core";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import cx from "clsx";
@@ -17,6 +18,7 @@ import {
     IconLogout,
     IconMoon,
     IconSettings,
+    IconShoppingCart,
     IconSun,
     IconUser,
 } from "@tabler/icons-react";
@@ -25,6 +27,7 @@ import { useAuth } from "../domains/auth/hooks/useAuth.ts";
 import { useLogout } from "../domains/auth/hooks/useLogout.ts";
 import classes from "./__root.module.css";
 import { Footer } from "../shared/components/Footer.tsx";
+import { useCart } from "../domains/cart/hooks/useCart.ts";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -45,6 +48,8 @@ export function RootComponent(): JSX.Element {
     const computedColorScheme = useComputedColorScheme("light", {
         getInitialValueInEffect: true,
     });
+    const { data: cart } = useCart();
+    const cartItemCount = cart?.totalItems || 0;
     const logout = useLogout();
 
     return (
@@ -95,13 +100,39 @@ export function RootComponent(): JSX.Element {
                                 About
                             </Button>
                             {isAuthenticated && (
-                                <Button
-                                    variant="subtle"
-                                    component={Link}
-                                    to="/wishlists"
-                                >
-                                    My Wishlists
-                                </Button>
+                                <Group gap="xs">
+                                    <Button
+                                        variant="subtle"
+                                        component={Link}
+                                        to="/wishlists"
+                                    >
+                                        My Wishlists
+                                    </Button>
+                                    <ActionIcon
+                                        component={Link}
+                                        to="/cart"
+                                        variant="subtle"
+                                        size="lg"
+                                        pos="relative"
+                                    >
+                                        <IconShoppingCart size={20} />
+                                        {cartItemCount > 0 && (
+                                            <Badge
+                                                size="xs"
+                                                variant="filled"
+                                                color="red"
+                                                pos="absolute"
+                                                top={-5}
+                                                right={-5}
+                                                style={{
+                                                    pointerEvents: "none",
+                                                }}
+                                            >
+                                                {cartItemCount}
+                                            </Badge>
+                                        )}
+                                    </ActionIcon>
+                                </Group>
                             )}
                         </Group>
                         {/* right section */}
