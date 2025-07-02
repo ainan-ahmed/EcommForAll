@@ -1,5 +1,5 @@
 export const API = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8080/api',
+  BASE_URL:  'http://localhost:8080/api',
   TIMEOUT: 30000, // 30 seconds
   ENDPOINTS: {
     CATEGORIES: '/categories',
@@ -9,7 +9,9 @@ export const API = {
     AUTH: {
       LOGIN: '/auth/login',
       REGISTER: '/auth/register',
-      LOGOUT: '/auth/logout'
+      LOGOUT: '/auth/logout',
+      VALIDATE: '/auth/validate',
+      CURRENT_USER: '/auth/user',
     }
   }
 };

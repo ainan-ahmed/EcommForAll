@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .env.aws
+.env.ai
+!**/backend/ecommforall-ai.json

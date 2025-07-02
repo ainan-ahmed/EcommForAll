@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User } from "../domains/user/types";
+import { API } from "../config/api";
+import { getCurrentUser, validateToken } from "../domains/auth/api/authApi";
 
 interface AuthState {
     user: User | null;
@@ -18,6 +20,7 @@ export const authStore = create<AuthState>()(
             isAuthenticated: false,
             setUser: (user) => set({ user }),
             checkAuth: async () => {
+                
                 const token = localStorage.getItem("authToken");
 
                 if (!token) {
@@ -27,14 +30,10 @@ export const authStore = create<AuthState>()(
 
                 try {
                     // Make a request to validate the token
-                    const response = await fetch(`${API.BASE_URL}/auth/me`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+                    const isValid = await validateToken();
 
-                    if (response.ok) {
-                        const user = await response.json();
+                    if (isValid) {
+                        const user: User = await getCurrentUser();
                         set({ user, isAuthenticated: true });
                     } else {
                         // If token is invalid, clear auth state

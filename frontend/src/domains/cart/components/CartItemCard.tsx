@@ -71,51 +71,50 @@ export function CartItemCard({
 
                         {/* Variant Attributes */}
                         <Stack gap="xs">
-                        {item.variantId && item.variantAttributes && (
-                               
-                                    Object.keys(item.variantAttributes).length >
-                                        0 && (
-                                        <Group gap="xs" wrap="wrap">
-                                            {Object.entries(
-                                                item.variantAttributes
-                                            ).map(
-                                                ([
-                                                    attributeName,
-                                                    attributeValue,
-                                                ]) => (
-                                                    <Badge
-                                                        key={attributeName}
-                                                        variant="light"
-                                                        color="blue"
-                                                        size="sm"
-                                                    >
-                                                        {attributeName}:{" "}
-                                                        {attributeValue}
-                                                    </Badge>
-                                                )
-                                            )}
-                                        </Group>
-                                    )
-                            )}
-                            {item.sku && (
-                                    <Group gap="xs">
-                                        <Text size="sm" c="dimmed">
-                                            SKU:
-                                        </Text>
-                                        <Badge
-                                            variant="filled"
-                                            size="sm"
-                                            color="purple"
-                                        >
-                                            {item.sku}
-                                        </Badge>
+                            {item.variantId &&
+                                item.variantAttributes &&
+                                Object.keys(item.variantAttributes).length >
+                                    0 && (
+                                    <Group gap="xs" wrap="wrap">
+                                        {Object.entries(
+                                            item.variantAttributes
+                                        ).map(
+                                            ([
+                                                attributeName,
+                                                attributeValue,
+                                            ]) => (
+                                                <Badge
+                                                    key={attributeName}
+                                                    variant="light"
+                                                    color="blue"
+                                                    size="sm"
+                                                >
+                                                    {attributeName}:{" "}
+                                                    {attributeValue}
+                                                </Badge>
+                                            )
+                                        )}
                                     </Group>
                                 )}
-                            </Stack>
+                            {item.sku && (
+                                <Group gap="xs">
+                                    <Text size="sm" c="dimmed">
+                                        SKU:
+                                    </Text>
+                                    <Badge
+                                        variant="filled"
+                                        size="sm"
+                                        color="purple"
+                                    >
+                                        {item.sku}
+                                    </Badge>
+                                </Group>
+                            )}
+                        </Stack>
 
-                        {item.productDescription && (
+                        {item.description && (
                             <Text size="sm" c="dimmed" lineClamp={2}>
-                                {item.productDescription}
+                                {item.description}
                             </Text>
                         )}
 

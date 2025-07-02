@@ -4,6 +4,7 @@ import { Product } from "../types";
 import { Brand } from "../../brand/types";
 import { Category } from "../../category/types";
 import { RichTextEditorField } from "../../../shared/components/RichTextEditorField";
+import { GenerateDescriptionButton } from "./GenerateDescriptionButton";
 
 interface BasicInfoTabProps {
     form: UseFormReturnType<Omit<Product, "variants" | "images">>;
@@ -11,6 +12,12 @@ interface BasicInfoTabProps {
     brands: Brand[];
 }
 export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
+    const selectedCategory = categories.find(
+        (cat) => cat.id === form.values.categoryId
+    );
+    const selectedBrand = brands.find(
+        (brand) => brand.id === form.values.brandId
+    );
     return (
         <Grid>
             <Grid.Col span={12}>
@@ -22,7 +29,7 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                 />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col span={12} pos={"relative"}>
                 <RichTextEditorField
                     form={form}
                     name="description"
@@ -32,6 +39,19 @@ export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
                     minHeight={250}
                     placeholder="Enter detailed product information..."
                 />
+                {/* Position the button in the top-right corner of the textarea */}
+                <div style={{ position: "absolute", top: 0, right: 0 }}>
+                    <GenerateDescriptionButton
+                        productName={form.values.name}
+                        existingDescription={form.values.description}
+                        category={selectedCategory?.name}
+                        brand={selectedBrand?.name}
+                        productId={form.values.id} // For existing products
+                        onDescriptionGenerated={(description) =>
+                            form.setFieldValue("description", description)
+                        }
+                    />
+                </div>
             </Grid.Col>
 
             <Grid.Col span={6}>
