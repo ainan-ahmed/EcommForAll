@@ -3,7 +3,6 @@ package com.ainan.ecommforallbackend.service;
 import com.ainan.ecommforallbackend.dto.ProductDescriptionRequestDto;
 import com.ainan.ecommforallbackend.dto.ProductDescriptionResponseDto;
 import com.ainan.ecommforallbackend.dto.ProductVariantDto;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.model.ChatModel;
@@ -19,8 +18,8 @@ public class AiService {
     private final ChatModel chatModel;
 
     /**
-     * Generate product description using AI
-     * 
+     * Generate the product description using AI
+     *
      * @param request ProductDescriptionRequestDto containing product details
      * @return ProductDescriptionResponseDto with generated description
      */
@@ -101,7 +100,7 @@ public class AiService {
                     promptBuilder.append("  Price: $").append(variant.getPrice()).append("\n");
                 }
 
-                    promptBuilder.append("  Stock: ").append(variant.getStock()).append(" units\n");
+                promptBuilder.append("  Stock: ").append(variant.getStock()).append(" units\n");
 
                 promptBuilder.append("\n");
             }

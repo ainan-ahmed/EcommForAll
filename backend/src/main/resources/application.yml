@@ -1,45 +1,45 @@
 spring:
-    application:
-        name: backend
-    datasource:
-        url: jdbc:postgresql://localhost:5432/ecommforall
-        driver-class-name: org.postgresql.Driver
-        username: postgres
-        password: postgres
-    jpa:
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.PostgreSQLDialect
-        hibernate:
-            ddl-auto: update
-        show-sql: true
-    security:
-        user:
-            name: admin
-            password: admin
-    ai:
-        vertex:
-          ai:
-            gemini:
-              project-id: ${GOOGLE_CLOUD_PROJECT_ID:ecommforall-ai}
-              location: ${GOOGLE_CLOUD_LOCATION:europe-west4}
+  application:
+    name: backend
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ecommforall
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  security:
+    user:
+      name: admin
+      password: admin
+  ai:
+    vertex:
+      ai:
+        gemini:
+          project-id: ${GOOGLE_CLOUD_PROJECT_ID:ecommforall-ai}
+          location: ${GOOGLE_CLOUD_LOCATION:europe-west4}
 jwt:
-    secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
-    expiration: 86400000
+  secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
+  expiration: 86400000
 
 springdoc:
-    swagger-ui:
-        path: /swagger-ui.html
-    api-docs:
-        path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
 
 aws:
-    s3:
-        bucket: ecommforall
-    region: eu-north-1
+  s3:
+    bucket: ecommforall
+  region: eu-north-1
 
 logging:
-    level:
-        org:
-            springframework:
-                security: DEBUG
+  level:
+    org:
+      springframework:
+        security: DEBUG

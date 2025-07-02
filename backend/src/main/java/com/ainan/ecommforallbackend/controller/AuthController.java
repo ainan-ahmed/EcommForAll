@@ -4,22 +4,15 @@ import com.ainan.ecommforallbackend.dto.*;
 import com.ainan.ecommforallbackend.security.JwtUtil;
 import com.ainan.ecommforallbackend.service.AuthService;
 import com.ainan.ecommforallbackend.service.ShoppingCartService;
+import com.ainan.ecommforallbackend.service.UserService;
 import com.ainan.ecommforallbackend.service.WishlistService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -27,10 +20,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final UserService userservice;
     private final WishlistService wishlistService;
     private final ShoppingCartService shoppingCartService;
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@Valid @RequestBody UserAuthDto registrationDto) {
@@ -55,7 +48,39 @@ public class AuthController {
                     .body(Map.of("error", "Invalid username or password"));
 
         }
-       
+
+    }
+
+    @GetMapping("/validate")
+    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
+
+        if (token != null && jwtUtil.validateJwtToken(token)) {
+            return ResponseEntity.ok(Map.of("valid", true));
+        }
+        return ResponseEntity.ok(Map.of("valid", false));
+    }
+
+    @GetMapping("/user")
+    public ResponseEntity<UserDto> getUserDetails(@RequestHeader("Authorization") String token, Principal principal) {
+        String username;
+        if (token != null && token.startsWith("Bearer ")) {
+            // Extract the token without "Bearer "
+            token = token.substring(7);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        if (principal != null) {
+            username = principal.getName();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserDto userDto = userservice.getUserByUsername(username);
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok(userDto);
     }
 
     private void createDefaultWishlist(String userId) {

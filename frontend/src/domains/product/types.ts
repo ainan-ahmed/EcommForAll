@@ -99,3 +99,24 @@ export interface WishlistProductSummary {
     primaryImage?: ProductImage;
     brand: string;
 }
+export interface ProductDescriptionRequest {
+    productName: string;
+    category?: string;
+    brand?: string;
+    existingDescription?: string;
+    attributes?: Record<string, string>;
+    targetAudience?: string;
+    tone?: "professional" | "casual" | "technical" | "marketing";
+    maxLength?: number;
+    hasVariants?: boolean;
+    variants?: ProductVariant[];
+}
+export interface ProductDescriptionResponse {
+    generatedDescription: string;
+    originalDescription: string;
+    wordCount: number;
+    tone: string;
+    generatedAt: string;
+    success: boolean;
+    errorMessage?: string;
+}

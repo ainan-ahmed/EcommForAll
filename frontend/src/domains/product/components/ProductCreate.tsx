@@ -15,6 +15,7 @@ import {
 
 export function ProductCreate() {
     const { user, isAuthenticated } = useStore(authStore);
+    console.log(user);
     const navigate = useNavigate();
 
     // Fetch categories for dropdown
@@ -44,9 +45,10 @@ export function ProductCreate() {
                 variants: productData.variants.map((variant) => ({
                     ...variant,
                     // Remove temporary images from variants when sending to API
-                    images: variant.images?.filter(
-                        (img) => !img.id.startsWith("temp-")
-                    ) ?? [],
+                    images:
+                        variant.images?.filter(
+                            (img) => !img.id.startsWith("temp-")
+                        ) ?? [],
                 })),
                 // Remove temporary images when sending to API
                 images: productData.images.filter(
@@ -116,26 +118,6 @@ export function ProductCreate() {
             });
         }
     };
-
-    // Check if user is authenticated
-    if (!isAuthenticated) {
-        notifications.show({
-            title: "Unauthorized",
-            message: "You need to log in to create products",
-            color: "red",
-        });
-        return <Navigate to="/login" search={{ redirect: "/products/new" }} />;
-    }
-
-    // Check if user role is seller or admin
-    if (user?.role !== "SELLER" && user?.role !== "ADMIN") {
-        notifications.show({
-            title: "Unauthorized",
-            message: "Only sellers can create products",
-            color: "red",
-        });
-        return <Navigate to="/products" />;
-    }
 
     // Show loading while fetching categories and brands
     if (isLoadingCategories || isLoadingBrands) {

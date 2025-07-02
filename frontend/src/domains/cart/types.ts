@@ -5,7 +5,7 @@ export interface CartItem {
     id: string;
     productId: string;
     productName: string;
-    productDescription: string;
+    description: string;
     variantId: string;
     sku: string;
     variantAttributes: Record<string, string>;

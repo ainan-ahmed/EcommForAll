@@ -3,12 +3,16 @@ services:
     build: ./backend
     env_file:
       - ./backend/.env.aws
+      - ./backend/.env.ai
     ports:
       - "8080:8080"
+    volumes:
+      - ./backend/ecommforall-ai-key.json:/app/ecommforall-ai-key.json
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommforall
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      GOOGLE_APPLICATION_CREDENTIALS: /app/ecommforall-ai-key.json
     depends_on:
     - db
 

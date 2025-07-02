@@ -10,6 +10,7 @@ import {
     useComputedColorScheme,
     useMantineColorScheme,
     Badge,
+    LoadingOverlay,
 } from "@mantine/core";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import cx from "clsx";
@@ -22,12 +23,14 @@ import {
     IconSun,
     IconUser,
 } from "@tabler/icons-react";
-import { JSX } from "react";
+import { JSX, useEffect } from "react";
 import { useAuth } from "../domains/auth/hooks/useAuth.ts";
 import { useLogout } from "../domains/auth/hooks/useLogout.ts";
 import classes from "./__root.module.css";
 import { Footer } from "../shared/components/Footer.tsx";
 import { useCart } from "../domains/cart/hooks/useCart.ts";
+import { useStore } from "zustand";
+import { authStore } from "../stores/authStore";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -51,6 +54,22 @@ export function RootComponent(): JSX.Element {
     const { data: cart } = useCart();
     const cartItemCount = cart?.totalItems || 0;
     const logout = useLogout();
+    const { checkAuth } = useStore(authStore);
+
+    useEffect(() => {
+        // Validate token on app load
+        checkAuth();
+
+        // Optional: Set up periodic validation
+        const intervalId = setInterval(
+            () => {
+                checkAuth();
+            },
+            15 * 60 * 1000
+        ); // Check every 15 minutes
+
+        return () => clearInterval(intervalId);
+    }, [checkAuth]);
 
     return (
         <>
