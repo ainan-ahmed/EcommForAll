@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.UUID;
 
+
 public interface AdminService {
     UserDto updateUserRole(UUID userId, RoleName newRole);
     Page<UserDto> getAllUsers(Pageable pageable);
