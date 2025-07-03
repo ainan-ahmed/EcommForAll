@@ -22,53 +22,100 @@ EcommForAll is a [**Work-in-Progress**] project aiming to create a robust e-comm
 
 This project serves as a personal learning endeavor and a portfolio piece to showcase skills in full-stack development.
 
+## 🗺️ Roadmap
+
+##### Phase 1: Core E-commerce & AI Features
+
+-   [x] **User Authentication & Authorization**
+    -   [x] JWT-based authentication with role-based access control (Admin, Seller, Customer)
+    -   [ ] OAuth2 integration for Google and Facebook login
+-   [x] **Product Management**
+    -   [x] Categories, subcategories, and product attributes
+    -   [x] API endpoints and filtering/sorting functionality
+    -   [x] Complete UI implementation
+-   [x] **AI Description Generation**
+    -   [x] Product description generation using Google Vertex AI
+    -   [x] Multiple tone options (professional, casual, technical, marketing)
+    -   [x] Support for product variants and SEO optimization
+-   [ ] **Customer Support**
+    -   [ ] AI chatbot infrastructure
+    -   [ ] Advanced conversation handling
+-   [x] **Wishlist & Reviews**
+    -   [x] Wishlist functionality
+    -   [ ] Product ratings and reviews
+-   [ ] **Admin Panel**
+    -   [ ] User, product, and order management interfaces
+    -   [ ] Blog content management system
+-   [ ] **Shopping Cart & Checkout**
+    -   [x] Cart item management
+    -   [ ] Order processing and payment gateway integration (Stripe, PayPal)
+-   [ ] **Blog System**
+    -   [ ] CRUD operations for blog posts with categories and tags
+    -   [x] Markdown/WYSIWYG editor integration
+-   [x] **User Profile**
+    -   [x] Profile pages and editing functionality
+
+##### Phase 2: Advanced Features
+
+-   [ ] **Enhanced User Experience**
+    -   [ ] Multiple address management and order history
+    -   [ ] ElasticSearch integration for advanced search
+-   [ ] **Communication & Notifications**
+    -   [ ] Email notification system
+    -   [ ] Enhanced AI chatbot capabilities
+
 ## 🌟 Features
 
-This project features a combination of modern tools and practices for web development.
+### Core Functionality:
 
-### Core Functionality (Implemented / In Progress):
-* **User Authentication:** Secure registration and login (JWT-based).
-* **Product Management:**
-    * Product listing with pagination and filtering.
-    * Detailed product view.
-    * Creating and editing products (requires admin/seller roles).
-* **Category & Brand Management:** 
-	* Display products by category and brand.
-	* CRUD operations for Category and Brand.
-* **Shopping Cart**: Functionality for adding, removing, and updating items in a cart.
-* **Order Management (Planned):** Checkout process and order history.
+-   **User Authentication:** JWT-based secure login/registration
+-   **Product Management:** CRUD operations with filtering & pagination
+-   **Category & Brand Management:** Full CRUD operations
+-   **Shopping Cart:** Add, remove, and update items
+-   **AI Product Descriptions:** Generate compelling descriptions using Google Vertex AI
+-   **Wishlist:** Save and manage favorite products
 
 ### Frontend Stack:
-* **Framework:** ⚛️ React with Vite for a fast development experience.
-* **Language:** ✨ TypeScript for strong typing and better maintainability.
-* **Routing:** 🧭 [TanStack Router](https://github.com/TanStack/router) for type-safe, file-based routing.
-* **Data Fetching & State Management:**
-    * ✳️ [TanStack Query (React Query)](https://github.com/TanStack/query) – Hooks for fetching, caching, and updating asynchronous data.
-    * 🐻 [Zustand](https://github.com/pmndrs/zustand) – A small, fast, and scalable state-management solution for global state (e.g., auth state).
-* **UI Components:** 🎨 [Mantine UI](https://github.com/mantinedev/mantine) – A comprehensive React components library.
-* **Icons:** ✨ [Tabler Icons](https://github.com/tabler/tabler).
-* **Form Validation:**
-    * 📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form).
-    * 🚨 [Zod](https://github.com/colinhacks/zod) – TypeScript-first schema validation.
+
+-   **Framework:** ⚛️ React with Vite for a fast development experience.
+-   **Language:** ✨ TypeScript for strong typing and better maintainability.
+-   **Routing:** 🧭 [TanStack Router](https://github.com/TanStack/router) for type-safe, file-based routing.
+-   **Data Fetching & State Management:**
+    -   ✳️ [TanStack Query (React Query)](https://github.com/TanStack/query) – Hooks for fetching, caching, and updating asynchronous data.
+    -   🐻 [Zustand](https://github.com/pmndrs/zustand) – A small, fast, and scalable state-management solution for global state (e.g., auth state).
+-   **UI Components:** 🎨 [Mantine UI](https://github.com/mantinedev/mantine) – A comprehensive React components library.
+-   **Icons:** ✨ [Tabler Icons](https://github.com/tabler/tabler).
+-   **Form Validation:**
+    -   📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form).
+    -   🚨 [Zod](https://github.com/colinhacks/zod) – TypeScript-first schema validation.
 
 ### Backend Stack:
-* **Framework:** 🌱 Spring Boot.
-* **Language:** Java
-* **Build Tool:** 🛠️ Maven.
-* **Database:** 🐘 PostgreSQL.
-* **ORM:** 🍃 Spring Data JPA / Hibernate.
-    * **Security:** 🛡️ Spring Security.
-* **API:** 🌐 RESTful APIs.
+
+-   **Framework:** 🌱 Spring Boot with Java
+-   **Database:** 🐘 PostgreSQL with Spring Data JPA/Hibernate
+-   **Security:** 🛡️ Spring Security with JWT authentication
+-   **AI Integration:** 🤖 Spring AI with Google Vertex AI (Gemini models)
+-   **API:** 🌐 RESTful APIs with OpenAPI documentation
+
 #### DevOps & Tooling:
-* **Containerization:** 🐳 Docker & Docker Compose for consistent development, testing, and deployment environments.
-* **Version Control:** Git & GitHub.
+
+-   **Containerization:** 🐳 Docker & Docker Compose
+-   **Version Control:** Git & GitHub
+
 ### Other Features:
-* **Dockerized:** The entire application (frontend, backend, database) is containerized using Docker and orchestrated with `docker-compose` for consistent development and deployment environments.
-* **Responsive Design:** UI designed to adapt to various screen sizes.
-* **Dark Mode Support:** With Dark Mode/Light Mode toggle.
+
+-   **Dockerized:** Full application containerization
+-   **Responsive Design:** Mobile-friendly UI
+-   **Dark Mode Support:** Toggle between light and dark themes
+-   **AI-Powered:** Product description generation and customer support
 
 ## Project Structure
+
 See [Project Structure](https://github.com/ainan-ahmed/EcommForAll/blob/main/PROJECT-STRUCTURE.MD)
+
+## 🤖 AI Services Documentation
+
+For detailed information about the AI-powered features including product description generation, API endpoints, usage examples, and configuration, see [AI Service Documentation](https://github.com/ainan-ahmed/EcommForAll/blob/main/AI_SERVICE_README.md).
 
 ## 🚀 Getting Started
 
@@ -76,99 +123,34 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Node.js (v18.x or later recommended)
-* npm / yarn / pnpm (choose one)
-* Java JDK (version 17 or later for Spring Boot)
-* Maven
-* Docker & Docker Compose
+-   Node.js (v18.x or later)
+-   Java JDK (version 17 or later)
+-   Docker & Docker Compose
+-   Maven (for manual backend setup)
 
 ### Installation
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
+
 ```bash
-    git clone [https://github.com/ainan-ahmed/EcommForAll.git](https://github.com/ainan-ahmed/EcommForAll.git)
-    cd EcommForAll
+git clone https://github.com/ainan-ahmed/EcommForAll.git
+cd EcommForAll
 ```
 
+2. **Using Docker Compose (Recommended):**
 
-2.  **Backend Setup:**
-    * Navigate to the backend directory (e.g., `cd backend`).
-    * Build the Spring Boot application:
-        ```bash
-        mvn clean install
-        mvn spring-boot:run
-        ```
-
-3.  **Frontend Setup:**
-    * Navigate to the frontend directory (e.g., `cd frontend`).
-    * Install dependencies:
 ```bash
-        # Using npm
-        npm install
-        # Or using yarn
-        # yarn install
-        # Or using pnpm
-        # pnpm install
+docker-compose up --build
 ```
-### Running with Docker Compose
 
-The easiest way to run the entire application stack is using Docker Compose:
+3. **Manual Setup:**
 
-1.  Ensure Docker is running.
-2.  From the root directory of the project:
-    ```bash
-    docker-compose up --build
-    ```
-    This will build the images for frontend and backend and start all services (frontend, backend, Database).
+    - **Backend:** `cd backend && mvn clean install && mvn spring-boot:run`
+    - **Frontend:** `cd frontend && npm install && npm run dev`
 
-3.  Access the application:
-    * Frontend: `http://localhost:5173`
-    * Backend API: `http://localhost:8080`
-    
-## 🗺️ Roadmap
-##### Phase 1: Core E-commerce & Blog Features
-- [ ]  User Authentication & Authorization with Jwt Based Authentication
-	- [x]  Implement role-based access control (Admin, Seller, Customer)
-	- [ ]  Integrate OAuth2 for Google and Facebook login
-- [x]  Product Management
-	- [x] Implement product Categories and subcategories.
-	- [x] Add product attributes (size, color, brand)
-  - [x] implement api endpoints
-	- [x] Implement filtering and sorting for products
-  - [x] develop UI's needed for products
-- [ ] Wishlist & Reviews
-	- [x] Implement wishlist functionality
-	- [ ] Add product ratings and reviews
-- [ ] Admin Panel
-	- [ ] Implement Admin Panel.
-	- [ ] Implement user management in admin panel
-	- [ ] Implement product management in admin panel
-	- [ ] Implement order management in admin panel (have to implement **Shopping Cart & Checkout** first)
-	- [ ] Implement blog content management in admin panel (have to implement **Blog System** first)
-- [ ]  Shopping Cart & Checkout
-	- [x] Implement add/update/remove items in cart
-	- [ ] Implement order processing
-	- [ ] Integrate payment gateways (Stripe, PayPal)
-- [ ] Blog System
-	- [ ] Implement CRUD blog posts
-	- [ ] Implement categories and tags for blogs
-	- [x] Integrate Markdown/WYSIWYG editor
-- [x] User Profile
-	- [x] User Profile Page
-	- [x] Edit Profile
-
-
-##### Phase 2: Advanced Features
-- [ ] User Profile & Address Management
-	- [ ] Allow users to save multiple addresses
-	- [ ] Implement order history view
-- [ ] Search & Filtering Optimization
-	- [ ] Integrate ElasticSearch for advanced search
-- [ ] Notifications System
-	- [ ] Set up email notifications
-- [ ] Chat Support
-	- [ ] Add ChatBot
-
+4. **Access the application:**
+    - Frontend: `http://localhost:5173`
+    - Backend API: `http://localhost:8080`
 
 ## 🤝 Contributing
 
@@ -180,14 +162,14 @@ This project is licensed under the MIT License - see the [LICENSE.md](https://gi
 
 ## 🙏 Acknowledgements
 
-* [Mantine UI](https://mantine.dev/)
-* [TanStack Router](https://tanstack.com/router/)
-* [TanStack Query](https://tanstack.com/query/)
-* [Zustand](https://github.com/pmndrs/zustand)
-* [Spring Boot](https://spring.io/projects/spring-boot)
-* [Vite](https://vitejs.dev/)
-* [Mantine Admin](https://github.com/jotyy/Mantine-Admin/blob/main/README.md) for Readme Template.
-* And other great open-source libraries used.
+-   [Mantine UI](https://mantine.dev/)
+-   [TanStack Router](https://tanstack.com/router/)
+-   [TanStack Query](https://tanstack.com/query/)
+-   [Zustand](https://github.com/pmndrs/zustand)
+-   [Spring Boot](https://spring.io/projects/spring-boot)
+-   [Vite](https://vitejs.dev/)
+-   [Mantine Admin](https://github.com/jotyy/Mantine-Admin/blob/main/README.md) for Readme Template.
+-   And other great open-source libraries used.
 
 ---
 
