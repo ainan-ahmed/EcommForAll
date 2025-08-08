@@ -34,4 +34,4 @@ build/
 
 .env.aws
 .env.ai
-!**/ecommforall-ai.json
+!**/backend/ecommforall-ai.json
