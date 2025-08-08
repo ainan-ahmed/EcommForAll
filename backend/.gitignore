@@ -1,8 +1,6 @@
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
-target/
-!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -36,4 +34,4 @@ build/
 
 .env.aws
 .env.ai
-!**/ecommforall-ai.json
+!**/backend/ecommforall-ai.json
