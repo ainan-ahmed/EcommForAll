@@ -25,14 +25,17 @@ public class VariantImageController {
     private final S3Service s3Service;
 
     @GetMapping
-    public ResponseEntity<Page<VariantImageDto>> getAllVariantImages(@PathVariable UUID productId,@PathVariable UUID variantId, Pageable pageable) {
+    public ResponseEntity<Page<VariantImageDto>> getAllVariantImages(
+            @PathVariable UUID productId,
+            @PathVariable UUID variantId,
+            Pageable pageable) {
         return ResponseEntity.ok(variantImageService.getImagesByVariantId(variantId, pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<VariantImageDto> getVariantImage(
-            @PathVariable UUID productId
-            ,@PathVariable UUID variantId,
+            @PathVariable UUID productId,
+            @PathVariable UUID variantId,
             @PathVariable UUID id) {
         return ResponseEntity.ok(variantImageService.getImageById(id));
     }
@@ -43,14 +46,16 @@ public class VariantImageController {
             @PathVariable UUID variantId,
             @RequestParam("file") MultipartFile file,
             @RequestParam(value = "altText", required = false) String altText,
-            @RequestParam(value = "sortOrder", defaultValue = "0") int sortOrder) throws IOException
-    {
+            @RequestParam(value = "sortOrder", defaultValue = "0") int sortOrder) throws IOException {
+
         String fileName = s3Service.uploadFile(file);
+
         VariantImageCreateDto variantImageCreateDto = new VariantImageCreateDto();
         variantImageCreateDto.setVariantId(variantId);
         variantImageCreateDto.setImageUrl(fileName);
         variantImageCreateDto.setAltText(altText);
         variantImageCreateDto.setSortOrder(sortOrder);
+
         return new ResponseEntity<>(variantImageService.createImage(variantImageCreateDto), HttpStatus.CREATED);
     }
 
@@ -62,18 +67,17 @@ public class VariantImageController {
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam(value = "altText", required = false) String altText,
             @RequestParam(value = "sortOrder", required = false) Integer sortOrder) throws IOException {
-            VariantImageDto existingImage = variantImageService.getImageById(id);
-        // Update file if provided
+
+        VariantImageDto existingImage = variantImageService.getImageById(id);
+
         if (file != null && !file.isEmpty()) {
             s3Service.deleteFile(existingImage.getImageUrl());
             String newImageUrl = s3Service.uploadFile(file);
             existingImage.setImageUrl(newImageUrl);
         }
-        // Update metadata if provided
         if (altText != null) {
             existingImage.setAltText(altText);
         }
-
         if (sortOrder != null) {
             existingImage.setSortOrder(sortOrder);
         }
@@ -81,16 +85,15 @@ public class VariantImageController {
         return ResponseEntity.ok(variantImageService.updateImage(id, existingImage));
     }
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVariantImage(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
             @PathVariable UUID id) {
+
         VariantImageDto image = variantImageService.getImageById(id);
         variantImageService.deleteImage(id);
-        if(image.getImageUrl() != null) {
+        if (image.getImageUrl() != null) {
             s3Service.deleteFile(image.getImageUrl());
         }
         return ResponseEntity.noContent().build();

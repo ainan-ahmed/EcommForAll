@@ -26,14 +26,14 @@ public class ProductDto {
 
     private String sku;
 
-    @JsonAlias({ "isActive", "active", "is_active", "status" })
+    @JsonAlias({"isActive", "active", "is_active", "status"})
     private Boolean isActive;
 
-    @JsonAlias({ "isFeatured", "featured", "is_featured" })
+    @JsonAlias({"isFeatured", "featured", "is_featured"})
     private Boolean isFeatured;
 
     // Price for products without variants
-    @Positive(message = "Price must be positive")
+    @PositiveOrZero(message = "Price must be positive")
     private BigDecimal price;
 
     // Stock for products without variants
@@ -42,7 +42,7 @@ public class ProductDto {
 
     // Calculated minimum price from variants
     @Positive(message = "Price must be positive")
-    @JsonAlias({ "minPrice", "min_price" })
+    @JsonAlias({"minPrice", "min_price"})
     private BigDecimal minPrice;
 
     // Computed fields

@@ -8,9 +8,8 @@ import com.ainan.ecommforallbackend.mapper.ProductVariantMapper;
 import com.ainan.ecommforallbackend.repository.ProductRepository;
 import com.ainan.ecommforallbackend.repository.ProductVariantRepository;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.CacheEvict;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,9 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-@Data
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ProductVariantServiceImpl implements ProductVariantService {
 
     private final ProductVariantRepository productVariantRepository;
