@@ -1,39 +1,52 @@
 package com.ainan.ecommforallbackend.service;
 
-import com.ainan.ecommforallbackend.dto.ProductDescriptionRequestDto;
-import com.ainan.ecommforallbackend.dto.ProductDescriptionResponseDto;
-import com.ainan.ecommforallbackend.dto.ProductVariantDto;
+import com.ainan.ecommforallbackend.dto.*;
+import com.ainan.ecommforallbackend.util.PromptTemplates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class AiService {
 
-    private final ChatModel chatModel;
+    private final ChatClient chatClient;
+    private final ProductService productService;
+    private final BrandService brandService;
+    private final CategoryService categoryService;
 
-    /**
-     * Generate the product description using AI
-     *
-     * @param request ProductDescriptionRequestDto containing product details
-     * @return ProductDescriptionResponseDto with generated description
-     */
-    public ProductDescriptionResponseDto generateProductDescription(ProductDescriptionRequestDto request) {
+    public ProductDescriptionResponseDto generateProductDescription(
+            ProductDescriptionRequestDto request, UUID productId) {
         try {
-            log.info("Generating product description for: {}", request.getProductName());
+            log.info("Processing AI description request for product: {}",
+                    productId != null ? "ID " + productId : request.getProductName());
 
-            String prompt = buildPrompt(request);
-            String generatedDescription = chatModel.call(prompt);
+            // Enhance request with product details if productId is provided
+            ProductDescriptionRequestDto finalRequest = request;
+            if (productId != null) {
+                finalRequest = enhanceRequestWithProductDetails(request, productId);
+                log.info("Enhanced request with details from product ID: {}", productId);
+            }
 
+            // Apply default values
+            finalRequest = applyDefaults(finalRequest);
+
+            // Generate description using AI
+            String generatedDescription = generateWithAI(finalRequest);
+            log.info("AI Response received: '{}'", generatedDescription);
+            generatedDescription = postProcessDescription(generatedDescription, finalRequest);
+
+            log.info("Successfully generated description for product: {}", finalRequest.getProductName());
             return ProductDescriptionResponseDto.success(
                     generatedDescription,
-                    request.getExistingDescription(),
-                    request.getTone() != null ? request.getTone() : "professional");
+                    finalRequest.getExistingDescription(),
+                    finalRequest.getTone());
 
         } catch (Exception e) {
             log.error("Error generating product description: {}", e.getMessage(), e);
@@ -41,89 +54,193 @@ public class AiService {
         }
     }
 
-    /**
-     * Build AI prompt for product description generation
-     */
-    private String buildPrompt(ProductDescriptionRequestDto request) {
-        StringBuilder promptBuilder = new StringBuilder();
+    private ProductDescriptionRequestDto applyDefaults(ProductDescriptionRequestDto request) {
+        if (request.getTone() == null) {
+            request.setTone("professional");
+        }
+        if (request.getMaxLength() == null) {
+            request.setMaxLength(150);
+        }
+        return request;
+    }
 
-        promptBuilder.append("Generate a compelling product description for an e-commerce website.\n\n");
-        promptBuilder.append("Product Name: ").append(request.getProductName()).append("\n");
+    private ProductDescriptionRequestDto enhanceRequestWithProductDetails(
+            ProductDescriptionRequestDto request, UUID productId) {
+        try {
+            ProductDto product = productService.getProductById(productId, List.of("variants"));
+            return mergeRequestWithProductData(request, product);
+        } catch (Exception e) {
+            log.warn("Could not enhance request with product details for ID {}: {}", productId, e.getMessage());
+            return request;
+        }
+    }
 
-        if (request.getCategory() != null) {
-            promptBuilder.append("Category: ").append(request.getCategory()).append("\n");
+    private ProductDescriptionRequestDto mergeRequestWithProductData(
+            ProductDescriptionRequestDto request, ProductDto product) {
+
+        ProductDescriptionRequestDto enhanced = new ProductDescriptionRequestDto();
+
+        // User inputs take precedence
+        enhanced.setProductName(request.getProductName() != null ? request.getProductName() : product.getName());
+        enhanced.setExistingDescription(request.getExistingDescription() != null ? request.getExistingDescription() : product.getDescription());
+        enhanced.setTone(request.getTone());
+        enhanced.setMaxLength(request.getMaxLength());
+        enhanced.setAttributes(request.getAttributes());
+        enhanced.setTargetAudience(request.getTargetAudience());
+
+        // Enhance with product details if not provided in request
+        enhanced.setBrand(request.getBrand() != null ? request.getBrand() : fetchBrandName(product.getBrandId()));
+        enhanced.setCategory(request.getCategory() != null ? request.getCategory() : fetchCategoryName(product.getCategoryId()));
+
+        // Handle variants
+        if (product.getVariants() != null && !product.getVariants().isEmpty()) {
+            enhanced.setHasVariants(true);
+            enhanced.setVariants(request.getVariants() != null ? request.getVariants() : product.getVariants());
+        } else {
+            enhanced.setHasVariants(request.getHasVariants());
+            enhanced.setVariants(request.getVariants());
         }
 
-        if (request.getBrand() != null) {
-            promptBuilder.append("Brand: ").append(request.getBrand()).append("\n");
+        return enhanced;
+    }
+
+    private String fetchBrandName(UUID brandId) {
+        if (brandId == null) return null;
+        try {
+            BrandDto brand = brandService.getBrandById(brandId);
+            return brand != null ? brand.getName() : null;
+        } catch (Exception e) {
+            log.warn("Could not fetch brand {}: {}", brandId, e.getMessage());
+            return null;
+        }
+    }
+
+    private String fetchCategoryName(UUID categoryId) {
+        if (categoryId == null) return null;
+        try {
+            CategoryDto category = categoryService.getCategoryById(categoryId);
+            return category != null ? category.getName() : null;
+        } catch (Exception e) {
+            log.warn("Could not fetch category {}: {}", categoryId, e.getMessage());
+            return null;
+        }
+    }
+
+    private String generateWithAI(ProductDescriptionRequestDto request) {
+        String promptTemplate = PromptTemplates.PRODUCT_DESCRIPTION;
+
+        Map<String, Object> promptVariables = buildPromptVariables(request);
+
+        try {
+            String aiResponse = chatClient.prompt()
+                    .system("You are an expert e-commerce copywriter specializing in creating compelling product descriptions that drive conversions.")
+                    .user(userSpec -> userSpec.text(promptTemplate).params(promptVariables))
+                    .call()
+                    .content();
+
+            log.info("AI Response length: {}", aiResponse != null ? aiResponse.length() : "null");
+
+            return aiResponse;
+        } catch (Exception e) {
+            log.error("Error calling ChatClient: {}", e.getMessage(), e);
+            throw e;
         }
 
+    }
+
+    private String postProcessDescription(String description, ProductDescriptionRequestDto request) {
+        description = description.trim();
+        if (request.getMaxLength() != null) {
+            String[] words = description.split("\\s+");
+            if (words.length > request.getMaxLength()) {
+                description = truncateToWordLimit(description, request.getMaxLength());
+            }
+        }
+
+        log.info("Post-processed description: '{}'", description);
+        return description;
+    }
+
+    private String truncateToWordLimit(String text, int maxWords) {
+        String[] words = text.split("\\s+");
+        if (words.length <= maxWords) {
+            return text;
+        }
+
+        StringBuilder truncated = new StringBuilder();
+        for (int i = 0; i < maxWords; i++) {
+            truncated.append(words[i]).append(" ");
+        }
+
+        return truncated.toString().trim();
+    }
+
+    private Map<String, Object> buildPromptVariables(ProductDescriptionRequestDto request) {
+        String existingDescription = "";
         if (request.getExistingDescription() != null && !request.getExistingDescription().trim().isEmpty()) {
-            promptBuilder.append("Existing Description (improve this): ").append(request.getExistingDescription())
-                    .append("\n");
+            existingDescription = "Existing Description (improve this): " + request.getExistingDescription();
         }
 
-        if (request.getAttributes() != null && !request.getAttributes().isEmpty()) {
-            promptBuilder.append("Attributes: ");
-            String attrs = request.getAttributes().entrySet().stream()
-                    .map(entry -> entry.getKey() + ": " + entry.getValue())
-                    .collect(Collectors.joining(", "));
-            promptBuilder.append(attrs).append("\n");
-        }
-
-        if (request.getTargetAudience() != null) {
-            promptBuilder.append("Target Audience: ").append(request.getTargetAudience()).append("\n");
-        }
-
-        // Handle variant information
+        String variantInfo = "";
         if (request.getHasVariants() != null && request.getHasVariants() &&
                 request.getVariants() != null && !request.getVariants().isEmpty()) {
-
-            promptBuilder.append("\nProduct Variants:\n");
-
-            for (int i = 0; i < request.getVariants().size(); i++) {
-                ProductVariantDto variant = request.getVariants().get(i);
-                promptBuilder.append("Variant ").append(i + 1).append(":\n");
-
-                if (variant.getAttributeValues() != null && !variant.getAttributeValues().isEmpty()) {
-                    promptBuilder.append("  Attributes: ");
-                    variant.getAttributeValues()
-                            .forEach((key, value) -> promptBuilder.append(key).append(": ").append(value).append(", "));
-                    // Remove the last comma and space
-                    if (promptBuilder.length() > 2) {
-                        promptBuilder.setLength(promptBuilder.length() - 2);
-                    }
-                    promptBuilder.append("\n");
-                }
-
-                if (variant.getPrice() != null) {
-                    promptBuilder.append("  Price: $").append(variant.getPrice()).append("\n");
-                }
-
-                promptBuilder.append("  Stock: ").append(variant.getStock()).append(" units\n");
-
-                promptBuilder.append("\n");
-            }
-
-            promptBuilder.append("Note: This product comes in multiple variants. ");
-            promptBuilder.append("Mention the available options without being too specific about pricing. ");
-            promptBuilder.append("Focus on the variety and choice available to customers.\n");
+            variantInfo = buildVariantInfo(request);
         }
 
-        promptBuilder.append("\nRequirements:\n");
-        promptBuilder.append("- Tone: ").append(request.getTone() != null ? request.getTone() : "professional")
-                .append("\n");
-        promptBuilder.append("- Maximum length: ").append(request.getMaxLength() != null ? request.getMaxLength() : 150)
-                .append(" words\n");
-        promptBuilder.append("- Focus on benefits and value proposition\n");
-        promptBuilder.append("- Make it SEO-friendly and engaging\n");
-        promptBuilder.append("- Use persuasive language that encourages purchase\n");
-        promptBuilder.append("- Avoid technical jargon unless the tone is 'technical'\n");
-        promptBuilder.append("- Include a clear call-to-action if appropriate\n\n");
+        return Map.of(
+                "productName", request.getProductName(),
+                "category", request.getCategory() != null ? request.getCategory() : "",
+                "brand", request.getBrand() != null ? request.getBrand() : "",
+                "targetAudience", request.getTargetAudience() != null ? request.getTargetAudience() : "",
+                "tone", request.getTone(),
+                "maxLength", request.getMaxLength(),
+                "existingDescription", existingDescription,
+                "variantInfo", variantInfo
+        );
+    }
 
-        promptBuilder.append(
-                "Generate only the product description text, without any additional formatting or explanations.");
+    private String buildVariantInfo(ProductDescriptionRequestDto request) {
+        StringBuilder variantBuilder = new StringBuilder();
+        variantBuilder.append("Product Variants:\n");
 
-        return promptBuilder.toString();
+        for (int i = 0; i < request.getVariants().size(); i++) {
+            ProductVariantDto variant = request.getVariants().get(i);
+            variantBuilder.append("Variant ").append(i + 1).append(":\n");
+
+            if (variant.getAttributeValues() != null && !variant.getAttributeValues().isEmpty()) {
+                variantBuilder.append("  Attributes: ");
+                variant.getAttributeValues()
+                        .forEach((key, value) -> variantBuilder.append(key).append(": ").append(value).append(", "));
+                if (variantBuilder.length() > 2) {
+                    variantBuilder.setLength(variantBuilder.length() - 2);
+                }
+                variantBuilder.append("\n");
+            }
+
+            if (variant.getPrice() != null) {
+                variantBuilder.append("  Price: $").append(variant.getPrice()).append("\n");
+            }
+
+            variantBuilder.append("  Stock: ").append(variant.getStock()).append(" units\n\n");
+        }
+
+        variantBuilder.append("Note: This product comes in multiple variants. ");
+        variantBuilder.append("Mention the available options without being too specific about pricing.");
+
+        return variantBuilder.toString();
+    }
+
+    public boolean isServiceHealthy() {
+        try {
+            // Simple test to check if AI service is responsive
+            chatClient.prompt()
+                    .user("Test")
+                    .call()
+                    .content();
+            return true;
+        } catch (Exception e) {
+            log.error("AI service health check failed: {}", e.getMessage());
+            return false;
+        }
     }
 }

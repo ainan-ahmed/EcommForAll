@@ -2,7 +2,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:postgresql://localhost:5433/ecommforall
+    url: jdbc:postgresql://localhost:5432/ecommforall
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
@@ -18,11 +18,35 @@ spring:
       name: admin
       password: admin
   ai:
-    vertex:
-      ai:
-        gemini:
-          project-id: ${GOOGLE_CLOUD_PROJECT_ID:ecommforall-ai}
-          location: ${GOOGLE_CLOUD_LOCATION:europe-west4}
+    vector-store:
+      pgvector:
+        initialize-schema: true
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+        max-document-batch-size: 10000
+    openai:
+      api-key: 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
+      base-url: https://openrouter.ai/api
+      chat:
+        base-url: https://openrouter.ai/api
+        api-key: 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
+        options:
+          model: openai/gpt-4o-mini
+      embedding:
+        base-url: http://192.168.0.123:1234
+        api-key: ""
+        options:
+          model: text-embedding-nomic-embed-text-v2-moe
+  chat:
+    memory:
+      repository:
+        jdbc:
+          initialize-schema: always
+          platform: postgresql
+chatbot:
+  max-messages: 20
+  session-timeout-hours: 24
+  enable-tools: true
 jwt:
   secret: K6E9X7fAbC2D3eF4gH5iJ6kL7mN8oP9qR0sT1uVwXyZ1a2B3c4D5e6F7g8H9i0JkLmNoPqRsTuVwXyZ1234567890
   expiration: 86400000
@@ -42,4 +66,13 @@ logging:
   level:
     org:
       springframework:
+        ai:
+          openai: DEBUG
+          chat: DEBUG
         security: DEBUG
+    com:
+      ainan:
+        ecommforallbackend:
+          service: DEBUG
+          util:
+            VectorConverter: DEBUG

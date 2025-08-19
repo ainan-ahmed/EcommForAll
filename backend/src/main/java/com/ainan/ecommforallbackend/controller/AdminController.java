@@ -1,12 +1,13 @@
 package com.ainan.ecommforallbackend.controller;
 
+import com.ainan.ecommforallbackend.dto.EmbeddingSyncResponseDto;
 import com.ainan.ecommforallbackend.dto.RoleUpdateDto;
 import com.ainan.ecommforallbackend.dto.UserDto;
 import com.ainan.ecommforallbackend.dto.WishlistCreateDto;
 import com.ainan.ecommforallbackend.service.AdminService;
+import com.ainan.ecommforallbackend.service.ProductEmbeddingService;
 import com.ainan.ecommforallbackend.service.ShoppingCartService;
 import com.ainan.ecommforallbackend.service.WishlistService;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public class AdminController {
     private final AdminService adminService;
     private final WishlistService wishlistService;
     private final ShoppingCartService shoppingCartService;
+    private final ProductEmbeddingService embeddingService;
 
     @GetMapping("/users")
     public ResponseEntity<Page<UserDto>> getAllUsers(
@@ -50,6 +52,12 @@ public class AdminController {
             @PathVariable UUID userId,
             @RequestBody RoleUpdateDto roleUpdateDto) {
         return ResponseEntity.ok(adminService.updateUserRole(userId, roleUpdateDto.getRole()));
+    }
+
+    @PostMapping("/sync-embeddings")
+    public ResponseEntity<EmbeddingSyncResponseDto> syncEmbeddings() {
+        EmbeddingSyncResponseDto response = embeddingService.syncAllProducts();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-default-wishlists-and-carts")
