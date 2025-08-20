@@ -71,17 +71,18 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        //  public endpoints
-                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // public endpoints
+                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                        .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products/**",
                                 "/api/categories/**",
                                 "/api/brands/**",
                                 "/api/product-images/**",
                                 "/api/variant-images/**",
-                                "/api/variants/**"
-                        ).permitAll()
-                        //admin only endpoints
+                                "/api/variants/**")
+                        .permitAll()
+                        // admin only endpoints
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
                         // all other requests require authentication
                         .anyRequest().authenticated())
@@ -90,14 +91,17 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults());
         return http.build();
     }
-//    @Bean
-//    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
-//        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-//        authenticationManagerBuilder.userDetailsService(customUserDetailsService()).passwordEncoder(passwordEncoder());
-//        return authenticationManagerBuilder.build();
-//    }
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
-//    }
+    // @Bean
+    // public AuthenticationManager authenticationManager(HttpSecurity http) throws
+    // Exception {
+    // AuthenticationManagerBuilder authenticationManagerBuilder =
+    // http.getSharedObject(AuthenticationManagerBuilder.class);
+    // authenticationManagerBuilder.userDetailsService(customUserDetailsService()).passwordEncoder(passwordEncoder());
+    // return authenticationManagerBuilder.build();
+    // }
+    // @Autowired
+    // public void configureGlobal(AuthenticationManagerBuilder auth) throws
+    // Exception {
+    // auth.userDetailsService(userDetailsService()).passwordEncoder(passwordEncoder());
+    // }
 }

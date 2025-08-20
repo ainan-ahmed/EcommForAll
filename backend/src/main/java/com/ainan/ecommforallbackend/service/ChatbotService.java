@@ -37,10 +37,9 @@ public class ChatbotService {
             if (userPrompt.trim().isEmpty()) {
                 throw new IllegalArgumentException("User prompt cannot be empty");
             }
-            log.info("Chatbot user prompt generated: {}", userPrompt);
-            log.info("Chatbot conversation ID: {}", conversationId);
-            log.info("Chatbot intent: {}", intent);
             log.info("Processing: {}", request);
+            log.info("Chatbot user prompt generated: {}", userPrompt);
+            
             // Get AI response - Tools are already configured in ChatClient
             String aiResponse = chatbotClient.prompt()
                     .user(userPrompt)
@@ -59,24 +58,15 @@ public class ChatbotService {
 
         } catch (IllegalArgumentException e) {
             log.error("Invalid request: {}", e.getMessage());
-            return ChatResponseDto.success(
+            return ChatResponseDto.error(
                     UUID.randomUUID(),
-                    "Please provide a valid message.",
-                    "ERROR");
+                    "Please provide a valid message.");
         } catch (Exception e) {
             log.error("Error processing chat message: {}", e.getMessage(), e);
-            return ChatResponseDto.success(
+            return ChatResponseDto.error(
                     UUID.randomUUID(),
-                    "I apologize, but I'm having trouble processing your request right now. Please try again later.",
-                    "ERROR");
+                    "I apologize, but I'm having trouble processing your request right now. Please try again later.");
         }
-    }
-
-    private UUID generateConversationId(UUID userId) {
-        if (userId != null) {
-            return userId;
-        }
-        return UUID.randomUUID();
     }
 
     private String analyzeIntent(String message) {
@@ -109,24 +99,32 @@ public class ChatbotService {
         // Add context based on intent
         switch (intent) {
             case "PRODUCT_SEARCH":
-                prompt.append("The customer is looking for specific products. Use search tools to help them find what they need.\n");
+                prompt.append(
+                        "The customer is looking for specific products. Use search tools to help them find what they need.\n");
                 break;
             case "PRODUCT_COMPARISON":
-                prompt.append("The customer wants to compare products. Help them compare features, prices, and benefits.\n");
+                prompt.append(
+                        "The customer wants to compare products. Help them compare features, prices, and benefits.\n");
                 break;
             case "RECOMMENDATION":
-                prompt.append("The customer wants product recommendations. Suggest featured products or search based on their preferences.\n");
+                prompt.append(
+                        "The customer wants product recommendations. Suggest featured products or search based on their preferences.\n");
                 break;
             case "CATEGORY_BROWSE":
-                prompt.append("The customer is browsing by category. Help them explore products in specific categories.\n");
+                prompt.append(
+                        "The customer is browsing by category. Help them explore products in specific categories.\n");
                 break;
             default:
                 prompt.append("Provide helpful assistance based on the customer's request.\n");
                 break;
         }
 
-        prompt.append("\nCustomer Message: ").append(userMessage);
+        prompt.append("\nCustomer Message: ").append(userMessage).append("\n\n");
 
+        // Pattern to match price expressions
+        if (userMessage.toLowerCase().matches(".*\\b(under|below|less than|max|maximum)\\s*\\$?\\d+.*")) {
+            prompt.append("Please use the maxPrice parameter when searching");
+        }
         return prompt.toString();
     }
 

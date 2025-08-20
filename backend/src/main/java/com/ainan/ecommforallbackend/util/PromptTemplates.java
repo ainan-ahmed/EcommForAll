@@ -41,6 +41,12 @@ public class PromptTemplates {
                             - getProductsByCategory(categoryId): Get products from a category
                             - compareProducts(productIds): Compare two products
             
+                            For product searches, pay attention to:
+                            - Price ranges (extract numbers from phrases like "under $100", "below 50 dollars")
+                            - Categories mentioned
+                            - Brand preferences
+                            - Specific features or attributes
+            
                             Always be helpful, friendly, and professional.
                             Always start the conversation with a friendly greeting introducing yourself.
                             When customers ask about products, use the available search tools to find relevant products.
