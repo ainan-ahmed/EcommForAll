@@ -35,6 +35,7 @@ public class ProductCreateDto {
     @PositiveOrZero(message = "Stock must be non-negative")
     private Integer stock;
 
+
     @NotNull(message = "Brand is required")
     private UUID brandId;
 

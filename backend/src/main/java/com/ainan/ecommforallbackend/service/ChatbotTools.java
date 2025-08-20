@@ -1,15 +1,20 @@
-// java
 package com.ainan.ecommforallbackend.service;
 
 import com.ainan.ecommforallbackend.dto.ProductDto;
 import com.ainan.ecommforallbackend.dto.ProductFilterDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -18,35 +23,94 @@ import java.util.UUID;
 public class ChatbotTools {
 
     private final ProductService productService;
+    private final VectorStore vectorStore;
 
-    @Tool(description = "Search for products by name or description")
-    public String searchProducts(String query) {
-        log.info("=== TOOL CALLED: searchProducts with query: '{}' ===", query);
+    @Tool(description = "Search products in the database based on various criteria including price range")
+    public String searchProducts(
+            @ToolParam(description = "Product name or keyword to search for") String query,
+            @ToolParam(description = "Maximum price constraint - extract from phrases like 'under $100', 'below 50'\"") Double maxPrice,
+            @ToolParam(description = "Number of results to return (default 5)") int limit) {
         try {
-            String cleanQuery = query == null ? "" : query.replace("\"", "").trim();
+            // If only price filtering is needed and no specific query
+            if ((query == null || query.trim().isEmpty() || query.trim().equals("products")) && maxPrice != null) {
+                ProductFilterDto filter = new ProductFilterDto();
+                filter.setMaxPrice(BigDecimal.valueOf(maxPrice));
+                filter.setIsActive(true);
 
-            ProductFilterDto filter = new ProductFilterDto();
-            filter.setName(cleanQuery);
-            filter.setIsActive(true);
+                var products = productService.getFilteredProducts(filter, PageRequest.of(0, limit));
 
-            var products = productService.getFilteredProducts(filter, PageRequest.of(0, 5));
+                if (products.isEmpty()) {
+                    return String.format("No products found under $%.2f", maxPrice);
+                }
 
-            if (products.isEmpty()) {
-                return "No products found for: " + (cleanQuery.isEmpty() ? "(empty query)" : cleanQuery);
+                StringBuilder resultStr = new StringBuilder();
+                resultStr.append(String.format("Here are %d products under $%.2f:\n", products.getContent().size(), maxPrice));
+                for (ProductDto product : products.getContent()) {
+                    resultStr.append(String.format("- %s ($%.2f) - %s\n",
+                            product.getName(),
+                            product.getMinPrice(),
+                            product.getDescription() != null ?
+                                    (product.getDescription().length() > 100 ?
+                                            product.getDescription().substring(0, 100) + "..." :
+                                            product.getDescription()) : "No description"));
+                }
+                return resultStr.toString();
             }
 
-            StringBuilder result = new StringBuilder("Found products:\n");
-            products.getContent().forEach(product -> result.append(String.format("- %s ($%.2f) - ID: %s\n",
-                    product.getName(),
-                    product.getMinPrice(),
-                    product.getId())));
+            // For text-based search, use vector store
+            if (query != null && !query.trim().isEmpty()) {
+                List<Document> result = vectorStore.similaritySearch(
+                        SearchRequest.builder()
+                                .query(query)
+                                .topK(limit)
+                                .build()
+                );
 
-            log.info("Tool returning: {}", result.toString());
-            return result.toString();
+                List<ProductDto> products = result.stream()
+                        .map(document -> {
+                            String productIdStr = (String) document.getMetadata().get("productId");
+                            if (productIdStr != null) {
+                                try {
+                                    UUID productId = UUID.fromString(productIdStr);
+                                    ProductDto product = productService.getProductById(productId, null);
+                                    // Apply price filter if specified
+                                    if (maxPrice != null && product.getMinPrice().doubleValue() > maxPrice) {
+                                        return null;
+                                    }
+                                    return product;
+                                } catch (Exception e) {
+                                    log.warn("Failed to fetch product with ID {}: {}", productIdStr, e.getMessage());
+                                    return null;
+                                }
+                            }
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                if (products.isEmpty()) {
+                    return String.format("No products found for \"%s\"" + (maxPrice != null ? " under $%.2f" : ""), query, maxPrice);
+                }
+
+                StringBuilder resultStr = new StringBuilder();
+                resultStr.append(String.format("Search results for \"%s\":\n", query));
+                for (ProductDto product : products) {
+                    resultStr.append(String.format("- %s ($%.2f) - %s\n",
+                            product.getName(),
+                            product.getMinPrice(),
+                            product.getDescription() != null ?
+                                    (product.getDescription().length() > 100 ?
+                                            product.getDescription().substring(0, 100) + "..." :
+                                            product.getDescription()) : "No description"));
+                }
+                return resultStr.toString();
+            }
+
+            return "Please provide either a search query or price criteria.";
 
         } catch (Exception e) {
             log.error("Error searching products: {}", e.getMessage(), e);
-            return "Error searching products: " + e.getMessage();
+            return "Sorry, I encountered an error while searching for products. Please try again.";
         }
     }
 
