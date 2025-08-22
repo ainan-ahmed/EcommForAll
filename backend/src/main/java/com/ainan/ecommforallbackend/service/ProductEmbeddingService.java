@@ -64,7 +64,14 @@ public class ProductEmbeddingService {
 
         int indexed = 0, skipped = 0, failed = 0;
         log.info("Starting to process {} products for embedding", allProducts.size());
-
+        try {
+            log.info("Clearing existing embeddings from VectorStore...");
+            vectorStore.delete(List.of()); // This deletes all documents
+            log.info("Successfully cleared existing embeddings");
+        } catch (Exception e) {
+            log.error("Failed to clear existing embeddings: {}", e.getMessage(), e);
+            // Continue with indexing even if deletion fails
+        }
         for (Product product : allProducts) {
             try {
                 log.info("Processing product: {} ({})", product.getId(), product.getName());

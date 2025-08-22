@@ -6,6 +6,9 @@ WORKDIR /app
 
 # Copy the Maven build file, the source code, and the Maven Wrapper
 COPY pom.xml .
+COPY ecommforall-ai-key.json .
+COPY .env.ai .
+COPY .env.aws .
 COPY src ./src
 COPY .mvn .mvn
 COPY mvnw .
@@ -25,6 +28,7 @@ WORKDIR /app
 # Copy the packaged JAR file from the build stage
 COPY --from=build /app/target/*.jar app.jar
 
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/ecommforall-ai-key.json
 # Expose the port the application runs on
 EXPOSE 8080
 
