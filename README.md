@@ -1,6 +1,6 @@
 # EcommForAll 🛍️
 
-**EcommForAll** is a modern, full-stack e-commerce platform designed to provide a comprehensive online shopping experience. This project serves as a learning platform and a demonstration of building a feature-rich application using a modern tech stack.
+**EcommForAll** is a modern, full-stack e-commerce platform enhanced with **AI-powered features** for intelligent product recommendations, automated content generation, and conversational shopping assistance. This project demonstrates the integration of cutting-edge AI technologies with traditional e-commerce functionality.
 
 ✨ **[Link to Live Demo(not added yet)]** ✨
 
@@ -9,18 +9,21 @@
 [![React](https://img.shields.io/badge/React-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-%236DB33F.svg?style=for-the-badge&logo=spring-boot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring AI](https://img.shields.io/badge/Spring_AI-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-ai)
 [![Mantine UI](https://img.shields.io/badge/Mantine-%23339AF0.svg?style=for-the-badge&logo=mantine&logoColor=white)](https://mantine.dev/)
 [![TanStack Router](https://img.shields.io/badge/TanStack_Router-React-%23EF4444.svg?style=for-the-badge)](https://tanstack.com/router/)
 [![TanStack Query](https://img.shields.io/badge/TanStack_Query-React-%23FF4154.svg?style=for-the-badge)](https://tanstack.com/query/)
 [![Zustand](https://img.shields.io/badge/Zustand-%23764ABC.svg?style=for-the-badge)](https://github.com/pmndrs/zustand)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)](https://postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com/)
 
 ---
 
 ## 📖 Introduction
 
-EcommForAll is a [**Work-in-Progress**] project aiming to create a robust e-commerce platform. It demonstrates the integration of a **React-based** frontend with a **Spring Boot** backend, focusing on modern development practices, type safety, and efficient state management.
+EcommForAll is a [work-in-progress] project that combines traditional online shopping features with modern artificial intelligence capabilities. Built with **Spring AI** and **Google Vertex AI**, it offers intelligent product recommendations, automated content generation, conversational shopping assistance, and semantic product search.
 
-This project serves as a personal learning endeavor and a portfolio piece to showcase skills in full-stack development.
+This project serves as a comprehensive demonstration of integrating AI/ML technologies into real-world applications, showcasing skills in full-stack development, machine learning integration, and modern cloud-native architectures.
 
 ## 🌟 Features
 
@@ -48,8 +51,8 @@ This project features a combination of modern tools and practices for web develo
 * **UI Components:** 🎨 [Mantine UI](https://github.com/mantinedev/mantine) – A comprehensive React components library.
 * **Icons:** ✨ [Tabler Icons](https://github.com/tabler/tabler).
 * **Form Validation:**
-    * 📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form).
-    * 🚨 [Zod](https://github.com/colinhacks/zod) – TypeScript-first schema validation.
+    * 📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form)
+    * 🚨 [Zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation
 
 ### Backend Stack:
 * **Framework:** 🌱 Spring Boot.
@@ -84,91 +87,199 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
-1.  **Clone the repository:**
+1. **Clone the repository:**
 ```bash
-    git clone [https://github.com/ainan-ahmed/EcommForAll.git](https://github.com/ainan-ahmed/EcommForAll.git)
-    cd EcommForAll
+git clone https://github.com/ainan-ahmed/EcommForAll.git
+cd EcommForAll
 ```
 
-
-2.  **Backend Setup:**
-    * Navigate to the backend directory (e.g., `cd backend`).
-    * Build the Spring Boot application:
-        ```bash
-        mvn clean install
-        mvn spring-boot:run
-        ```
-
-3.  **Frontend Setup:**
-    * Navigate to the frontend directory (e.g., `cd frontend`).
-    * Install dependencies:
+2. **Google Cloud Setup:**
 ```bash
-        # Using npm
-        npm install
-        # Or using yarn
-        # yarn install
-        # Or using pnpm
-        # pnpm install
+# Install Google Cloud CLI and authenticate
+gcloud auth login
+gcloud config set project YOUR_PROJECT_ID
+
+# Enable required APIs
+gcloud services enable aiplatform.googleapis.com
+gcloud services enable compute.googleapis.com
+
+# Create and download service account key
+gcloud iam service-accounts create ecommforall-ai
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+    --member="serviceAccount:ecommforall-ai@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/aiplatform.user"
+gcloud iam.service-accounts keys create ecommforall-ai-key.json \
+    --iam-account=ecommforall-ai@YOUR_PROJECT_ID.iam.gserviceaccount.com
 ```
+
+3. **Backend Setup:**
+```bash
+cd backend
+
+# Set environment variables
+export GOOGLE_APPLICATION_CREDENTIALS="./ecommforall-ai-key.json"
+export GCLOUD_PROJECT="your-project-id"
+
+# Install PostgreSQL with pgvector (if not using Docker)
+# On Ubuntu/Debian:
+sudo apt-get install postgresql postgresql-contrib
+sudo apt-get install postgresql-15-pgvector
+
+# Build and run
+mvn clean install
+mvn spring-boot:run
+```
+
+4. **Frontend Setup:**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
 ### Running with Docker Compose
 
-The easiest way to run the entire application stack is using Docker Compose:
+The easiest way to run the entire AI-enhanced application stack:
 
-1.  Ensure Docker is running.
-2.  From the root directory of the project:
-    ```bash
-    docker-compose up --build
-    ```
-    This will build the images for frontend and backend and start all services (frontend, backend, Database).
+```bash
+# Start all services (includes PostgreSQL with pgvector)
+docker-compose up --build
 
-3.  Access the application:
-    * Frontend: `http://localhost:5173`
-    * Backend API: `http://localhost:8080`
-    
+# Access the application:
+# Frontend: http://localhost:5173
+# Backend API: http://localhost:8080
+# Swagger UI: http://localhost:8080/swagger-ui.html
+```
+
+### 🤖 AI Configuration
+
+Create `.env.ai` file in the backend directory:
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
+GCLOUD_PROJECT=your-project-id
+VERTEX_AI_LOCATION=europe-west1
+```
+
+### 📊 Database Setup
+
+The application automatically initializes:
+- **Product vector embeddings** for semantic search
+- **Conversation memory tables** for chatbot history
+- **Sample data** with AI-generated content
+
+## 🎯 AI API Examples
+
+### Chatbot Interaction
+```bash
+curl -X POST "http://localhost:8080/api/chatbot/chat" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "message": "Show me wireless headphones under $100",
+    "conversationId": "uuid-here"
+  }'
+```
+
+### Generate Product Description
+```bash
+curl -X POST "http://localhost:8080/api/ai/generate-description" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{
+    "productName": "Gaming Mechanical Keyboard",
+    "category": "Electronics",
+    "brand": "GameTech",
+    "tone": "technical",
+    "maxLength": 200
+  }'
+```
+
+### Semantic Product Search
+```bash
+curl -X GET "http://localhost:8080/api/products/search?q=comfortable+running+shoes" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+```
+
 ## 🗺️ Roadmap
-##### Phase 1: Core E-commerce & Blog Features
-- [ ]  User Authentication & Authorization with Jwt Based Authentication
-	- [x]  Implement role-based access control (Admin, Seller, Customer)
-	- [ ]  Integrate OAuth2 for Google and Facebook login
-- [x]  Product Management
-	- [x] Implement product Categories and subcategories.
-	- [x] Add product attributes (size, color, brand)
-  - [x] implement api endpoints
-	- [x] Implement filtering and sorting for products
-  - [x] develop UI's needed for products
-- [ ] Wishlist & Reviews
-	- [x] Implement wishlist functionality
-	- [ ] Add product ratings and reviews
-- [ ] Admin Panel
-	- [ ] Implement Admin Panel.
-	- [ ] Implement user management in admin panel
-	- [ ] Implement product management in admin panel
-	- [ ] Implement order management in admin panel (have to implement **Shopping Cart & Checkout** first)
-	- [ ] Implement blog content management in admin panel (have to implement **Blog System** first)
-- [ ]  Shopping Cart & Checkout
-	- [x] Implement add/update/remove items in cart
-	- [ ] Implement order processing
-	- [ ] Integrate payment gateways (Stripe, PayPal)
-- [ ] Blog System
-	- [ ] Implement CRUD blog posts
-	- [ ] Implement categories and tags for blogs
-	- [x] Integrate Markdown/WYSIWYG editor
-- [x] User Profile
-	- [x] User Profile Page
-	- [x] Edit Profile
 
+### ✅ **Phase 1: Core E-commerce + AI Foundation (Current)**
+- [x] **User Authentication & Authorization** with JWT
+- [x] **Product Management** with categories, variants, and attributes
+- [x] **Shopping Cart & Wishlist** functionality
+- [x] **AI-Powered Chatbot** with Vertex AI integration
+- [x] **Vector-Based Product Search** with pgvector
+- [x] **AI Content Generation** for product descriptions
+- [x] **Conversation Memory** and context management
+- [ ] **Admin Panel** with AI management tools
 
-##### Phase 2: Advanced Features
-- [ ] User Profile & Address Management
-	- [ ] Allow users to save multiple addresses
-	- [ ] Implement order history view
-- [ ] Search & Filtering Optimization
-	- [ ] Integrate ElasticSearch for advanced search
-- [ ] Notifications System
-	- [ ] Set up email notifications
-- [ ] Chat Support
-	- [ ] Add ChatBot
+### 🚧 **Phase 2: **
+- [ ] **Personalized Recommendations** using collaborative filtering
+- [ ] **Image-Based Product Search** with Vision AI
+- [ ] **Voice Shopping Assistant** integration
+- [ ] **Sentiment Analysis** for reviews and feedback
 
+## 🏛️ AI Architecture Details
+
+### **Vector Store Configuration**
+- **Database**: PostgreSQL with pgvector extension
+- **Embedding Model**: Google Text Embedding 005
+- **Dimensions**: 768-dimensional vectors
+- **Index Type**: HNSW (Hierarchical Navigable Small World)
+- **Distance Metric**: Cosine similarity
+- **Batch Size**: 10,000 documents per batch
+
+### **LLM Configuration**
+- **Primary Model**: Google Vertex AI Gemini Pro
+- **Fallback Model**: Gemini Flash for faster responses
+- **Temperature**: 0.7 for balanced creativity/accuracy
+- **Max Tokens**: Configurable per use case
+- **Function Calling**: Custom tools for e-commerce operations
+
+### **Memory Management**
+- **Type**: Sliding window conversation memory
+- **Storage**: JDBC-based persistent storage
+- **Window Size**: 20 messages per conversation
+- **Timeout**: 24 hours conversation expiry
+- **Context**: User preferences and shopping history
+
+## 📚 Documentation
+
+- **[AI Service Documentation](backend/AI_SERVICE_README.md)** - Detailed AI features and API reference
+- **[Project Structure](PROJECT-STRUCTURE.MD)** - Complete codebase organization
+- **[API Endpoints](backend/API_ENDPOINTS.md)** - Comprehensive API documentation
+- **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
+
+## 🛠️ Advanced Configuration
+
+### Environment Variables
+```bash
+# AI Configuration
+GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
+GCLOUD_PROJECT=your-project-id
+VERTEX_AI_LOCATION=europe-west1
+
+# Database
+DATABASE_URL=jdbc:postgresql://localhost:5432/ecommforall
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=postgres
+
+# AWS S3
+AWS_S3_BUCKET=ecommforall
+AWS_REGION=eu-north-1
+
+# Security
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRATION=86400000
+```
+
+### Docker Configuration
+```yaml
+# docker-compose.yml includes:
+- PostgreSQL with pgvector extension
+- Spring Boot backend with AI dependencies
+- React frontend with AI chat interface
+- Volume mounting for persistent data
+```
 
 ## 🤝 Contributing
 
@@ -176,19 +287,30 @@ This is a personal project, but contributions, feedback, and suggestions are wel
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ainan-ahmed/EcommForAll/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details.
 
 ## 🙏 Acknowledgements
 
-* [Mantine UI](https://mantine.dev/)
-* [TanStack Router](https://tanstack.com/router/)
-* [TanStack Query](https://tanstack.com/query/)
-* [Zustand](https://github.com/pmndrs/zustand)
-* [Spring Boot](https://spring.io/projects/spring-boot)
-* [Vite](https://vitejs.dev/)
-* [Mantine Admin](https://github.com/jotyy/Mantine-Admin/blob/main/README.md) for Readme Template.
-* And other great open-source libraries used.
+### **AI & ML Technologies**
+* [Spring AI](https://spring.io/projects/spring-ai) - AI integration framework
+* [Google Vertex AI](https://cloud.google.com/vertex-ai) - Machine learning platform
+* [pgvector](https://github.com/pgvector/pgvector) - Vector similarity search for PostgreSQL
+
+### **Frontend Technologies**
+* [Mantine UI](https://mantine.dev/) - React components library
+* [TanStack Router](https://tanstack.com/router/) - Type-safe routing
+* [TanStack Query](https://tanstack.com/query/) - Data fetching and caching
+* [Zustand](https://github.com/pmndrs/zustand) - State management
+
+### **Backend Technologies**
+* [Spring Boot](https://spring.io/projects/spring-boot) - Application framework
+* [PostgreSQL](https://postgresql.org/) - Database with vector extensions
+* [Vite](https://vitejs.dev/) - Build tool and development server
+
+### **Infrastructure**
+* [Docker](https://docker.com/) - Containerization platform
+* [AWS S3](https://aws.amazon.com/s3/) - Cloud storage service
 
 ---
 
-Built with ❤️ by **Ainan**
+**🤖 Built with AI-First Philosophy by Ainan** ❤️
