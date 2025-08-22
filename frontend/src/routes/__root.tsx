@@ -31,6 +31,7 @@ import { Footer } from "../shared/components/Footer.tsx";
 import { useCart } from "../domains/cart/hooks/useCart.ts";
 import { useStore } from "zustand";
 import { authStore } from "../stores/authStore";
+import { ChatbotWidget } from "../domains/AI/components/ChatbotWidget";
 
 export const Route = createRootRoute({
     component: RootComponent,
@@ -247,6 +248,7 @@ export function RootComponent(): JSX.Element {
                 <Outlet />
             </main>
             <Footer />
+            {isAuthenticated && <ChatbotWidget />}
             <TanStackRouterDevtools position="bottom-right" />
         </>
     );

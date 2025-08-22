@@ -39,7 +39,7 @@ public class ChatbotConfig {
 
     @Bean("chatbotClient")
     public ChatClient chatbotClient(ChatModel chatModel, ChatMemory chatMemory) {
-        log.info("Building ChatClient with QuestionAnswerAdvisor...");
+        log.info("Building ChatClient with full features for Vertex AI...");
         log.info("VectorStore available: {}", vectorStore != null ? "Yes" : "No");
 
         try {
@@ -48,7 +48,8 @@ public class ChatbotConfig {
 
             return ChatClient.builder(chatModel)
                     .defaultSystem(PromptTemplates.defaultChatBotPrompt)
-                    .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build(), // Memory advisor
+                    .defaultAdvisors(
+                            MessageChatMemoryAdvisor.builder(chatMemory).build(), // Memory advisor
                             qaAdvisor) // RAG advisor
                     .defaultTools(chatbotTools)
                     .build();

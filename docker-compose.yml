@@ -7,17 +7,19 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./backend/ecommforall-ai-key.json:/app/ecommforall-ai-key.json
+      - ./backend/ecommforall-ai-key.json:/app/ecommforall-ai-key.json:ro
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommforall
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      GOOGLE_CLOUD_PROJECT_ID: ecommforall-ai
+      GOOGLE_CLOUD_LOCATION: europe-west4
       GOOGLE_APPLICATION_CREDENTIALS: /app/ecommforall-ai-key.json
     depends_on:
     - db
 
   db:
-    image: postgres:15
+    image: pgvector/pgvector:pg15
     restart: always
     environment:
       POSTGRES_DB: ecommforall
@@ -31,8 +33,6 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres -d ecommforall"]
       interval: 10s
       retries: 5
-    commands: >
-      postgres -c shared_preload_libraries=pgvector
   frontend:
     build: ./frontend
     ports:

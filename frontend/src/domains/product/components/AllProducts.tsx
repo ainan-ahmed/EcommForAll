@@ -73,8 +73,8 @@ export function AllProducts() {
         sort: sortBy,
         name: debouncedNameSearch,
         categoryId: selectedCategory || undefined,
-        minPrice: priceRange[0] > 0 ? priceRange[0] : undefined,
-        maxPrice: priceRange[1] < 1000 ? priceRange[1] : undefined,
+        minPrice: priceRange[0] > 0 ? priceRange[0] : 50,
+        maxPrice: priceRange[1] < 1000 ? priceRange[1] : 1000,
     };
 
     // Fetch products based on filters and pagination

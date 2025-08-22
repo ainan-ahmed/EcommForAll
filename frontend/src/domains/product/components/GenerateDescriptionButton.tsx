@@ -13,10 +13,10 @@ import {
     LoadingOverlay,
     Alert,
 } from "@mantine/core";
-import { useAIDescription } from "../hooks/useAIDescription";
 import { IconBrain, IconRobot, IconWand } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import { ProductDescriptionRequest } from "../types";
+import { useProductDescriptionGenAI } from "../../AI/hooks/useProductDescriptionGenAI";
+import { ProductDescriptionRequest } from "../../AI/types";
 
 interface GenerateDescriptionButtonProps {
     productName: string;
@@ -40,7 +40,7 @@ export function GenerateDescriptionButton({
     const [maxLength, setMaxLength] = useState<number>(150);
     const [targetAudience, setTargetAudience] = useState<string>("");
 
-    const { mutate, isPending, error } = useAIDescription({
+    const { mutate, isPending, error } = useProductDescriptionGenAI({
         onSuccess: (data) => {
             if (data.generatedDescription) {
                 // Apply the description directly
