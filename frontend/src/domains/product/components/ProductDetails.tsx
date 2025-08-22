@@ -86,6 +86,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
             : [];
     }, [product?.images]);
+    console.log("Sorted Images:", sortedImages);
 
     const combinedImages = useMemo(() => {
         if (!selectedVariant || !product) return sortedImages;
