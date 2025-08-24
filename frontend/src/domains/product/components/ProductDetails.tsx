@@ -44,9 +44,10 @@ import {
 } from "../../user/hooks/useWishlist";
 import { addToWishlist, removeFromWishlist } from "../../user/api/wishlistApi";
 import { useQueryClient } from "@tanstack/react-query";
-import { WishlistProductSummary } from "../types";
+import { Product, WishlistProductSummary } from "../types";
 import { useAddToCart } from "../../cart/hooks/useCart";
 import { AddToCartRequest } from "../../cart/types";
+import { useSimilarProducts } from "../../AI/hooks/useSimilarProducts";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
@@ -57,6 +58,13 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
     // 1. Fetch product data using hook
     const { data: product, isLoading, isError } = useProduct(id);
+
+    // fetch similar products
+    const {
+        data: similarProductsResponse,
+        isLoading: isSimilarProductsLoading,
+        isError: isSimilarProductsError,
+    } = useSimilarProducts(id, !!product); // Only fetch similar products after product is loaded
 
     // 2. State hooks
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
@@ -274,6 +282,10 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             });
         }
     };
+
+    function handleViewProduct(id: string): void {
+        navigate({ to: `/products/${id}` });
+    }
 
     // ✅ JSX render comes last
     return (
@@ -656,35 +668,50 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                 You May Also Like
             </Title>
             <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mt="md">
-                {[1, 2, 3, 4].map((i) => (
-                    <Card
-                        key={i}
-                        shadow="sm"
-                        padding="md"
-                        radius="md"
-                        withBorder
-                    >
-                        <Card.Section>
-                            <Image
-                                src={`https://placehold.co/300x200?text=Related+${i}`}
-                                height={160}
-                                alt={`Related product ${i}`}
-                            />
-                        </Card.Section>
-                        <Text fw={500} mt="md" lineClamp={1}>
-                            Related Product {i}
-                        </Text>
-                        <Text mt="xs" c="dimmed" size="sm" lineClamp={1}>
-                            Brief product description
-                        </Text>
-                        <Group justify="space-between" mt="md">
-                            <Text fw={700}>${(19.99 + i).toFixed(2)}</Text>
-                            <Button variant="light" size="xs">
-                                View
-                            </Button>
-                        </Group>
-                    </Card>
-                ))}
+                {isSimilarProductsLoading && <LoadingOverlay visible={true} />}
+                {isSimilarProductsError && (
+                    <Text>Error loading similar products</Text>
+                )}
+                {similarProductsResponse?.similarProducts &&
+                    similarProductsResponse.similarProducts.map(
+                        (product: Product) => (
+                            <Card
+                                key={product.id}
+                                shadow="sm"
+                                padding="md"
+                                radius="md"
+                                withBorder
+                                onClick={() => handleViewProduct(product.id)}
+                            >
+                                <Card.Section>
+                                    <Image
+                                        src={product.primaryImage?.imageUrl}
+                                        height={160}
+                                        alt={product.name}
+                                    />
+                                </Card.Section>
+                                <Text fw={500} mt="md" lineClamp={1}>
+                                    {product.name}
+                                </Text>
+                                <Text
+                                    mt="xs"
+                                    c="dimmed"
+                                    size="sm"
+                                    lineClamp={1}
+                                >
+                                    {product.description}
+                                </Text>
+                                <Group justify="space-between" mt="md">
+                                    <Text fw={700}>
+                                        From ${product.minPrice.toFixed(2)}
+                                    </Text>
+                                    <Button variant="light" size="xs" onClick={() => handleViewProduct(product.id)}>
+                                        View
+                                    </Button>
+                                </Group>
+                            </Card>
+                        )
+                    )}
             </SimpleGrid>
         </Container>
     );
