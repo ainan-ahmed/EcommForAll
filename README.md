@@ -204,7 +204,7 @@ The application automatically initializes:
 -   [ ] **Product Reviews**
 -   [ ] **Order Checkout**
 
-### 🚧 **Phase 2: **
+### 🚧 **Phase 2:**
 
 -   [ ] **Image-Based Product Search** with Vision AI
 -   [ ] **Voice Shopping Assistant** integration
@@ -223,8 +223,7 @@ The application automatically initializes:
 
 ### **LLM Configuration**
 
--   **Primary Model**: Google Vertex AI Gemini Pro
--   **Fallback Model**: Gemini Flash for faster responses
+-   **Primary Model**: Gemini 2.5 pro
 -   **Temperature**: 0.7 for balanced creativity/accuracy
 -   **Max Tokens**: Configurable per use case
 -   **Function Calling**: Custom tools for e-commerce operations
@@ -234,7 +233,6 @@ The application automatically initializes:
 -   **Type**: Sliding window conversation memory
 -   **Storage**: JDBC-based persistent storage
 -   **Window Size**: 20 messages per conversation
--   **Timeout**: 24 hours conversation expiry
 -   **Context**: User preferences and shopping history
 
 ## 🎯 AI API Examples
