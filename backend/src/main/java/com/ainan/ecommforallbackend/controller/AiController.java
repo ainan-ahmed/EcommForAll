@@ -2,11 +2,14 @@ package com.ainan.ecommforallbackend.controller;
 
 import com.ainan.ecommforallbackend.dto.ProductDescriptionRequestDto;
 import com.ainan.ecommforallbackend.dto.ProductDescriptionResponseDto;
+import com.ainan.ecommforallbackend.dto.SimilarProductsResponseDto;
 import com.ainan.ecommforallbackend.service.AiService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -62,4 +65,29 @@ public class AiController {
             return ResponseEntity.status(503).body("AI Service is not operational");
         }
     }
+
+    @GetMapping("/similar-products/{productId}")
+    @Operation(
+            summary = "Find similar products",
+            description = """
+                    Find products similar to the given product using AI embeddings and vector similarity search.
+                    The endpoint uses product features like name, description, category, and price to find 
+                    semantically similar products.
+                    """
+    )
+    public ResponseEntity<SimilarProductsResponseDto> findSimilarProducts(
+            @Parameter(description = "Product ID to find similar products for")
+            @PathVariable UUID productId,
+            @Parameter(description = "Number of similar products to return (default: 5, max: 20)")
+            @RequestParam(defaultValue = "5") @Valid @Min(1) @Max(20) int limit) {
+
+        SimilarProductsResponseDto response = aiService.findSimilarProducts(productId, limit);
+
+        if (response.getSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
 }

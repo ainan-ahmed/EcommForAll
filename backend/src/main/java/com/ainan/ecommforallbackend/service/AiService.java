@@ -5,6 +5,8 @@ import com.ainan.ecommforallbackend.util.PromptTemplates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class AiService {
     private final ProductService productService;
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final VectorStore vectorStore;
 
     public ProductDescriptionResponseDto generateProductDescription(
             ProductDescriptionRequestDto request, UUID productId) {
@@ -52,6 +55,134 @@ public class AiService {
             log.error("Error generating product description: {}", e.getMessage(), e);
             return ProductDescriptionResponseDto.error("Failed to generate product description: " + e.getMessage());
         }
+    }
+
+    public SimilarProductsResponseDto findSimilarProducts(UUID productId, int limit) {
+        try {
+            log.info("Finding similar products for productId: {}", productId);
+
+            // Get the source product
+            ProductDto sourceProduct = productService.getProductById(productId, null);
+            if (sourceProduct == null) {
+                throw new RuntimeException("Product not found with id: " + productId);
+            }
+
+            // Create query text from source product for similarity search
+            String queryText = createProductTextForSimilarity(sourceProduct);
+            log.debug("Query text for similarity search: {}", queryText);
+            
+            // Use VectorStore's built-in similarity search
+            List<Document> similarDocuments = vectorStore.similaritySearch(queryText);
+
+            // Convert documents to ProductDto
+            List<ProductDto> similarProducts = convertDocumentsToProductDtos(similarDocuments, productId, limit);
+
+            return SimilarProductsResponseDto.builder()
+                    .success(true)
+                    .message("Similar products found successfully")
+                    .sourceProductId(productId)
+                    .sourceProductName(sourceProduct.getName())
+                    .similarProducts(similarProducts)
+                    .totalFound(similarProducts.size())
+                    .build();
+
+        } catch (Exception e) {
+            log.error("Error finding similar products for productId: {}", productId, e);
+            return SimilarProductsResponseDto.builder()
+                    .success(false)
+                    .message("Failed to find similar products: " + e.getMessage())
+                    .sourceProductId(productId)
+                    .build();
+        }
+    }
+
+    private String createProductTextForSimilarity(ProductDto product) {
+        StringBuilder queryText = new StringBuilder();
+
+        if (product.getName() != null) {
+            queryText.append(product.getName()).append(" ");
+        }
+
+        if (product.getDescription() != null) {
+            queryText.append(product.getDescription()).append(" ");
+        }
+
+        // Add category and brand names if available
+        String categoryName = fetchCategoryName(product.getCategoryId());
+        if (categoryName != null) {
+            queryText.append(categoryName).append(" ");
+        }
+
+        String brandName = fetchBrandName(product.getBrandId());
+        if (brandName != null) {
+            queryText.append(brandName);
+        }
+
+        return queryText.toString().trim();
+    }
+
+    private List<ProductDto> convertDocumentsToProductDtos(List<Document> documents, UUID excludeProductId, int limit) {
+        return documents.stream()
+                .filter(doc -> {
+                    String docProductId = doc.getMetadata().get("productId").toString();
+                    return !excludeProductId.toString().equals(docProductId);
+                })
+                .limit(limit)
+                .map(this::convertDocumentToProductDto)
+                .filter(dto -> dto != null)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    private ProductDto convertDocumentToProductDto(Document document) {
+        try {
+            String productIdStr = document.getMetadata().get("productId").toString();
+            UUID productId = UUID.fromString(productIdStr);
+
+            // Get full product details
+            ProductDto product = productService.getProductById(productId, null);
+
+            if (product == null) {
+                log.warn("Product not found for ID: {}", productId);
+                return null;
+            }
+
+            // Return the existing ProductDto as is - it already contains all necessary fields
+            return product;
+
+        } catch (Exception e) {
+            log.error("Error converting document to ProductDto: {}", e.getMessage(), e);
+            return null;
+        }
+    }
+
+    private Double extractSimilarityScore(Document document) {
+        // Spring AI VectorStore might include similarity score in metadata
+        Object score = document.getMetadata().get("score");
+        if (score != null && score instanceof Number) {
+            return ((Number) score).doubleValue();
+        }
+        return 0.8; // Default similarity score
+    }
+
+    private String truncateDescription(String description, int maxLength) {
+        if (description == null || description.length() <= maxLength) {
+            return description;
+        }
+        return description.substring(0, maxLength) + "...";
+    }
+
+    private String generateSlug(String name) {
+        if (name == null) return null;
+        return name.toLowerCase()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .replaceAll("\\s+", "-")
+                .replaceAll("-+", "-")
+                .replaceAll("^-|-$", "");
+    }
+
+    private String formatPrice(java.math.BigDecimal price) {
+        if (price == null) return null;
+        return String.format("$%.2f", price);
     }
 
     private ProductDescriptionRequestDto applyDefaults(ProductDescriptionRequestDto request) {
@@ -244,3 +375,4 @@ public class AiService {
         }
     }
 }
+
