@@ -29,48 +29,64 @@ This project serves as a comprehensive demonstration of integrating AI/ML techno
 
 This project features a combination of modern tools and practices for web development.
 
-### Core Functionality (Implemented / In Progress):
-* **User Authentication:** Secure registration and login (JWT-based).
-* **Product Management:**
-    * Product listing with pagination and filtering.
-    * Detailed product view.
-    * Creating and editing products (requires admin/seller roles).
-* **Category & Brand Management:** 
-	* Display products by category and brand.
-	* CRUD operations for Category and Brand.
-* **Shopping Cart**: Functionality for adding, removing, and updating items in a cart.
-* **Order Management (Planned):** Checkout process and order history.
+### 🛒 Complete E-commerce Platform:
+
+-   **Authentication & Authorization:** Secure user registration and login with JWT-based authentication
+-   **Product Management:** Full product lifecycle with detailed views, creation, editing, and admin/seller role controls
+-   **Product Variants:** Support for product variations with attributes, pricing, and inventory management
+-   **Brand Management:** Complete CRUD operations for brand management and brand-based product filtering
+-   **Category Management:** Hierarchical category system with CRUD operations and category-based product organization
+-   **Shopping Cart:** Full cart functionality - add, remove, update items with persistent state
+-   **Wishlist System:** Save and manage favorite products across sessions
+-   **Order Management (Planned):** Complete checkout process with order history and tracking
+
+### 🤖 AI-Powered Features:
+
+-   **Intelligent Chatbot:** Conversational shopping assistant powered by Google Vertex AI
+-   **Product Recommendations:** AI-driven similar product suggestions using vector embeddings
+-   **Content Generation:** Automated product description generation with customizable tone and style
+-   **Semantic Search:** Vector-based product search for natural language queries through AI Chatbot
+-   **Conversation Memory:** Persistent chat history with context-aware responses
 
 ### Frontend Stack:
-* **Framework:** ⚛️ React with Vite for a fast development experience.
-* **Language:** ✨ TypeScript for strong typing and better maintainability.
-* **Routing:** 🧭 [TanStack Router](https://github.com/TanStack/router) for type-safe, file-based routing.
-* **Data Fetching & State Management:**
-    * ✳️ [TanStack Query (React Query)](https://github.com/TanStack/query) – Hooks for fetching, caching, and updating asynchronous data.
-    * 🐻 [Zustand](https://github.com/pmndrs/zustand) – A small, fast, and scalable state-management solution for global state (e.g., auth state).
-* **UI Components:** 🎨 [Mantine UI](https://github.com/mantinedev/mantine) – A comprehensive React components library.
-* **Icons:** ✨ [Tabler Icons](https://github.com/tabler/tabler).
-* **Form Validation:**
-    * 📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form)
-    * 🚨 [Zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation
+
+-   **Framework:** ⚛️ React with Vite for a fast development experience.
+-   **Language:** ✨ TypeScript for strong typing and better maintainability.
+-   **Routing:** 🧭 [TanStack Router](https://github.com/TanStack/router) for type-safe, file-based routing.
+-   **Data Fetching & State Management:**
+    -   ✳️ [TanStack Query (React Query)](https://github.com/TanStack/query) – Hooks for fetching, caching, and updating asynchronous data.
+    -   🐻 [Zustand](https://github.com/pmndrs/zustand) – A small, fast, and scalable state-management solution for global state (e.g., auth state).
+-   **UI Components:** 🎨 [Mantine UI](https://github.com/mantinedev/mantine) – A comprehensive React components library.
+-   **Icons:** ✨ [Tabler Icons](https://github.com/tabler/tabler).
+-   **Form Validation:**
+    -   📋 [Mantine Forms](https://www.npmjs.com/package/@mantine/form)
+    -   🚨 [Zod](https://github.com/colinhacks/zod) - TypeScript-first schema validation
 
 ### Backend Stack:
-* **Framework:** 🌱 Spring Boot.
-* **Language:** Java
-* **Build Tool:** 🛠️ Maven.
-* **Database:** 🐘 PostgreSQL.
-* **ORM:** 🍃 Spring Data JPA / Hibernate.
-    * **Security:** 🛡️ Spring Security.
-* **API:** 🌐 RESTful APIs.
+
+-   **Framework:** 🌱 Spring Boot.
+-   **Language:** Java
+-   **Build Tool:** 🛠️ Maven.
+-   **Database:** 🐘 PostgreSQL.
+-   **Vector Database:** [pgvector](https://github.com/pgvector/pgvector)
+-   **ORM:** 🍃 Spring Data JPA / Hibernate.
+-   **Security:** 🛡️ Spring Security.
+-   **API:** 🌐 RESTful APIs.
+-   **Generative AI:** [Spring AI](https://spring.io/projects/spring-ai), [Vertex AI](https://cloud.google.com/vertex-ai?hl=en).
+
 #### DevOps & Tooling:
-* **Containerization:** 🐳 Docker & Docker Compose for consistent development, testing, and deployment environments.
-* **Version Control:** Git & GitHub.
+
+-   **Containerization:** 🐳 Docker & Docker Compose for consistent development, testing, and deployment environments.
+-   **Version Control:** Git & GitHub.
+
 ### Other Features:
-* **Dockerized:** The entire application (frontend, backend, database) is containerized using Docker and orchestrated with `docker-compose` for consistent development and deployment environments.
-* **Responsive Design:** UI designed to adapt to various screen sizes.
-* **Dark Mode Support:** With Dark Mode/Light Mode toggle.
+
+-   **Dockerized:** The entire application (frontend, backend, database) is containerized using Docker and orchestrated with `docker-compose` for consistent development and deployment environments.
+-   **Responsive Design:** UI designed to adapt to various screen sizes.
+-   **Dark Mode Support:** With Dark Mode/Light Mode toggle.
 
 ## Project Structure
+
 See [Project Structure](https://github.com/ainan-ahmed/EcommForAll/blob/main/PROJECT-STRUCTURE.MD)
 
 ## 🚀 Getting Started
@@ -79,21 +95,23 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Node.js (v18.x or later recommended)
-* npm / yarn / pnpm (choose one)
-* Java JDK (version 17 or later for Spring Boot)
-* Maven
-* Docker & Docker Compose
+-   Node.js (v18.x or later recommended)
+-   npm / yarn / pnpm (choose one)
+-   Java JDK (version 17 or later for Spring Boot)
+-   Maven
+-   Docker & Docker Compose
 
 ### Installation
 
 1. **Clone the repository:**
+
 ```bash
 git clone https://github.com/ainan-ahmed/EcommForAll.git
 cd EcommForAll
 ```
 
 2. **Google Cloud Setup:**
+
 ```bash
 # Install Google Cloud CLI and authenticate
 gcloud auth login
@@ -113,6 +131,7 @@ gcloud iam.service-accounts keys create ecommforall-ai-key.json \
 ```
 
 3. **Backend Setup:**
+
 ```bash
 cd backend
 
@@ -131,6 +150,7 @@ mvn spring-boot:run
 ```
 
 4. **Frontend Setup:**
+
 ```bash
 cd frontend
 npm install
@@ -154,6 +174,7 @@ docker-compose up --build
 ### 🤖 AI Configuration
 
 Create `.env.ai` file in the backend directory:
+
 ```bash
 GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
 GCLOUD_PROJECT=your-project-id
@@ -163,13 +184,63 @@ VERTEX_AI_LOCATION=europe-west1
 ### 📊 Database Setup
 
 The application automatically initializes:
-- **Product vector embeddings** for semantic search
-- **Conversation memory tables** for chatbot history
-- **Sample data** with AI-generated content
+
+-   **Product vector embeddings** for semantic search(through admin endpoint)
+-   **Conversation memory tables** for chatbot history
+-   **Sample data** with AI-generated content
+
+## 🗺️ Roadmap
+
+### ✅ **Phase 1: Core E-commerce + AI Foundation (Current)**
+
+-   [x] **User Authentication & Authorization** with JWT
+-   [x] **Product Management** with categories, variants, and attributes
+-   [x] **Shopping Cart & Wishlist** functionality
+-   [x] **AI-Powered Chatbot** with Vertex AI integration
+-   [x] **Vector-Based Product Search** with pgvector
+-   [x] **AI Content Generation** for product descriptions
+-   [x] **Conversation Memory** and context management
+-   [ ] **Admin Panel** 
+-   [ ] **Product Reviews**
+-   [ ] **Order Checkout**
+
+### 🚧 **Phase 2: **
+
+-   [ ] **Image-Based Product Search** with Vision AI
+-   [ ] **Voice Shopping Assistant** integration
+-   [ ] **Sentiment Analysis** for reviews and feedback
+
+## 🏛️ AI Architecture Details
+
+### **Vector Store Configuration**
+
+-   **Database**: PostgreSQL with pgvector extension
+-   **Embedding Model**: Google Text Embedding 005
+-   **Dimensions**: 768-dimensional vectors
+-   **Index Type**: HNSW (Hierarchical Navigable Small World)
+-   **Distance Metric**: Cosine similarity
+-   **Batch Size**: 10,000 documents per batch
+
+### **LLM Configuration**
+
+-   **Primary Model**: Google Vertex AI Gemini Pro
+-   **Fallback Model**: Gemini Flash for faster responses
+-   **Temperature**: 0.7 for balanced creativity/accuracy
+-   **Max Tokens**: Configurable per use case
+-   **Function Calling**: Custom tools for e-commerce operations
+
+### **Memory Management**
+
+-   **Type**: Sliding window conversation memory
+-   **Storage**: JDBC-based persistent storage
+-   **Window Size**: 20 messages per conversation
+-   **Timeout**: 24 hours conversation expiry
+-   **Context**: User preferences and shopping history
 
 ## 🎯 AI API Examples
 
 ### Chatbot Interaction
+
 ```bash
 curl -X POST "http://localhost:8080/api/chatbot/chat" \
   -H "Content-Type: application/json" \
@@ -181,6 +252,7 @@ curl -X POST "http://localhost:8080/api/chatbot/chat" \
 ```
 
 ### Generate Product Description
+
 ```bash
 curl -X POST "http://localhost:8080/api/ai/generate-description" \
   -H "Content-Type: application/json" \
@@ -194,64 +266,17 @@ curl -X POST "http://localhost:8080/api/ai/generate-description" \
   }'
 ```
 
-### Semantic Product Search
-```bash
-curl -X GET "http://localhost:8080/api/products/search?q=comfortable+running+shoes" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
-
-## 🗺️ Roadmap
-
-### ✅ **Phase 1: Core E-commerce + AI Foundation (Current)**
-- [x] **User Authentication & Authorization** with JWT
-- [x] **Product Management** with categories, variants, and attributes
-- [x] **Shopping Cart & Wishlist** functionality
-- [x] **AI-Powered Chatbot** with Vertex AI integration
-- [x] **Vector-Based Product Search** with pgvector
-- [x] **AI Content Generation** for product descriptions
-- [x] **Conversation Memory** and context management
-- [ ] **Admin Panel** with AI management tools
-
-### 🚧 **Phase 2: **
-- [ ] **Personalized Recommendations** using collaborative filtering
-- [ ] **Image-Based Product Search** with Vision AI
-- [ ] **Voice Shopping Assistant** integration
-- [ ] **Sentiment Analysis** for reviews and feedback
-
-## 🏛️ AI Architecture Details
-
-### **Vector Store Configuration**
-- **Database**: PostgreSQL with pgvector extension
-- **Embedding Model**: Google Text Embedding 005
-- **Dimensions**: 768-dimensional vectors
-- **Index Type**: HNSW (Hierarchical Navigable Small World)
-- **Distance Metric**: Cosine similarity
-- **Batch Size**: 10,000 documents per batch
-
-### **LLM Configuration**
-- **Primary Model**: Google Vertex AI Gemini Pro
-- **Fallback Model**: Gemini Flash for faster responses
-- **Temperature**: 0.7 for balanced creativity/accuracy
-- **Max Tokens**: Configurable per use case
-- **Function Calling**: Custom tools for e-commerce operations
-
-### **Memory Management**
-- **Type**: Sliding window conversation memory
-- **Storage**: JDBC-based persistent storage
-- **Window Size**: 20 messages per conversation
-- **Timeout**: 24 hours conversation expiry
-- **Context**: User preferences and shopping history
-
 ## 📚 Documentation
 
-- **[AI Service Documentation](backend/AI_SERVICE_README.md)** - Detailed AI features and API reference
-- **[Project Structure](PROJECT-STRUCTURE.MD)** - Complete codebase organization
-- **[API Endpoints](backend/API_ENDPOINTS.md)** - Comprehensive API documentation
-- **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
+-   **[AI Service Documentation](backend/AI_SERVICE_README.md)** - Detailed AI features and API reference
+-   **[Project Structure](PROJECT-STRUCTURE.MD)** - Complete codebase organization
+-   **[API Endpoints](backend/API_ENDPOINTS.md)** - Comprehensive API documentation
+-   **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
 
 ## 🛠️ Advanced Configuration
 
 ### Environment Variables
+
 ```bash
 # AI Configuration
 GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
@@ -273,6 +298,7 @@ JWT_EXPIRATION=86400000
 ```
 
 ### Docker Configuration
+
 ```yaml
 # docker-compose.yml includes:
 - PostgreSQL with pgvector extension
@@ -292,24 +318,28 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) f
 ## 🙏 Acknowledgements
 
 ### **AI & ML Technologies**
-* [Spring AI](https://spring.io/projects/spring-ai) - AI integration framework
-* [Google Vertex AI](https://cloud.google.com/vertex-ai) - Machine learning platform
-* [pgvector](https://github.com/pgvector/pgvector) - Vector similarity search for PostgreSQL
+
+-   [Spring AI](https://spring.io/projects/spring-ai) - AI integration framework
+-   [Google Vertex AI](https://cloud.google.com/vertex-ai) - Machine learning platform
+-   [pgvector](https://github.com/pgvector/pgvector) - Vector similarity search for PostgreSQL
 
 ### **Frontend Technologies**
-* [Mantine UI](https://mantine.dev/) - React components library
-* [TanStack Router](https://tanstack.com/router/) - Type-safe routing
-* [TanStack Query](https://tanstack.com/query/) - Data fetching and caching
-* [Zustand](https://github.com/pmndrs/zustand) - State management
+
+-   [Mantine UI](https://mantine.dev/) - React components library
+-   [TanStack Router](https://tanstack.com/router/) - Type-safe routing
+-   [TanStack Query](https://tanstack.com/query/) - Data fetching and caching
+-   [Zustand](https://github.com/pmndrs/zustand) - State management
 
 ### **Backend Technologies**
-* [Spring Boot](https://spring.io/projects/spring-boot) - Application framework
-* [PostgreSQL](https://postgresql.org/) - Database with vector extensions
-* [Vite](https://vitejs.dev/) - Build tool and development server
+
+-   [Spring Boot](https://spring.io/projects/spring-boot) - Application framework
+-   [PostgreSQL](https://postgresql.org/) - Database with vector extensions
+-   [Vite](https://vitejs.dev/) - Build tool and development server
 
 ### **Infrastructure**
-* [Docker](https://docker.com/) - Containerization platform
-* [AWS S3](https://aws.amazon.com/s3/) - Cloud storage service
+
+-   [Docker](https://docker.com/) - Containerization platform
+-   [AWS S3](https://aws.amazon.com/s3/) - Cloud storage service
 
 ---
 
