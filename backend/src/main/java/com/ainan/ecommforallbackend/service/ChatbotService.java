@@ -83,6 +83,9 @@ public class ChatbotService {
             log.error("Invalid request: {}", e.getMessage());
 
             // For validation errors, don't store anything in memory
+            if (conversationId != null) {
+                removeLastUserMessageFromMemory(conversationId, request.getMessage());
+            }
             return ChatResponseDto.error(
                     conversationId != null ? conversationId : UUID.randomUUID(),
                     "Please provide a valid message.");
@@ -91,7 +94,7 @@ public class ChatbotService {
 
             // CRITICAL: Remove the user message that was auto-stored but failed to process
             if (conversationId != null) {
-                removeLastUserMessageFromMemory(conversationId);
+                removeLastUserMessageFromMemory(conversationId, request.getMessage());
             }
 
             return ChatResponseDto.error(
@@ -176,15 +179,17 @@ public class ChatbotService {
         return dto;
     }
 
-    private void removeLastUserMessageFromMemory(UUID conversationId) {
+    private void removeLastUserMessageFromMemory(UUID conversationId, String userMessage) {
         try {
+            // check whether last message is actually last valid message, or the failed one
+
             // Get current conversation history
             List<Message> messages = chatMemory.get(conversationId.toString());
 
             if (!messages.isEmpty()) {
                 // Remove the last message if it's from user (the failed one)
                 Message lastMessage = messages.get(messages.size() - 1);
-                if (lastMessage.getMessageType() == MessageType.USER) {
+                if (lastMessage.getMessageType() == MessageType.USER && lastMessage.getText().equals(userMessage)) {
                     // Clear and rebuild memory without the last user message
                     chatMemory.clear(conversationId.toString());
 

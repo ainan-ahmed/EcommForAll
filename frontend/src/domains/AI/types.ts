@@ -1,4 +1,4 @@
-import { ProductVariant } from "../product/types";
+import { Product, ProductVariant } from "../product/types";
 
 export interface ProductDescriptionRequest {
     productName: string;
@@ -54,4 +54,14 @@ export interface ChatResponse {
 export interface ChatHistory {
     conversationId: string;
     messages: ChatMessage[];
+}
+
+
+export interface similarProductsResponse {
+    success: boolean;
+    message: string;
+    sourceProductId: string;
+    sourceProductName: string;
+    similarProducts: Product[];
+    totalFound: number;
 }
