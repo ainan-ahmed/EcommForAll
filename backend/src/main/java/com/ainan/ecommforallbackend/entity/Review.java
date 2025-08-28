@@ -1,7 +1,5 @@
 package com.ainan.ecommforallbackend.entity;
 
-import com.ainan.ecommforallbackend.entity.Product;
-import com.ainan.ecommforallbackend.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +23,7 @@ public class Review {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false, updatable = false)
     private Product product;
 
     @ManyToOne
@@ -32,9 +31,11 @@ public class Review {
     private User user;
 
     private Integer rating;  // 1-5
+    @Column(name = "title", nullable = false)
     private String title;
+    @Column(name = "comment", nullable = false, length = 2000)
     private String comment;
-    private Boolean isApproved = false;
+    private Boolean isApproved = true;
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
