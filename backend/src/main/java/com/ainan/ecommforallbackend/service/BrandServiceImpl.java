@@ -21,37 +21,38 @@ public class BrandServiceImpl implements BrandService {
     private final BrandRepository brandRepository;
     private final ProductRepository productRepository;
     private final S3Service s3Service;
+
     @Override
     public Page<BrandDto> getAllBrands(Pageable pageable) {
-        Page<BrandDto> brands = brandRepository.findAll(pageable)
+        return brandRepository.findAll(pageable)
                 .map(brand -> {
                     BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
                     dto.setProductCount((int) productRepository.countByBrandId(dto.getId()));
                     return convertImageToPresignedUrl(dto);
                 });
-        return brands;
     }
+
     @Override
     public Page<BrandDto> getAllActiveBrands(Pageable pageable) {
-        Page<BrandDto> brands = brandRepository.findByIsActiveTrue(pageable)
+        return brandRepository.findByIsActiveTrue(pageable)
                 .map(brand -> {
                     BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
                     dto.setProductCount((int) productRepository.countByBrandId(dto.getId()));
                     return convertImageToPresignedUrl(dto);
                 });
-        return brands;
     }
 
     @Override
     public BrandDto getBrandById(UUID id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: " + id));
         BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
         dto.setProductCount((int) productRepository.countByBrandId(id));
         return convertImageToPresignedUrl(dto);
     }
+
     @Override
     public BrandDto getBrandByName(String name) {
-        Brand brand = brandRepository.findByNameIgnoreCase(name).orElseThrow(() -> new RuntimeException("Brand not found with name: "+ name));
+        Brand brand = brandRepository.findByNameIgnoreCase(name).orElseThrow(() -> new RuntimeException("Brand not found with name: " + name));
         BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(brand);
         dto.setProductCount((int) productRepository.countByBrandId(brand.getId()));
         return convertImageToPresignedUrl(dto);
@@ -60,9 +61,10 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public BrandDto createBrand(BrandCreateDto brandDto) {
-        if(brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
-            throw new RuntimeException("Brand already exists with name: "+ brandDto.getName());
-        };
+        if (brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()) {
+            throw new RuntimeException("Brand already exists with name: " + brandDto.getName());
+        }
+        ;
         Brand brand = BrandMapper.INSTANCE.BrandCreateDtoToBrand(brandDto);
         brand.setIsActive(true);
         Brand savedBrand = brandRepository.save(brand);
@@ -73,11 +75,12 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public BrandDto updateBrand(UUID id, BrandDto brandDto) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
-        if(!brand.getName().equalsIgnoreCase(brandDto.getName()) &&brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()){
-            throw new RuntimeException("Brand already exists with name: "+ brandDto.getName());
-        };
-        BrandMapper.INSTANCE.BrandDtoToBrand(brandDto,brand);
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: " + id));
+        if (!brand.getName().equalsIgnoreCase(brandDto.getName()) && brandRepository.findByNameIgnoreCase(brandDto.getName()).isPresent()) {
+            throw new RuntimeException("Brand already exists with name: " + brandDto.getName());
+        }
+        ;
+        BrandMapper.INSTANCE.BrandDtoToBrand(brandDto, brand);
         Brand updatedBrand = brandRepository.save(brand);
         BrandDto dto = BrandMapper.INSTANCE.BrandToBrandDto(updatedBrand);
 
@@ -87,10 +90,11 @@ public class BrandServiceImpl implements BrandService {
     @Override
     @Transactional
     public void deleteBrand(UUID id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: "+ id));
+        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found with id: " + id));
         brand.setIsActive(false);
         brandRepository.save(brand);
     }
+
     private BrandDto convertImageToPresignedUrl(BrandDto brandDto) {
         if (brandDto != null && brandDto.getImageUrl() != null) {
             String imageUrl = brandDto.getImageUrl();
