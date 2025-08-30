@@ -12,12 +12,19 @@ export const API = {
             LOGOUT: "/auth/logout",
             VALIDATE: "/auth/validate",
             CURRENT_USER: "/auth/user",
+            FORGOT_PASSWORD: "/auth/forgot-password",
+            RESET_PASSWORD: "/auth/reset-password",
         },
         CHATBOT: {
             CHAT_HISTORY: "/chatbot/chat",
             SEND_MESSAGE: "/chatbot/chat",
             CLEAR_CONVERSATION: "/chatbot/chat",
             HEALTH: "/chatbot/health",
+        },
+        REVIEW: {
+            PRODUCT_REVIEWS: "/review",
+            CREATE_REVIEW: "/review/review/create",
+            DELETE_REVIEW: "/review/review",
         },
     },
 };

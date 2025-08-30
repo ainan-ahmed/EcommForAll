@@ -13,8 +13,10 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as resetPasswordImport } from './routes/reset-password'
 import { Route as registerImport } from './routes/register'
 import { Route as loginImport } from './routes/login'
+import { Route as forgotPasswordImport } from './routes/forgot-password'
 import { Route as cartImport } from './routes/cart'
 import { Route as aboutImport } from './routes/about'
 import { Route as indexImport } from './routes/index'
@@ -57,6 +59,12 @@ const WishlistsRoute = WishlistsImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const resetPasswordRoute = resetPasswordImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const registerRoute = registerImport.update({
   id: '/register',
   path: '/register',
@@ -78,6 +86,12 @@ const ProductsRoute = ProductsImport.update({
 const loginRoute = loginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const forgotPasswordRoute = forgotPasswordImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -273,6 +287,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesImport
       parentRoute: typeof rootRoute
     }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof forgotPasswordImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -299,6 +320,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof registerImport
+      parentRoute: typeof rootRoute
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof resetPasswordImport
       parentRoute: typeof rootRoute
     }
     '/wishlists': {
@@ -587,10 +615,12 @@ export interface FileRoutesByFullPath {
   '/brands': typeof BrandsRouteWithChildren
   '/cart': typeof cartRoute
   '/categories': typeof CategoriesRouteWithChildren
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
   '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
+  '/reset-password': typeof resetPasswordRoute
   '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
   '/brands/new': typeof brandsNewRoute
@@ -618,8 +648,10 @@ export interface FileRoutesByTo {
   '/': typeof indexRoute
   '/about': typeof aboutRoute
   '/cart': typeof cartRoute
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
   '/register': typeof registerRoute
+  '/reset-password': typeof resetPasswordRoute
   '/brands/new': typeof brandsNewRoute
   '/categories/new': typeof categoriesNewRoute
   '/products/new': typeof productsNewRoute
@@ -645,10 +677,12 @@ export interface FileRoutesById {
   '/brands': typeof BrandsRouteWithChildren
   '/cart': typeof cartRoute
   '/categories': typeof CategoriesRouteWithChildren
+  '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
   '/products': typeof ProductsRouteWithChildren
   '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
+  '/reset-password': typeof resetPasswordRoute
   '/wishlists': typeof WishlistsRouteWithChildren
   '/brands/$brandId': typeof BrandsBrandIdRouteWithChildren
   '/brands/new': typeof brandsNewRoute
@@ -680,10 +714,12 @@ export interface FileRouteTypes {
     | '/brands'
     | '/cart'
     | '/categories'
+    | '/forgot-password'
     | '/login'
     | '/products'
     | '/profile'
     | '/register'
+    | '/reset-password'
     | '/wishlists'
     | '/brands/$brandId'
     | '/brands/new'
@@ -710,8 +746,10 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/cart'
+    | '/forgot-password'
     | '/login'
     | '/register'
+    | '/reset-password'
     | '/brands/new'
     | '/categories/new'
     | '/products/new'
@@ -735,10 +773,12 @@ export interface FileRouteTypes {
     | '/brands'
     | '/cart'
     | '/categories'
+    | '/forgot-password'
     | '/login'
     | '/products'
     | '/profile'
     | '/register'
+    | '/reset-password'
     | '/wishlists'
     | '/brands/$brandId'
     | '/brands/new'
@@ -769,10 +809,12 @@ export interface RootRouteChildren {
   BrandsRoute: typeof BrandsRouteWithChildren
   cartRoute: typeof cartRoute
   CategoriesRoute: typeof CategoriesRouteWithChildren
+  forgotPasswordRoute: typeof forgotPasswordRoute
   loginRoute: typeof loginRoute
   ProductsRoute: typeof ProductsRouteWithChildren
   ProfileRoute: typeof ProfileRouteWithChildren
   registerRoute: typeof registerRoute
+  resetPasswordRoute: typeof resetPasswordRoute
   WishlistsRoute: typeof WishlistsRouteWithChildren
 }
 
@@ -782,10 +824,12 @@ const rootRouteChildren: RootRouteChildren = {
   BrandsRoute: BrandsRouteWithChildren,
   cartRoute: cartRoute,
   CategoriesRoute: CategoriesRouteWithChildren,
+  forgotPasswordRoute: forgotPasswordRoute,
   loginRoute: loginRoute,
   ProductsRoute: ProductsRouteWithChildren,
   ProfileRoute: ProfileRouteWithChildren,
   registerRoute: registerRoute,
+  resetPasswordRoute: resetPasswordRoute,
   WishlistsRoute: WishlistsRouteWithChildren,
 }
 
@@ -804,10 +848,12 @@ export const routeTree = rootRoute
         "/brands",
         "/cart",
         "/categories",
+        "/forgot-password",
         "/login",
         "/products",
         "/profile",
         "/register",
+        "/reset-password",
         "/wishlists"
       ]
     },
@@ -836,6 +882,9 @@ export const routeTree = rootRoute
         "/categories/"
       ]
     },
+    "/forgot-password": {
+      "filePath": "forgot-password.tsx"
+    },
     "/login": {
       "filePath": "login.tsx"
     },
@@ -856,6 +905,9 @@ export const routeTree = rootRoute
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/reset-password": {
+      "filePath": "reset-password.tsx"
     },
     "/wishlists": {
       "filePath": "",

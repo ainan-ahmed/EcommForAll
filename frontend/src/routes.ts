@@ -6,6 +6,8 @@ export const routes = rootRoute("__root.tsx", [
     index("index.tsx"),
     route("/login", "login.tsx"),
     route("/register", "register.tsx"),
+    route("/forgot-password", "forgot-password.tsx"),
+    route("/reset-password", "reset-password.tsx"),
     route("/cart", "cart.tsx"),
 
     // Products section

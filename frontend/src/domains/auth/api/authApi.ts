@@ -1,5 +1,12 @@
 import { API } from "../../../config/api.ts";
-import { LoginFormValues, RegisterFormValues } from "../types.ts";
+import { 
+    LoginFormValues, 
+    RegisterFormValues, 
+    ForgotPasswordFormValues, 
+    ResetPasswordFormValues,
+    ForgotPasswordResponse,
+    ResetPasswordResponse
+} from "../types.ts";
 
 export async function login(data: LoginFormValues) {
     console.log("Login data:", data); // Debugging line to check the data being sent
@@ -76,6 +83,36 @@ export async function getCurrentUser() {
 
     if (!response.ok) {
         throw new Error("Failed to fetch current user");
+    }
+
+    return response.json();
+}
+
+export async function forgotPassword(data: ForgotPasswordFormValues): Promise<ForgotPasswordResponse> {
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.FORGOT_PASSWORD}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to send reset email");
+    }
+
+    return response.json();
+}
+
+export async function resetPassword(data: ResetPasswordFormValues): Promise<ResetPasswordResponse> {
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.RESET_PASSWORD}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Failed to reset password");
     }
 
     return response.json();
