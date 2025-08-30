@@ -48,6 +48,7 @@ import { Product, WishlistProductSummary } from "../types";
 import { useAddToCart } from "../../cart/hooks/useCart";
 import { AddToCartRequest } from "../../cart/types";
 import { useSimilarProducts } from "../../AI/hooks/useSimilarProducts";
+import { ReviewsSection } from "../../review/components/ReviewsSection";
 
 interface ProductDetailsProps {
     id: string; // Accept ID instead of product
@@ -657,9 +658,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                 </Tabs.Panel>
 
                 <Tabs.Panel value="reviews" pt="xl">
-                    <Paper p="md">
-                        <Text>Customer reviews would be displayed here.</Text>
-                    </Paper>
+                    <ReviewsSection productId={id} />
                 </Tabs.Panel>
             </Tabs>
 
