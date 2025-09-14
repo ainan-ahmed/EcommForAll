@@ -27,7 +27,7 @@ export const routes = rootRoute("__root.tsx", [
         route("/$categorySlug", [
             index("categories/$categorySlug/index.tsx"),
             route("/edit", "categories/$categorySlug/edit.tsx"),
-        ])
+        ]),
     ]),
 
     // brands section
@@ -37,19 +37,24 @@ export const routes = rootRoute("__root.tsx", [
         route("/$brandId", [
             index("brands/$brandId/index.tsx"),
             route("/edit", "brands/$brandId/edit.tsx"),
-        ])
+        ]),
     ]),
     // wishlists section
     route("/wishlists", [
         index("wishlists/index.tsx"),
-        route("/$wishlistId", [
-            index("wishlists/$wishlistId/index.tsx")
-        ])
+        route("/$wishlistId", [index("wishlists/$wishlistId/index.tsx")]),
     ]),
+    // orders section
+    route("/orders", [
+        index("orders/index.tsx"),
+        route("/checkout", "orders/checkout.tsx"),
+        route("/admin", "orders/admin.tsx"),
+        route("/$orderId", [index("orders/$orderId/index.tsx")]),
+    ]),
+
     // profile section
     route("/profile", [
         index("profile/index.tsx"),
         route("/edit", "profile/edit.tsx"),
     ]),
-
 ]);

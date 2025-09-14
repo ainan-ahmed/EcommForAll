@@ -1,11 +1,11 @@
 // src/domains/cart/api/cartApi.ts
-import { API } from "../../config/api";
+import { API } from "../../../config/api";
 import {
     Cart,
     CartItem,
     AddToCartRequest,
     UpdateCartItemRequest,
-} from "./types";
+} from "../types";
 
 /**
  * Get current user's cart
