@@ -23,14 +23,18 @@ import { Route as indexImport } from './routes/index'
 import { Route as wishlistsIndexImport } from './routes/wishlists/index'
 import { Route as profileIndexImport } from './routes/profile/index'
 import { Route as productsIndexImport } from './routes/products/index'
+import { Route as ordersIndexImport } from './routes/orders/index'
 import { Route as categoriesIndexImport } from './routes/categories/index'
 import { Route as brandsIndexImport } from './routes/brands/index'
 import { Route as profileEditImport } from './routes/profile/edit'
 import { Route as productsNewImport } from './routes/products/new'
+import { Route as ordersCheckoutImport } from './routes/orders/checkout'
+import { Route as ordersAdminImport } from './routes/orders/admin'
 import { Route as categoriesNewImport } from './routes/categories/new'
 import { Route as brandsNewImport } from './routes/brands/new'
 import { Route as wishlistsWishlistIdIndexImport } from './routes/wishlists/$wishlistId/index'
 import { Route as productsProductIdIndexImport } from './routes/products/$productId/index'
+import { Route as ordersOrderIdIndexImport } from './routes/orders/$orderId/index'
 import { Route as categoriesCategorySlugIndexImport } from './routes/categories/$categorySlug/index'
 import { Route as brandsBrandIdIndexImport } from './routes/brands/$brandId/index'
 import { Route as productsProductIdEditImport } from './routes/products/$productId/edit'
@@ -42,10 +46,12 @@ import { Route as brandsBrandIdEditImport } from './routes/brands/$brandId/edit'
 const WishlistsImport = createFileRoute('/wishlists')()
 const ProfileImport = createFileRoute('/profile')()
 const ProductsImport = createFileRoute('/products')()
+const OrdersImport = createFileRoute('/orders')()
 const CategoriesImport = createFileRoute('/categories')()
 const BrandsImport = createFileRoute('/brands')()
 const WishlistsWishlistIdImport = createFileRoute('/wishlists/$wishlistId')()
 const ProductsProductIdImport = createFileRoute('/products/$productId')()
+const OrdersOrderIdImport = createFileRoute('/orders/$orderId')()
 const CategoriesCategorySlugImport = createFileRoute(
   '/categories/$categorySlug',
 )()
@@ -80,6 +86,12 @@ const ProfileRoute = ProfileImport.update({
 const ProductsRoute = ProductsImport.update({
   id: '/products',
   path: '/products',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OrdersRoute = OrdersImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -143,6 +155,12 @@ const productsIndexRoute = productsIndexImport.update({
   getParentRoute: () => ProductsRoute,
 } as any)
 
+const ordersIndexRoute = ordersIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdersRoute,
+} as any)
+
 const categoriesIndexRoute = categoriesIndexImport.update({
   id: '/',
   path: '/',
@@ -179,6 +197,24 @@ const ProductsProductIdRoute = ProductsProductIdImport.update({
   getParentRoute: () => ProductsRoute,
 } as any)
 
+const ordersCheckoutRoute = ordersCheckoutImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => OrdersRoute,
+} as any)
+
+const ordersAdminRoute = ordersAdminImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => OrdersRoute,
+} as any)
+
+const OrdersOrderIdRoute = OrdersOrderIdImport.update({
+  id: '/$orderId',
+  path: '/$orderId',
+  getParentRoute: () => OrdersRoute,
+} as any)
+
 const categoriesNewRoute = categoriesNewImport.update({
   id: '/new',
   path: '/new',
@@ -213,6 +249,12 @@ const productsProductIdIndexRoute = productsProductIdIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ProductsProductIdRoute,
+} as any)
+
+const ordersOrderIdIndexRoute = ordersOrderIdIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OrdersOrderIdRoute,
 } as any)
 
 const categoriesCategorySlugIndexRoute =
@@ -301,6 +343,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof loginImport
       parentRoute: typeof rootRoute
     }
+    '/orders': {
+      id: '/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof OrdersImport
+      parentRoute: typeof rootRoute
+    }
     '/products': {
       id: '/products'
       path: '/products'
@@ -364,6 +413,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof categoriesNewImport
       parentRoute: typeof CategoriesImport
     }
+    '/orders/$orderId': {
+      id: '/orders/$orderId'
+      path: '/$orderId'
+      fullPath: '/orders/$orderId'
+      preLoaderRoute: typeof OrdersOrderIdImport
+      parentRoute: typeof OrdersImport
+    }
+    '/orders/admin': {
+      id: '/orders/admin'
+      path: '/admin'
+      fullPath: '/orders/admin'
+      preLoaderRoute: typeof ordersAdminImport
+      parentRoute: typeof OrdersImport
+    }
+    '/orders/checkout': {
+      id: '/orders/checkout'
+      path: '/checkout'
+      fullPath: '/orders/checkout'
+      preLoaderRoute: typeof ordersCheckoutImport
+      parentRoute: typeof OrdersImport
+    }
     '/products/$productId': {
       id: '/products/$productId'
       path: '/$productId'
@@ -405,6 +475,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories/'
       preLoaderRoute: typeof categoriesIndexImport
       parentRoute: typeof CategoriesImport
+    }
+    '/orders/': {
+      id: '/orders/'
+      path: '/'
+      fullPath: '/orders/'
+      preLoaderRoute: typeof ordersIndexImport
+      parentRoute: typeof OrdersImport
     }
     '/products/': {
       id: '/products/'
@@ -461,6 +538,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/categories/$categorySlug/'
       preLoaderRoute: typeof categoriesCategorySlugIndexImport
       parentRoute: typeof CategoriesCategorySlugImport
+    }
+    '/orders/$orderId/': {
+      id: '/orders/$orderId/'
+      path: '/'
+      fullPath: '/orders/$orderId/'
+      preLoaderRoute: typeof ordersOrderIdIndexImport
+      parentRoute: typeof OrdersOrderIdImport
     }
     '/products/$productId/': {
       id: '/products/$productId/'
@@ -542,6 +626,35 @@ const CategoriesRouteWithChildren = CategoriesRoute._addFileChildren(
   CategoriesRouteChildren,
 )
 
+interface OrdersOrderIdRouteChildren {
+  ordersOrderIdIndexRoute: typeof ordersOrderIdIndexRoute
+}
+
+const OrdersOrderIdRouteChildren: OrdersOrderIdRouteChildren = {
+  ordersOrderIdIndexRoute: ordersOrderIdIndexRoute,
+}
+
+const OrdersOrderIdRouteWithChildren = OrdersOrderIdRoute._addFileChildren(
+  OrdersOrderIdRouteChildren,
+)
+
+interface OrdersRouteChildren {
+  OrdersOrderIdRoute: typeof OrdersOrderIdRouteWithChildren
+  ordersAdminRoute: typeof ordersAdminRoute
+  ordersCheckoutRoute: typeof ordersCheckoutRoute
+  ordersIndexRoute: typeof ordersIndexRoute
+}
+
+const OrdersRouteChildren: OrdersRouteChildren = {
+  OrdersOrderIdRoute: OrdersOrderIdRouteWithChildren,
+  ordersAdminRoute: ordersAdminRoute,
+  ordersCheckoutRoute: ordersCheckoutRoute,
+  ordersIndexRoute: ordersIndexRoute,
+}
+
+const OrdersRouteWithChildren =
+  OrdersRoute._addFileChildren(OrdersRouteChildren)
+
 interface ProductsProductIdRouteChildren {
   productsProductIdEditRoute: typeof productsProductIdEditRoute
   productsProductIdIndexRoute: typeof productsProductIdIndexRoute
@@ -617,6 +730,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof CategoriesRouteWithChildren
   '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
+  '/orders': typeof OrdersRouteWithChildren
   '/products': typeof ProductsRouteWithChildren
   '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
@@ -626,12 +740,16 @@ export interface FileRoutesByFullPath {
   '/brands/new': typeof brandsNewRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
   '/categories/new': typeof categoriesNewRoute
+  '/orders/$orderId': typeof OrdersOrderIdRouteWithChildren
+  '/orders/admin': typeof ordersAdminRoute
+  '/orders/checkout': typeof ordersCheckoutRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
   '/profile/edit': typeof profileEditRoute
   '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
+  '/orders/': typeof ordersIndexRoute
   '/products/': typeof productsIndexRoute
   '/profile/': typeof profileIndexRoute
   '/wishlists/': typeof wishlistsIndexRoute
@@ -640,6 +758,7 @@ export interface FileRoutesByFullPath {
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId/': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
+  '/orders/$orderId/': typeof ordersOrderIdIndexRoute
   '/products/$productId/': typeof productsProductIdIndexRoute
   '/wishlists/$wishlistId/': typeof wishlistsWishlistIdIndexRoute
 }
@@ -654,10 +773,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof resetPasswordRoute
   '/brands/new': typeof brandsNewRoute
   '/categories/new': typeof categoriesNewRoute
+  '/orders/admin': typeof ordersAdminRoute
+  '/orders/checkout': typeof ordersCheckoutRoute
   '/products/new': typeof productsNewRoute
   '/profile/edit': typeof profileEditRoute
   '/brands': typeof brandsIndexRoute
   '/categories': typeof categoriesIndexRoute
+  '/orders': typeof ordersIndexRoute
   '/products': typeof productsIndexRoute
   '/profile': typeof profileIndexRoute
   '/wishlists': typeof wishlistsIndexRoute
@@ -666,6 +788,7 @@ export interface FileRoutesByTo {
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug': typeof categoriesCategorySlugIndexRoute
+  '/orders/$orderId': typeof ordersOrderIdIndexRoute
   '/products/$productId': typeof productsProductIdIndexRoute
   '/wishlists/$wishlistId': typeof wishlistsWishlistIdIndexRoute
 }
@@ -679,6 +802,7 @@ export interface FileRoutesById {
   '/categories': typeof CategoriesRouteWithChildren
   '/forgot-password': typeof forgotPasswordRoute
   '/login': typeof loginRoute
+  '/orders': typeof OrdersRouteWithChildren
   '/products': typeof ProductsRouteWithChildren
   '/profile': typeof ProfileRouteWithChildren
   '/register': typeof registerRoute
@@ -688,12 +812,16 @@ export interface FileRoutesById {
   '/brands/new': typeof brandsNewRoute
   '/categories/$categorySlug': typeof CategoriesCategorySlugRouteWithChildren
   '/categories/new': typeof categoriesNewRoute
+  '/orders/$orderId': typeof OrdersOrderIdRouteWithChildren
+  '/orders/admin': typeof ordersAdminRoute
+  '/orders/checkout': typeof ordersCheckoutRoute
   '/products/$productId': typeof ProductsProductIdRouteWithChildren
   '/products/new': typeof productsNewRoute
   '/profile/edit': typeof profileEditRoute
   '/wishlists/$wishlistId': typeof WishlistsWishlistIdRouteWithChildren
   '/brands/': typeof brandsIndexRoute
   '/categories/': typeof categoriesIndexRoute
+  '/orders/': typeof ordersIndexRoute
   '/products/': typeof productsIndexRoute
   '/profile/': typeof profileIndexRoute
   '/wishlists/': typeof wishlistsIndexRoute
@@ -702,6 +830,7 @@ export interface FileRoutesById {
   '/products/$productId/edit': typeof productsProductIdEditRoute
   '/brands/$brandId/': typeof brandsBrandIdIndexRoute
   '/categories/$categorySlug/': typeof categoriesCategorySlugIndexRoute
+  '/orders/$orderId/': typeof ordersOrderIdIndexRoute
   '/products/$productId/': typeof productsProductIdIndexRoute
   '/wishlists/$wishlistId/': typeof wishlistsWishlistIdIndexRoute
 }
@@ -716,6 +845,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/forgot-password'
     | '/login'
+    | '/orders'
     | '/products'
     | '/profile'
     | '/register'
@@ -725,12 +855,16 @@ export interface FileRouteTypes {
     | '/brands/new'
     | '/categories/$categorySlug'
     | '/categories/new'
+    | '/orders/$orderId'
+    | '/orders/admin'
+    | '/orders/checkout'
     | '/products/$productId'
     | '/products/new'
     | '/profile/edit'
     | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
+    | '/orders/'
     | '/products/'
     | '/profile/'
     | '/wishlists/'
@@ -739,6 +873,7 @@ export interface FileRouteTypes {
     | '/products/$productId/edit'
     | '/brands/$brandId/'
     | '/categories/$categorySlug/'
+    | '/orders/$orderId/'
     | '/products/$productId/'
     | '/wishlists/$wishlistId/'
   fileRoutesByTo: FileRoutesByTo
@@ -752,10 +887,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/brands/new'
     | '/categories/new'
+    | '/orders/admin'
+    | '/orders/checkout'
     | '/products/new'
     | '/profile/edit'
     | '/brands'
     | '/categories'
+    | '/orders'
     | '/products'
     | '/profile'
     | '/wishlists'
@@ -764,6 +902,7 @@ export interface FileRouteTypes {
     | '/products/$productId/edit'
     | '/brands/$brandId'
     | '/categories/$categorySlug'
+    | '/orders/$orderId'
     | '/products/$productId'
     | '/wishlists/$wishlistId'
   id:
@@ -775,6 +914,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/forgot-password'
     | '/login'
+    | '/orders'
     | '/products'
     | '/profile'
     | '/register'
@@ -784,12 +924,16 @@ export interface FileRouteTypes {
     | '/brands/new'
     | '/categories/$categorySlug'
     | '/categories/new'
+    | '/orders/$orderId'
+    | '/orders/admin'
+    | '/orders/checkout'
     | '/products/$productId'
     | '/products/new'
     | '/profile/edit'
     | '/wishlists/$wishlistId'
     | '/brands/'
     | '/categories/'
+    | '/orders/'
     | '/products/'
     | '/profile/'
     | '/wishlists/'
@@ -798,6 +942,7 @@ export interface FileRouteTypes {
     | '/products/$productId/edit'
     | '/brands/$brandId/'
     | '/categories/$categorySlug/'
+    | '/orders/$orderId/'
     | '/products/$productId/'
     | '/wishlists/$wishlistId/'
   fileRoutesById: FileRoutesById
@@ -811,6 +956,7 @@ export interface RootRouteChildren {
   CategoriesRoute: typeof CategoriesRouteWithChildren
   forgotPasswordRoute: typeof forgotPasswordRoute
   loginRoute: typeof loginRoute
+  OrdersRoute: typeof OrdersRouteWithChildren
   ProductsRoute: typeof ProductsRouteWithChildren
   ProfileRoute: typeof ProfileRouteWithChildren
   registerRoute: typeof registerRoute
@@ -826,6 +972,7 @@ const rootRouteChildren: RootRouteChildren = {
   CategoriesRoute: CategoriesRouteWithChildren,
   forgotPasswordRoute: forgotPasswordRoute,
   loginRoute: loginRoute,
+  OrdersRoute: OrdersRouteWithChildren,
   ProductsRoute: ProductsRouteWithChildren,
   ProfileRoute: ProfileRouteWithChildren,
   registerRoute: registerRoute,
@@ -850,6 +997,7 @@ export const routeTree = rootRoute
         "/categories",
         "/forgot-password",
         "/login",
+        "/orders",
         "/products",
         "/profile",
         "/register",
@@ -887,6 +1035,15 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/orders": {
+      "filePath": "",
+      "children": [
+        "/orders/$orderId",
+        "/orders/admin",
+        "/orders/checkout",
+        "/orders/"
+      ]
     },
     "/products": {
       "filePath": "",
@@ -940,6 +1097,21 @@ export const routeTree = rootRoute
       "filePath": "categories/new.tsx",
       "parent": "/categories"
     },
+    "/orders/$orderId": {
+      "filePath": "",
+      "parent": "/orders",
+      "children": [
+        "/orders/$orderId/"
+      ]
+    },
+    "/orders/admin": {
+      "filePath": "orders/admin.tsx",
+      "parent": "/orders"
+    },
+    "/orders/checkout": {
+      "filePath": "orders/checkout.tsx",
+      "parent": "/orders"
+    },
     "/products/$productId": {
       "filePath": "",
       "parent": "/products",
@@ -970,6 +1142,10 @@ export const routeTree = rootRoute
     "/categories/": {
       "filePath": "categories/index.tsx",
       "parent": "/categories"
+    },
+    "/orders/": {
+      "filePath": "orders/index.tsx",
+      "parent": "/orders"
     },
     "/products/": {
       "filePath": "products/index.tsx",
@@ -1002,6 +1178,10 @@ export const routeTree = rootRoute
     "/categories/$categorySlug/": {
       "filePath": "categories/$categorySlug/index.tsx",
       "parent": "/categories/$categorySlug"
+    },
+    "/orders/$orderId/": {
+      "filePath": "orders/$orderId/index.tsx",
+      "parent": "/orders/$orderId"
     },
     "/products/$productId/": {
       "filePath": "products/$productId/index.tsx",

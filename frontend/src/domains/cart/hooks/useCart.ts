@@ -7,7 +7,7 @@ import {
     updateCartItem,
     removeFromCart,
     clearCart,
-} from "../cartApi";
+} from "../api/cartApi";
 import { AddToCartRequest, UpdateCartItemRequest } from "../types";
 
 // Hook to fetch cart
