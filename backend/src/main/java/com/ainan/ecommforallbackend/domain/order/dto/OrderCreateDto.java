@@ -1,5 +1,7 @@
 package com.ainan.ecommforallbackend.domain.order.dto;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -26,5 +28,5 @@ public class OrderCreateDto {
     private boolean fromCart = true;
 
     // If not from cart, individual items can be provided
-    private java.util.List<OrderItemCreateDto> items;
+    private List<OrderItemCreateDto> items;
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(basePackages = "com.ainan.ecommforallbackend.repository")
+@EnableJpaRepositories(basePackages = "com.ainan.ecommforallbackend.domain.*.repository")
 public class BackendApplication {
 
     public static void main(String[] args) {

@@ -1,13 +1,10 @@
 package com.ainan.ecommforallbackend.domain.order.entity;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
-
 import com.ainan.ecommforallbackend.domain.product.entity.Product;
 import com.ainan.ecommforallbackend.domain.product.entity.ProductVariant;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -17,10 +14,13 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(exclude = {"order"})
 public class OrderItem {
 
     @Id
     @UuidGenerator
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,5 +58,4 @@ public class OrderItem {
     public void calculateSubtotal() {
         this.subtotal = this.price.multiply(new BigDecimal(this.quantity));
     }
-
 }

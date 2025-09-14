@@ -3,7 +3,6 @@ package com.ainan.ecommforallbackend.core.config;
 import com.ainan.ecommforallbackend.core.security.JwtAuthenticationFilter;
 import com.ainan.ecommforallbackend.domain.auth.service.CustomUserDetailsService;
 import com.ainan.ecommforallbackend.domain.user.repository.UserRepository;
-
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

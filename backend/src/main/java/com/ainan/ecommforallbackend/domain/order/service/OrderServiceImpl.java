@@ -4,7 +4,9 @@ import com.ainan.ecommforallbackend.core.exception.ResourceNotFoundException;
 import com.ainan.ecommforallbackend.domain.cart.dto.CartItemDto;
 import com.ainan.ecommforallbackend.domain.cart.service.ShoppingCartService;
 import com.ainan.ecommforallbackend.domain.order.dto.*;
-import com.ainan.ecommforallbackend.domain.order.entity.*;
+import com.ainan.ecommforallbackend.domain.order.entity.Order;
+import com.ainan.ecommforallbackend.domain.order.entity.OrderItem;
+import com.ainan.ecommforallbackend.domain.order.entity.OrderStatus;
 import com.ainan.ecommforallbackend.domain.order.mapper.OrderMapper;
 import com.ainan.ecommforallbackend.domain.order.repository.OrderItemRepository;
 import com.ainan.ecommforallbackend.domain.order.repository.OrderRepository;
@@ -17,7 +19,6 @@ import com.ainan.ecommforallbackend.domain.product.repository.ProductVariantRepo
 import com.ainan.ecommforallbackend.domain.product.service.ProductImageService;
 import com.ainan.ecommforallbackend.domain.user.entity.User;
 import com.ainan.ecommforallbackend.domain.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,10 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,6 +61,8 @@ public class OrderServiceImpl implements OrderService {
             if (cartItems.isEmpty()) {
                 throw new IllegalStateException("Cannot create order: cart is empty");
             }
+            // Validate stock for all cart items before processing
+            validateStockForCartItems(cartItems);
 
             for (CartItemDto cartItem : cartItems) {
                 OrderItem orderItem = createOrderItemFromCartItem(cartItem);
@@ -76,7 +76,7 @@ public class OrderServiceImpl implements OrderService {
             if (orderCreateDto.getItems() == null || orderCreateDto.getItems().isEmpty()) {
                 throw new IllegalArgumentException("Order must contain at least one item");
             }
-
+            validateStockForOrderItems(orderCreateDto.getItems());
             for (OrderItemCreateDto itemDto : orderCreateDto.getItems()) {
                 OrderItem orderItem = createOrderItemFromCreateDto(itemDto);
                 order.addItem(orderItem);
@@ -88,6 +88,9 @@ public class OrderServiceImpl implements OrderService {
 
         // Save the order
         Order savedOrder = orderRepository.save(order);
+
+        // Update inventory (reduce stock) for all items
+        updateInventoryForOrder(order.getItems(), false);
         log.info("Created order {} for user {}", savedOrder.getId(), userId);
 
         return orderMapper.toDto(savedOrder);
@@ -166,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDto updatePaymentStatus(UUID orderId, PaymentStatusUpdateDto paymentStatusUpdateDto,
-            String adminId) {
+                                                String adminId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
@@ -198,7 +201,8 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setCancellationReason(reason);
         order.setCancelledAt(LocalDateTime.now());
-
+        // Restore inventory for cancelled order
+        updateInventoryForOrder(order.getItems(), true);
         orderRepository.save(order);
         log.info("Order {} cancelled by user {}: {}", orderId, userId, reason);
     }
@@ -309,8 +313,8 @@ public class OrderServiceImpl implements OrderService {
         orderItem.setQuantity(itemDto.getQuantity());
 
         // Handle variant if applicable
-        if (itemDto.getProductVariantId() != null) {
-            ProductVariant variant = productVariantRepository.findById(itemDto.getProductVariantId())
+        if (itemDto.getVariantId() != null) {
+            ProductVariant variant = productVariantRepository.findById(itemDto.getVariantId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product variant not found"));
 
             orderItem.setProductVariant(variant);
@@ -320,6 +324,77 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setPrice(product.getPrice());
         }
         return orderItem;
+    }
+    // New methods for stock management
+
+    private void validateStockForCartItems(List<CartItemDto> cartItems) {
+        List<String> outOfStockItems = new ArrayList<>();
+
+        for (CartItemDto item : cartItems) {
+            if (item.getVariantId() != null) {
+                ProductVariant variant = productVariantRepository.findById(item.getVariantId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product variant not found"));
+
+                if (variant.getStock() < item.getQuantity()) {
+                    String variantInfo = variant.getSku() != null ? variant.getSku() : variant.getId().toString();
+                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity() + ", available: " + variant.getStock() + ")");
+                }
+            } else {
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+                if (product.getStock() < item.getQuantity()) {
+                    outOfStockItems.add("Product: " + product.getName() + " (available: " + product.getStock() + ")");
+                }
+            }
+        }
+
+        if (!outOfStockItems.isEmpty()) {
+            throw new IllegalStateException("Insufficient stock for: " + String.join(", ", outOfStockItems));
+        }
+    }
+
+    private void validateStockForOrderItems(List<OrderItemCreateDto> items) {
+        List<String> outOfStockItems = new ArrayList<>();
+
+        for (OrderItemCreateDto item : items) {
+            if (item.getVariantId() != null) {
+                ProductVariant variant = productVariantRepository.findById(item.getVariantId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product variant not found"));
+
+                if (variant.getStock() < item.getQuantity()) {
+                    String variantInfo = variant.getSku() != null ? variant.getSku() : variant.getId().toString();
+                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity() + ", available: " + variant.getStock() + ")");
+                }
+            } else {
+                Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+                if (product.getStock() < item.getQuantity()) {
+                    outOfStockItems.add("Product: " + product.getName() + " (available: " + product.getStock() + ")");
+                }
+            }
+        }
+
+        if (!outOfStockItems.isEmpty()) {
+            throw new IllegalStateException("Insufficient stock for: " + String.join(", ", outOfStockItems));
+        }
+    }
+
+    private void updateInventoryForOrder(Collection<OrderItem> items, boolean isRestore) {
+        for (OrderItem item : items) {
+            if (item.getProductVariant() != null) {
+                ProductVariant variant = item.getProductVariant();
+                int stockChange = isRestore ? item.getQuantity() : -item.getQuantity();
+                variant.setStock(variant.getStock() + stockChange);
+                productVariantRepository.save(variant);
+            } else {
+                Product product = item.getProduct();
+                int stockChange = isRestore ? item.getQuantity() : -item.getQuantity();
+                product.setStock(product.getStock() + stockChange);
+                productRepository.save(product);
+            }
+        }
     }
 
     private Set<OrderItemDto> addPrimaryImagesToOrderItems(Set<OrderItemDto> orderItems) {

@@ -16,7 +16,7 @@ public class OrderItemDto {
 
     private UUID productId;
 
-    private UUID productVariantId;
+    private UUID variantId;
 
     private String productName;
 

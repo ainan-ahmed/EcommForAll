@@ -1,6 +1,5 @@
 package com.ainan.ecommforallbackend.domain.order.controller;
 
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.ainan.ecommforallbackend.domain.order.dto.*;
 import com.ainan.ecommforallbackend.domain.order.service.OrderService;
+import com.ainan.ecommforallbackend.domain.user.service.UserService;
 
 import java.security.Principal;
 import java.util.List;
@@ -25,6 +25,7 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto,
@@ -87,6 +88,13 @@ public class OrderController {
         if (principal == null) {
             throw new IllegalStateException("User not authenticated");
         }
-        return principal.getName();
+        String username = principal.getName();
+        try {
+            return userService.getUserByUsername(username)
+                    .getId()
+                    .toString();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to get user ID for username: " + username, e);
+        }
     }
 }
