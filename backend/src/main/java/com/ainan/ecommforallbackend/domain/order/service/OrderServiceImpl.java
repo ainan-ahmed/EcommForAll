@@ -109,6 +109,7 @@ public class OrderServiceImpl implements OrderService {
 
         OrderResponseDto orderDto = orderMapper.toDto(order);
 
+        System.err.println(orderDto);
         // Add primary images for order items
         orderDto.setItems(addPrimaryImagesToOrderItems(orderDto.getItems()));
 
@@ -169,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponseDto updatePaymentStatus(UUID orderId, PaymentStatusUpdateDto paymentStatusUpdateDto,
-                                                String adminId) {
+            String adminId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
@@ -337,7 +338,8 @@ public class OrderServiceImpl implements OrderService {
 
                 if (variant.getStock() < item.getQuantity()) {
                     String variantInfo = variant.getSku() != null ? variant.getSku() : variant.getId().toString();
-                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity() + ", available: " + variant.getStock() + ")");
+                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity()
+                            + ", available: " + variant.getStock() + ")");
                 }
             } else {
                 Product product = productRepository.findById(item.getProductId())
@@ -364,7 +366,8 @@ public class OrderServiceImpl implements OrderService {
 
                 if (variant.getStock() < item.getQuantity()) {
                     String variantInfo = variant.getSku() != null ? variant.getSku() : variant.getId().toString();
-                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity() + ", available: " + variant.getStock() + ")");
+                    outOfStockItems.add("Product variant: " + variantInfo + " (requested: " + item.getQuantity()
+                            + ", available: " + variant.getStock() + ")");
                 }
             } else {
                 Product product = productRepository.findById(item.getProductId())
@@ -399,6 +402,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Set<OrderItemDto> addPrimaryImagesToOrderItems(Set<OrderItemDto> orderItems) {
         orderItems.forEach(orderItem -> {
+            System.err.println(orderItem);
             Page<ProductImageDto> image = productImageService.getImagesByProductId(
                     orderItem.getProductId(),
                     PageRequest.of(0, 1));

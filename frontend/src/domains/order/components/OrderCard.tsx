@@ -2,78 +2,31 @@ import {
     Card,
     Group,
     Text,
-    Badge,
     Stack,
+    Badge,
     Button,
-    Divider,
     Grid,
-    Image,
-    Tooltip,
-    ActionIcon,
     Menu,
+    ActionIcon,
+    Tooltip,
 } from "@mantine/core";
 import {
-    IconPackage,
-    IconTruck,
     IconEye,
     IconDownload,
-    IconDots,
-    IconX,
     IconRefresh,
+    IconX,
+    IconDots,
+    IconTruck,
 } from "@tabler/icons-react";
-import { Order, OrderStatus } from "../types";
+import { OrderSummary, OrderStatus } from "../types";
 
 interface OrderCardProps {
-    order: Order;
-    onCancel?: (orderId: string) => void;
+    order: OrderSummary; // Changed from Order to OrderSummary
+    onCancel?: (orderId: string, reason?: string) => void;
     onReorder?: (orderId: string) => void;
     onDownloadInvoice?: (orderId: string) => void;
     isLoading?: boolean;
 }
-
-const getStatusColor = (status: OrderStatus): string => {
-    switch (status) {
-        case "PENDING":
-            return "yellow";
-        case "CONFIRMED":
-            return "blue";
-        case "PROCESSING":
-            return "cyan";
-        case "SHIPPED":
-            return "indigo";
-        case "DELIVERED":
-            return "green";
-        case "CANCELLED":
-            return "red";
-        case "REFUNDED":
-            return "orange";
-        default:
-            return "gray";
-    }
-};
-
-const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-        case "PENDING":
-        case "CONFIRMED":
-        case "PROCESSING":
-            return <IconPackage size={16} />;
-        case "SHIPPED":
-            return <IconTruck size={16} />;
-        case "DELIVERED":
-            return <IconPackage size={16} />;
-        default:
-            return <IconPackage size={16} />;
-    }
-};
-
-const canCancelOrder = (status: OrderStatus): boolean => {
-    return ["PENDING", "CONFIRMED"].includes(status);
-};
-
-const canReorder = (status: OrderStatus): boolean => {
-    return ["DELIVERED", "CANCELLED", "REFUNDED"].includes(status);
-};
 
 export function OrderCard({
     order,
@@ -83,7 +36,6 @@ export function OrderCard({
     isLoading = false,
 }: OrderCardProps) {
     const statusColor = getStatusColor(order.status);
-    const statusIcon = getStatusIcon(order.status);
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("en-US", {
@@ -102,34 +54,30 @@ export function OrderCard({
         }).format(amount);
     };
 
-    // Get first few items to display
-    const displayItems = order.items.slice(0, 3);
-    const remainingItemsCount = order.items.length - displayItems.length;
+    const canCancel = (status: OrderStatus): boolean => {
+        return ["PENDING", "CONFIRMED"].includes(status);
+    };
 
     return (
         <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Stack gap="md">
                 {/* Header */}
                 <Group justify="space-between" align="flex-start">
-                    <Stack gap={4}>
-                        <Group gap="xs" align="center">
-                            <Text fw={600} size="lg">
-                                Order #{order.orderNumber}
+                    <Stack gap="xs">
+                        <Group gap="sm">
+                            <Text size="lg" fw={600}>
+                                Order #{order.id.slice(-8).toUpperCase()}
                             </Text>
-                            <Badge
-                                color={statusColor}
-                                variant="light"
-                                leftSection={statusIcon}
-                            >
-                                {order.status.replace("_", " ")}
+                            <Badge color={statusColor} variant="light">
+                                {order.status}
                             </Badge>
                         </Group>
                         <Text size="sm" c="dimmed">
-                            Placed on {formatDate(order.createdAt)}
+                            {formatDate(order.createdAt)}
                         </Text>
                     </Stack>
 
-                    <Menu shadow="md" width={180}>
+                    <Menu shadow="md" width={200}>
                         <Menu.Target>
                             <ActionIcon
                                 variant="subtle"
@@ -142,12 +90,27 @@ export function OrderCard({
 
                         <Menu.Dropdown>
                             <Menu.Item
+                                leftSection={<IconEye size={14} />}
                                 component="a"
                                 href={`/orders/${order.id}`}
-                                leftSection={<IconEye size={14} />}
                             >
                                 View Details
                             </Menu.Item>
+
+                            {order.trackingNumber && (
+                                <Menu.Item
+                                    leftSection={<IconTruck size={14} />}
+                                    onClick={() => {
+                                        // Handle tracking
+                                        console.log(
+                                            "Track order:",
+                                            order.trackingNumber
+                                        );
+                                    }}
+                                >
+                                    Track Package
+                                </Menu.Item>
+                            )}
 
                             {onDownloadInvoice && (
                                 <Menu.Item
@@ -158,16 +121,19 @@ export function OrderCard({
                                 </Menu.Item>
                             )}
 
-                            {canReorder(order.status) && onReorder && (
-                                <Menu.Item
-                                    leftSection={<IconRefresh size={14} />}
-                                    onClick={() => onReorder(order.id)}
-                                >
-                                    Reorder
-                                </Menu.Item>
+                            {onReorder && (
+                                <>
+                                    <Menu.Divider />
+                                    <Menu.Item
+                                        leftSection={<IconRefresh size={14} />}
+                                        onClick={() => onReorder(order.id)}
+                                    >
+                                        Order Again
+                                    </Menu.Item>
+                                </>
                             )}
 
-                            {canCancelOrder(order.status) && onCancel && (
+                            {canCancel(order.status) && onCancel && (
                                 <>
                                     <Menu.Divider />
                                     <Menu.Item
@@ -183,80 +149,30 @@ export function OrderCard({
                     </Menu>
                 </Group>
 
-                {/* Order Items Preview */}
-                <Stack gap="xs">
-                    <Text size="sm" fw={500} c="dimmed">
-                        Items ({order.items.length})
-                    </Text>
-
-                    {displayItems.map((item) => (
-                        <Group key={item.id} gap="sm" wrap="nowrap">
-                            <Image
-                                src={item.imageUrl}
-                                alt={item.productName}
-                                w={40}
-                                h={40}
-                                radius="sm"
-                                fallbackSrc="https://via.placeholder.com/40"
-                            />
-                            <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
-                                <Text size="sm" lineClamp={1}>
-                                    {item.productName}
-                                </Text>
-                                {item.variantAttributes &&
-                                    Object.keys(item.variantAttributes).length >
-                                        0 && (
-                                        <Text size="xs" c="dimmed">
-                                            {Object.entries(
-                                                item.variantAttributes
-                                            )
-                                                .map(
-                                                    ([key, value]) =>
-                                                        `${key}: ${value}`
-                                                )
-                                                .join(", ")}
-                                        </Text>
-                                    )}
-                            </Stack>
-                            <Text size="sm" c="dimmed">
-                                Qty: {item.quantity}
-                            </Text>
-                            <Text size="sm" fw={500}>
-                                {formatCurrency(item.totalPrice)}
-                            </Text>
-                        </Group>
-                    ))}
-
-                    {remainingItemsCount > 0 && (
-                        <Text size="xs" c="dimmed" ta="center">
-                            +{remainingItemsCount} more item
-                            {remainingItemsCount > 1 ? "s" : ""}
-                        </Text>
-                    )}
-                </Stack>
-
-                <Divider />
-
                 {/* Order Summary */}
                 <Grid>
                     <Grid.Col span={6}>
                         <Stack gap={4}>
                             <Text size="sm" c="dimmed">
-                                Delivery Address
+                                Items
                             </Text>
-                            <Text size="sm">
-                                {order.shippingAddress.firstName}{" "}
-                                {order.shippingAddress.lastName}
+                            <Text size="sm" fw={500}>
+                                {order.itemCount} item
+                                {order.itemCount !== 1 ? "s" : ""}
                             </Text>
-                            <Text size="xs" c="dimmed" lineClamp={2}>
-                                {order.shippingAddress.addressLine1}
-                                {order.shippingAddress.addressLine2 &&
-                                    `, ${order.shippingAddress.addressLine2}`}
-                                <br />
-                                {order.shippingAddress.city},{" "}
-                                {/* state removed */}
-                                {order.shippingAddress.postalCode}
-                            </Text>
+                            {order.trackingNumber && (
+                                <>
+                                    <Text size="sm" c="dimmed" mt="xs">
+                                        Tracking
+                                    </Text>
+                                    <Text
+                                        size="xs"
+                                        style={{ fontFamily: "monospace" }}
+                                    >
+                                        {order.trackingNumber}
+                                    </Text>
+                                </>
+                            )}
                         </Stack>
                     </Grid.Col>
 
@@ -268,17 +184,9 @@ export function OrderCard({
                             <Text size="xl" fw={700}>
                                 {formatCurrency(order.totalAmount)}
                             </Text>
-                            {order.shippingDetails?.estimatedDelivery && (
-                                <Tooltip label="Estimated delivery date">
-                                    <Text size="xs" c="dimmed">
-                                        Est. delivery:{" "}
-                                        {formatDate(
-                                            order.shippingDetails
-                                                .estimatedDelivery
-                                        )}
-                                    </Text>
-                                </Tooltip>
-                            )}
+                            <Text size="xs" c="dimmed">
+                                {order.paymentStatus}
+                            </Text>
                         </Stack>
                     </Grid.Col>
                 </Grid>
@@ -295,19 +203,39 @@ export function OrderCard({
                         View Details
                     </Button>
 
-                    {order.shippingDetails?.trackingNumber && (
+                    {onReorder && (
                         <Button
-                            component="a"
-                            href={`/orders/${order.id}/track`}
-                            variant="filled"
+                            variant="light"
                             size="sm"
-                            leftSection={<IconTruck size={16} />}
+                            leftSection={<IconRefresh size={16} />}
+                            onClick={() => onReorder(order.id)}
                         >
-                            Track Order
+                            Reorder
                         </Button>
                     )}
                 </Group>
             </Stack>
         </Card>
     );
+}
+
+function getStatusColor(status: OrderStatus): string {
+    switch (status) {
+        case "PENDING":
+            return "yellow";
+        case "CONFIRMED":
+            return "blue";
+        case "PROCESSING":
+            return "cyan";
+        case "SHIPPED":
+            return "indigo";
+        case "DELIVERED":
+            return "green";
+        case "CANCELLED":
+            return "red";
+        case "REFUNDED":
+            return "orange";
+        default:
+            return "gray";
+    }
 }

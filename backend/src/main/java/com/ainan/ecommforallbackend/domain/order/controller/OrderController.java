@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ainan.ecommforallbackend.domain.order.dto.*;
+import com.ainan.ecommforallbackend.domain.order.entity.OrderStatus;
 import com.ainan.ecommforallbackend.domain.order.service.OrderService;
 import com.ainan.ecommforallbackend.domain.user.service.UserService;
 
@@ -39,12 +40,21 @@ public class OrderController {
     public ResponseEntity<Page<OrderSummaryDto>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sort,
-            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(defaultValue = "createdAt,desc") String sort,
+            @RequestParam(required = false) OrderStatus status,
             Principal principal) {
 
+        // Parse sort parameter correctly
+        String[] sortParams = sort.split(",");
+        String sortBy = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && "desc".equalsIgnoreCase(sortParams[1])
+                ? Sort.Direction.DESC
+                : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        // Fix: Use getCurrentUserId() instead of principal.getName()
         String userId = getCurrentUserId(principal);
-        Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(direction), sort);
         Page<OrderSummaryDto> orders = orderService.getUserOrders(userId, pageable);
         return ResponseEntity.ok(orders);
     }

@@ -22,6 +22,9 @@ import {
     OrderQueryParams,
     CheckoutSession,
     ShippingAddress,
+    OrdersResponse,
+    Order,
+    OrderSummary,
 } from "../types";
 
 // =====================================
@@ -31,23 +34,23 @@ import {
 /**
  * Hook to fetch user orders with pagination and filtering
  */
-export function useUserOrders(params: OrderQueryParams = {}) {
-    return useQuery({
+export function useUserOrders(params: OrderQueryParams) {
+    return useQuery<OrdersResponse, Error>({
         queryKey: ["orders", "user", params],
         queryFn: () => fetchUserOrders(params),
-        staleTime: 5 * 60 * 1000, // 5 minutes
+        staleTime: 30000, // 30 seconds
     });
 }
 
 /**
  * Hook to fetch a specific order by ID
  */
-export function useOrder(orderId: string, enabled: boolean = true) {
-    return useQuery({
+export function useOrder(orderId: string) {
+    return useQuery<Order, Error>({
         queryKey: ["orders", orderId],
         queryFn: () => fetchOrderById(orderId),
-        enabled: enabled && !!orderId,
-        staleTime: 2 * 60 * 1000, // 2 minutes
+        enabled: !!orderId,
+        staleTime: 60000, // 1 minute
     });
 }
 

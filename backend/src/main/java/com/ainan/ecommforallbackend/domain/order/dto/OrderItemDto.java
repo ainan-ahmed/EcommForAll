@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
 
 @Data
@@ -22,9 +23,7 @@ public class OrderItemDto {
 
     private String productDescription;
 
-    private String variantName;
-
-    private String variantAttributes;
+    private Map<String, String> variantAttributes;
 
     private String sku;
 

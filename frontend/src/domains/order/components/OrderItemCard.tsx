@@ -178,12 +178,12 @@ export function OrderItemCard({
                                 Qty: {item.quantity}
                             </Text>
                             <Text size="sm" c="dimmed">
-                                × {formatCurrency(item.unitPrice)}
+                                × {formatCurrency(item.price)}
                             </Text>
                         </Group>
 
                         <Text size="lg" fw={600}>
-                            {formatCurrency(item.totalPrice)}
+                            {formatCurrency(item.subtotal)}
                         </Text>
                     </Group>
                 </Stack>

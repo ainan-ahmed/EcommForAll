@@ -57,8 +57,8 @@ export interface OrderItem {
     variantAttributes?: Record<string, string>;
     sku: string;
     quantity: number;
-    unitPrice: number;
-    totalPrice: number;
+    price: number;
+    subtotal: number;
     imageUrl?: string;
     product?: Product; // Optional product details
     productImage?: ProductImage; // Primary product image
@@ -94,45 +94,37 @@ export interface ShippingDetails {
 // Order Summary Interface (for minimal order data)
 export interface OrderSummary {
     id: string;
-    orderNumber: string;
     status: OrderStatus;
+    paymentStatus: PaymentStatus;
     totalAmount: number;
-    itemCount: number;
+    itemCount: number; // Just the count, not the items array
     createdAt: string;
-    estimatedDelivery?: string;
+    updatedAt: string;
+    trackingNumber?: string;
 }
 
-// Main Order Interface
+// Full Order Interface (for detailed views)
 export interface Order {
     id: string;
     orderNumber: string;
-    userId: string;
     status: OrderStatus;
+    paymentStatus: PaymentStatus;
     totalAmount: number;
+    currency: string;
     subtotalAmount: number;
     taxAmount: number;
     shippingAmount: number;
     discountAmount?: number;
-    currency: string;
-
-    // Order Items
-    items: OrderItem[];
-
-    // Addresses
-    shippingAddress: ShippingAddress;
-    billingAddress: BillingAddress;
-
-    // Payment & Shipping
-    paymentDetails?: PaymentDetails;
-    shippingDetails?: ShippingDetails;
-
-    // Metadata
-    notes?: string;
     createdAt: string;
     updatedAt: string;
 
-    // Optional relationships
-    user?: User;
+    // Full details - only available in detailed views
+    items: OrderItem[];
+    shippingAddress: ShippingAddress;
+    billingAddress: ShippingAddress;
+    paymentDetails?: PaymentDetails;
+    shippingDetails?: ShippingDetails;
+    notes?: string;
 }
 
 // Order Creation Request Interface
@@ -166,31 +158,13 @@ export interface UpdateOrderRequest {
 
 // Orders Response Interface (for paginated results)
 export interface OrdersResponse {
-    content: Order[];
-    pageable: {
-        pageNumber: number;
-        pageSize: number;
-        sort: {
-            empty: boolean;
-            sorted: boolean;
-            unsorted: boolean;
-        };
-        offset: number;
-        paged: boolean;
-        unpaged: boolean;
-    };
+    content: OrderSummary[]; // Changed from Order[] to OrderSummary[]
     totalElements: number;
     totalPages: number;
     size: number;
     number: number;
-    sort: {
-        empty: boolean;
-        sorted: boolean;
-        unsorted: boolean;
-    };
     first: boolean;
     last: boolean;
-    numberOfElements: number;
     empty: boolean;
 }
 

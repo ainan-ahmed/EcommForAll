@@ -234,10 +234,10 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                                         </Title>
                                         <Text size="sm" c="dimmed">
                                             Total:{" "}
-                                            {new Intl.NumberFormat("en-US", {
+                                            {new Intl.NumberFormat("en-EU", {
                                                 style: "currency",
                                                 currency:
-                                                    order.currency || "USD",
+                                                    order.currency || "EUR",
                                             }).format(order.totalAmount)}
                                         </Text>
                                     </Group>
