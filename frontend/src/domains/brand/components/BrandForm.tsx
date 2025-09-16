@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { IconUpload, IconCheck } from "@tabler/icons-react";
 import { Brand } from "../types";
-import { brandSchema } from "../brandSchemas";
+import { brandSchema } from "../schemas/brandSchemas";
 
 interface BrandFormProps {
     initialData?: Partial<Brand>;

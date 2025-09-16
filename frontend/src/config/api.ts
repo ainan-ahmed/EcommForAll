@@ -26,5 +26,22 @@ export const API = {
             CREATE_REVIEW: "/review/review/create",
             DELETE_REVIEW: "/review/review",
         },
+        ORDER: {
+            BASE: "/orders",
+            BY_ID: "/orders/:id",
+            CANCEL: "/orders/:id/cancel",
+            STATUS: "/orders/:id/status",
+            STATS: "/orders/stats",
+            TRACK: "/orders/track/:trackingInfo",
+            PAYMENT: "/orders/:id/payment",
+            REORDER: "/orders/:id/reorder",
+            FROM_CART: "/orders/from-cart",
+            SHIPPING_ADDRESS: "/orders/:id/shipping-address",
+        },
+        CHECKOUT: {
+            SESSION: "/checkout/session",
+            SESSION_BY_ID: "/checkout/session/:id",
+            COMPLETE: "/checkout/session/:id/complete",
+        },
     },
 };

@@ -1,0 +1,19 @@
+id,name,description,imageUrl,website,isActive,createdAt,updatedAt,productCount
+6306ee5d-c1ed-4fb9-8c5c-36912be35efa,TechCorp,Leading technology brand,https://images.example.com/brands/techcorp.jpg,https://techcorp.example.com,True,2019-08-22T01:17:49.411484Z,2020-01-15T17:30:11.201528Z,0
+4c119361-9235-4ab3-b251-81bb05d34516,StyleMax,Fashion forward clothing,https://images.example.com/brands/stylemax.jpg,https://stylemax.example.com,True,2022-04-12T00:07:49.749398Z,2022-12-22T12:49:28.259168Z,0
+a490ea09-378e-417c-913f-574bf3dd15df,HomeComfort,Premium home products,https://images.example.com/brands/homecomfort.jpg,https://homecomfort.example.com,True,2020-03-26T14:47:49.098524Z,2023-02-26T21:13:30.408024Z,0
+027821ec-2fe9-40cf-b483-d2b2ae8597a0,FitLife,Sports and fitness gear,https://images.example.com/brands/fitlife.jpg,https://fitlife.example.com,True,2021-08-16T05:40:46.044235Z,2024-09-14T16:07:16.504605Z,0
+f73b4787-3ced-4ea6-89aa-148e7b441b7a,BookWorld,Quality books and media,https://images.example.com/brands/bookworld.jpg,https://bookworld.example.com,False,2020-03-24T11:56:03.905610Z,2023-12-19T06:07:15.663653Z,0
+4e18f415-a737-43ec-8f90-fd594692acd9,GlowBeauty,Natural beauty products,https://images.example.com/brands/glowbeauty.jpg,https://glowbeauty.example.com,True,2021-08-22T00:10:50.289511Z,2024-12-01T03:25:50.254897Z,0
+35110647-31b2-47fe-b290-d75c34e44e59,AutoPro,Professional car accessories,https://images.example.com/brands/autopro.jpg,https://autopro.example.com,True,2018-06-22T18:50:44.498357Z,2020-03-17T11:49:05.260804Z,0
+e76dd95a-832b-4bb3-bbe3-133d87e8f83b,PlayFun,Educational toys and games,https://images.example.com/brands/playfun.jpg,https://playfun.example.com,True,2023-08-10T02:43:39.354861Z,2024-11-28T20:03:03.372787Z,0
+4b83a3a9-f184-4910-9904-3b6c0f45e964,EliteGadgets,Premium electronic devices,https://images.example.com/brands/elitegadgets.jpg,https://elitegadgets.example.com,False,2019-03-16T04:31:14.332125Z,2023-02-05T14:46:12.022390Z,0
+44d106f0-bb67-460e-a37d-b28baaea21eb,UrbanWear,Modern urban clothing,https://images.example.com/brands/urbanwear.jpg,https://urbanwear.example.com,True,2022-01-07T23:08:16.942316Z,2022-03-28T15:45:28.586179Z,0
+6031392e-40b3-4085-8809-12ee5ae637c4,EcoHome,Sustainable home solutions,https://images.example.com/brands/ecohome.jpg,https://ecohome.example.com,True,2023-07-01T06:36:11.570027Z,2024-06-21T10:46:29.288698Z,0
+009eed2a-79bc-43f7-8d4c-4abb693e4f65,ActiveGear,Professional sports equipment,https://images.example.com/brands/activegear.jpg,https://activegear.example.com,False,2018-10-10T16:09:28.310035Z,2021-09-22T17:23:29.000754Z,0
+03346fb7-d26b-40c4-9a2d-3bfa8250274e,WellnessPlus,Health and wellness products,https://images.example.com/brands/wellnessplus.jpg,https://wellnessplus.example.com,True,2020-01-30T00:39:54.381760Z,2024-06-06T19:15:20.756027Z,0
+cf91c0b9-59bd-4379-b8dd-002785b6d0a1,MediaHub,Books and entertainment,https://images.example.com/brands/mediahub.jpg,https://mediahub.example.com,True,2022-05-07T06:33:43.521718Z,2024-06-29T17:09:39.296882Z,0
+b84f3755-1ff3-4bdd-b0f5-299dc11e67d3,CarTech,Automotive technology,https://images.example.com/brands/cartech.jpg,https://cartech.example.com,True,2022-08-06T20:20:07.100932Z,2024-01-23T21:04:02.875763Z,0
+fd18c9a5-a4c4-4d27-8967-33c675b5a67a,SmartLiving,Smart home technology,https://images.example.com/brands/smartliving.jpg,https://smartliving.example.com,False,2020-01-02T01:12:06.508947Z,2021-01-28T03:02:36.672925Z,0
+3c0c8974-9d00-47b5-ace0-561a29118cf4,OutdoorMax,Outdoor adventure gear,https://images.example.com/brands/outdoormax.jpg,https://outdoormax.example.com,True,2023-06-30T16:39:44.618975Z,2024-03-18T01:23:14.635388Z,0
+d17c230b-c040-4bec-9858-0ad93af3e6bd,BeautyElite,Luxury beauty products,https://images.example.com/brands/beautyelite.jpg,https://beautyelite.example.com,True,2018-02-23T06:41:31.973501Z,2019-01-16T14:51:40.063648Z,0

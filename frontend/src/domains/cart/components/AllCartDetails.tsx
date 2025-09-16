@@ -184,6 +184,8 @@ export function AllCartDetails() {
                             size="lg"
                             mb="md"
                             disabled={cart.items.length === 0}
+                            component={Link}
+                            to="/orders/checkout"
                         >
                             Proceed to Checkout
                         </Button>
