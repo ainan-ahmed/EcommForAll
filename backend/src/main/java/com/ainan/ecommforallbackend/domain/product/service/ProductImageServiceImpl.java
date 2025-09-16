@@ -36,7 +36,7 @@ public class ProductImageServiceImpl implements ProductImageService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
         Page<ProductImage> productImages = productImageRepository.findByProductIdOrderBySortOrderAsc(product.getId(), pageable);
-        return productImages.map(image -> convertToPresignedUrl(productImageMapper.productImageToProductImageDto(image)));
+        return productImages != null ? productImages.map(image -> convertToPresignedUrl(productImageMapper.productImageToProductImageDto(image))) : Page.empty();
     }
 
     @Override

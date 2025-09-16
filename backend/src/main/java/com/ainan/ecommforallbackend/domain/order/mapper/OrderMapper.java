@@ -6,9 +6,6 @@ import com.ainan.ecommforallbackend.domain.order.entity.OrderItem;
 import com.ainan.ecommforallbackend.domain.user.entity.User;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
-
-import java.util.Set;
-
 @Mapper(componentModel = "spring", uses = {}, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface OrderMapper {
 
@@ -39,9 +36,15 @@ public interface OrderMapper {
     @Mapping(target = "cancellationReason", ignore = true)
     Order toEntity(OrderCreateDto orderCreateDto, User user);
 
+    @Mapping(target = "productId", source = "orderItem.product.id")
+    @Mapping(target = "productName", source = "orderItem.product.name")
+    @Mapping(target = "variantId", expression = "java(orderItem.getProductVariant() != null ? orderItem.getProductVariant().getId() : null)")
+    @Mapping(target = "sku", source = "orderItem.sku")
+    @Mapping(target = "variantAttributes", expression = "java(orderItem.getProductVariant() != null ? orderItem.getProductVariant().getAttributeValues() : null)")
+    @Mapping(target = "price", source = "orderItem.price")
+    @Mapping(target = "quantity", source = "orderItem.quantity")
+    @Mapping(target = "subtotal", expression = "java(orderItem.getPrice().multiply(new java.math.BigDecimal(orderItem.getQuantity())))")
     OrderItemDto toOrderItemDto(OrderItem orderItem);
-
-    Set<OrderItemDto> toOrderItemDtoSet(Set<OrderItem> items);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)

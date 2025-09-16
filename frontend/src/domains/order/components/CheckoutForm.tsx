@@ -18,11 +18,15 @@ import {
 } from "@tabler/icons-react";
 import { ShippingAddressForm } from "./ShippingAddressForm";
 import { PaymentForm } from "./PaymentForm";
-import { ShippingAddress, PaymentMethod } from "../types";
+
+import { ShippingAddress, PaymentMethod, OrderItem } from "../types";
+import { useCreateOrder, useCreateOrderFromCart } from "../hooks/useOrder";
+import { useNavigate } from "@tanstack/react-router";
+import { useCart } from "../../cart/hooks/useCart";
+import { notifications } from "@mantine/notifications";
 
 interface CheckoutFormProps {
     totalAmount: number;
-    onComplete: (orderData: CheckoutData) => void;
     isLoading?: boolean;
 }
 
@@ -34,14 +38,15 @@ interface CheckoutData {
 
 export function CheckoutForm({
     totalAmount,
-    onComplete,
     isLoading = false,
 }: CheckoutFormProps) {
     const [active, setActive] = useState(0);
     const [shippingAddress, setShippingAddress] =
         useState<ShippingAddress | null>(null);
     const [paymentData, setPaymentData] = useState<any>(null);
-
+    const createOrderMutation = useCreateOrder();
+    const navigate = useNavigate();
+    const { data: cart } = useCart();
     const handleShippingSubmit = (address: ShippingAddress) => {
         setShippingAddress(address);
         setActive(1); // Move to payment step
@@ -52,12 +57,35 @@ export function CheckoutForm({
         setActive(2); // Move to review step
     };
 
-    const handleOrderComplete = () => {
-        if (shippingAddress && paymentData) {
-            onComplete({
+    const handleOrderComplete = async ({
+        shippingAddress,
+        paymentMethod,
+        paymentData,
+    }: CheckoutData) => {
+        try {
+            const order = await createOrderMutation.mutateAsync({
+                items:
+                    cart?.items.map((item) => ({
+                        productId: item.productId,
+                        variantId: item.variantId,
+                        quantity: item.quantity,
+                    })) || [],
                 shippingAddress,
-                paymentMethod: paymentData.paymentMethod,
-                paymentData,
+                billingAddress: shippingAddress,
+                paymentMethod: paymentData?.paymentMethod?.type || "", // Ensure this is a string
+                notes: "", // or collect from form
+            });
+            notifications.show({
+                title: "Order Placed",
+                message: `Order #${order.orderNumber} has been created successfully!`,
+                color: "green",
+            });
+            navigate({ to: `/orders/${order.id}` });
+        } catch (error: any) {
+            notifications.show({
+                title: "Order Failed",
+                message: error?.message || "Failed to place order.",
+                color: "red",
             });
         }
     };
@@ -212,7 +240,14 @@ export function CheckoutForm({
                                 {/* Place Order Button */}
                                 <Button
                                     size="lg"
-                                    onClick={handleOrderComplete}
+                                    onClick={() =>
+                                        shippingAddress && handleOrderComplete({
+                                            shippingAddress,
+                                            paymentMethod:
+                                                paymentData?.paymentMethod,
+                                            paymentData,
+                                        })
+                                    }
                                     loading={isLoading}
                                     leftSection={<IconShoppingCart size={20} />}
                                 >
