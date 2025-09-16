@@ -32,19 +32,15 @@ This project features a combination of modern tools and practices for web develo
 ### 🛒 Complete E-commerce Platform:
 
 -   **Authentication & Authorization:** Secure user registration and login with JWT-based authentication
--   **Product Management:** Full product lifecycle with detailed views, creation, editing, and admin/seller role controls
--   **Product Variants:** Support for product variations with attributes, pricing, and inventory management
--   **Brand Management:** Complete CRUD operations for brand management and brand-based product filtering
--   **Category Management:** Hierarchical category system with CRUD operations and category-based product organization
--   **Shopping Cart:** Full cart functionality - add, remove, update items with persistent state
--   **Wishlist System:** Save and manage favorite products across sessions
--   **Order Management (Planned):** Complete checkout process with order history and tracking
+-   **Product Management:** Full product lifecycle and admin/seller role controls with Support for product variations with attributes, pricing, and inventory management
+-   **Brand and Category Management :** Complete CRUD operations for brand management and Hierarchical category system.
+-   **Shopping Cart, Order Management, Wishlist:** Full cart functionality, Save and manage favorite products across sessions and Complete checkout process with order history and tracking
 
 ### 🤖 AI-Powered Features:
 
--   **Intelligent Chatbot:** Conversational shopping assistant powered by Google Vertex AI
--   **Product Recommendations:** AI-driven similar product suggestions using vector embeddings
--   **Content Generation:** Automated product description generation with customizable tone and style
+-   **Intelligent Chatbot Agent:** Conversational shopping assistant powered by Google Vertex AI
+-   **Product Recommendations Agent:** AI-driven similar product suggestions using vector embeddings
+-   **Content Generation Agent:** Automated product description generation with customizable tone and style
 -   **Semantic Search:** Vector-based product search for natural language queries through AI Chatbot
 -   **Conversation Memory:** Persistent chat history with context-aware responses
 
@@ -81,7 +77,6 @@ This project features a combination of modern tools and practices for web develo
 
 ### Other Features:
 
--   **Dockerized:** The entire application (frontend, backend, database) is containerized using Docker and orchestrated with `docker-compose` for consistent development and deployment environments.
 -   **Responsive Design:** UI designed to adapt to various screen sizes.
 -   **Dark Mode Support:** With Dark Mode/Light Mode toggle.
 
@@ -187,7 +182,6 @@ The application automatically initializes:
 
 -   **Product vector embeddings** for semantic search(through admin endpoint)
 -   **Conversation memory tables** for chatbot history
--   **Sample data** with AI-generated content
 
 ## 🗺️ Roadmap
 
@@ -202,7 +196,7 @@ The application automatically initializes:
 -   [x] **Conversation Memory** and context management
 -   [ ] **Admin Panel** 
 -   [x] **Product Reviews**
--   [ ] **Order Checkout**
+-   [x] **Order Checkout**
 
 ### 🚧 **Phase 2:**
 
