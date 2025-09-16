@@ -6,5 +6,5 @@ export const Route = createFileRoute("/orders/checkout")({
 });
 
 export function CheckoutPage() {
-    return <CheckoutForm totalAmount={0} onComplete={() => {}} />;
+    return <CheckoutForm />;
 }

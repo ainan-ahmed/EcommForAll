@@ -12,6 +12,7 @@ import {
 
 /**
  * Get all orders for the current user with pagination and filtering
+ * Returns OrderSummary[], not full Order[]
  */
 export async function fetchUserOrders(
     params: OrderQueryParams = {}
@@ -29,7 +30,20 @@ export async function fetchUserOrders(
         url.searchParams.append("page", params.page.toString());
     if (params.size !== undefined)
         url.searchParams.append("size", params.size.toString());
-    if (params.sort) url.searchParams.append("sort", params.sort);
+
+    // Fix sort parameter handling
+    if (params.sort) {
+        // Handle different sort formats
+        if (params.sort.includes(",")) {
+            // Format: "createdAt,desc" -> split and add separately
+            const [property, direction] = params.sort.split(",");
+            url.searchParams.append("sort", `${property},${direction}`);
+        } else {
+            // Format: "createdAt" -> add as is (default ASC)
+            url.searchParams.append("sort", params.sort);
+        }
+    }
+
     if (params.status) url.searchParams.append("status", params.status);
     if (params.dateFrom) url.searchParams.append("dateFrom", params.dateFrom);
     if (params.dateTo) url.searchParams.append("dateTo", params.dateTo);
@@ -40,7 +54,7 @@ export async function fetchUserOrders(
     if (params.orderNumber)
         url.searchParams.append("orderNumber", params.orderNumber);
 
-    const response = await fetch(url.toString(), {
+    const response = await fetch(url, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${token}`,
@@ -59,6 +73,7 @@ export async function fetchUserOrders(
 
 /**
  * Get a specific order by ID (user can only access their own orders)
+ * Returns full Order with all details including items
  */
 export async function fetchOrderById(orderId: string): Promise<Order> {
     const token = localStorage.getItem("authToken");
@@ -95,6 +110,17 @@ export async function createOrder(
     if (!token) {
         throw new Error("Authentication required");
     }
+    const requestBody = {
+        ...orderData,
+        shippingAddress:
+            typeof orderData.shippingAddress === "string"
+                ? orderData.shippingAddress
+                : JSON.stringify(orderData.shippingAddress),
+        billingAddress:
+            typeof orderData.billingAddress === "string"
+                ? orderData.billingAddress
+                : JSON.stringify(orderData.billingAddress),
+    };
 
     const response = await fetch(`${API.BASE_URL}/orders`, {
         method: "POST",
@@ -102,7 +128,7 @@ export async function createOrder(
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(orderData),
+        body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
