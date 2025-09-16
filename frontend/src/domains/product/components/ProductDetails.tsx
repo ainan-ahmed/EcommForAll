@@ -662,7 +662,9 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                 </Tabs.Panel>
             </Tabs>
 
-            {/* Related Products */}
+            {isAuthenticated &&
+                <div>
+                    {/* Related Products */}
             <Title order={2} mt={50}>
                 You May Also Like
             </Title>
@@ -712,6 +714,8 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                         )
                     )}
             </SimpleGrid>
+                </div>
+            }
         </Container>
     );
 }

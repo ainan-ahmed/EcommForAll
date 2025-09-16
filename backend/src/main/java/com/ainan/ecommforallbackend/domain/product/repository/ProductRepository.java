@@ -1,0 +1,31 @@
+package com.ainan.ecommforallbackend.domain.product.repository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.ainan.ecommforallbackend.domain.product.entity.Product;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+public interface ProductRepository extends JpaRepository<Product, UUID> , JpaSpecificationExecutor<Product> {
+    Optional<Product> findBySku(String sku);
+    Page<Product> findByIsActive(Boolean isActive, Pageable pageable);
+    Page<Product> findByIsFeatured(Boolean isFeatured, Pageable pageable);
+    Page<Product> findByCategoryId(UUID categoryId, Pageable pageable);
+    Page<Product> findBySellerId(UUID sellerId, Pageable pageable);
+    Page<Product> findByBrandId(UUID brandId, Pageable pageable);
+    Optional<Product> findBySkuAndSellerIdAndIsActive(String sku, UUID sellerId, Boolean isActive);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.category.id = :categoryId")
+    long countByCategoryId(@Param("categoryId") UUID categoryId);
+    @Query("SELECT COUNT(p) FROM Product p WHERE p.brand.id = :brandId")
+    long countByBrandId(@Param("brandId") UUID brandId);
+    @Query("SELECT p FROM Product p WHERE p.category.id IN :categoryIds")
+    Page<Product> findByCategoryIdIn(@Param("categoryIds") List<UUID> categoryIds, Pageable pageable);
+
+}
