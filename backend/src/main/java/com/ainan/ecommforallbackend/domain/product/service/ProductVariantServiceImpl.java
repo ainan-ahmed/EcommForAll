@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @RequiredArgsConstructor
 @Service
@@ -113,8 +114,8 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 .substring(0, Math.min(3, productVariant.getAttributeValues().toString().length()))
                 .toUpperCase();
 
-        String randomPart = String.format("%04d", (int) (Math.random() * 10000));
+        String randomPart = "%04d".formatted((int) (ThreadLocalRandom.current().nextDouble() * 10000));
 
-        return String.format("%s-%s-%s", productPrefix, attributePrefix, randomPart);
+        return "%s-%s-%s".formatted(productPrefix, attributePrefix, randomPart);
     }
 }
