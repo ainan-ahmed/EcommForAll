@@ -188,7 +188,7 @@ public class ChatbotService {
 
             if (!messages.isEmpty()) {
                 // Remove the last message if it's from user (the failed one)
-                Message lastMessage = messages.get(messages.size() - 1);
+                Message lastMessage = messages.getLast();
                 if (lastMessage.getMessageType() == MessageType.USER && lastMessage.getText().equals(userMessage)) {
                     // Clear and rebuild memory without the last user message
                     chatMemory.clear(conversationId.toString());
