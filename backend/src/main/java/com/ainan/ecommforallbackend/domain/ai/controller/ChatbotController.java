@@ -177,12 +177,12 @@ public class ChatbotController {
         if (message.getMetadata() != null && message.getMetadata().containsKey("timestamp")) {
             try {
                 Object timestamp = message.getMetadata().get("timestamp");
-                if (timestamp instanceof LocalDateTime) {
+                if (timestamp instanceof LocalDateTime time) {
                     // Convert LocalDateTime to Instant using system default time zone
-                    return ((LocalDateTime) timestamp).atZone(ZoneId.systemDefault()).toInstant();
-                } else if (timestamp instanceof String) {
+                    return time.atZone(ZoneId.systemDefault()).toInstant();
+                } else if (timestamp instanceof String string) {
                     // Parse string as LocalDateTime, then convert to Instant
-                    LocalDateTime parsedDateTime = LocalDateTime.parse((String) timestamp);
+                    LocalDateTime parsedDateTime = LocalDateTime.parse(string);
                     return parsedDateTime.atZone(ZoneId.systemDefault()).toInstant();
                 }
             } catch (Exception e) {
