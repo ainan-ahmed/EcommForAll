@@ -170,7 +170,7 @@ public class WishlistServiceImpl implements WishlistService {
             );
 
             if (!primaryImages.getContent().isEmpty()) {
-                productDto.setPrimaryImage(primaryImages.getContent().getFirst());
+                productDto.setPrimaryImage(primaryImages.getContent().get(0));
             }
         });
 

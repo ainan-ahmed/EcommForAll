@@ -112,7 +112,8 @@ public class AdminController {
 
             } while (page < userPage.getTotalPages());
 
-            String message = "Successfully processed %d users. Created %d wishlists and %d shopping carts".formatted(
+            String message = String.format(
+                    "Successfully processed %d users. Created %d wishlists and %d shopping carts",
                     userPage.getTotalElements(), wishlistCount.get(), cartCount.get());
             log.info(message);
 
