@@ -42,11 +42,11 @@ public class ChatbotTools {
                 var products = productService.getFilteredProducts(filter, PageRequest.of(0, limit));
 
                 if (products.isEmpty()) {
-                    return "No products found under $%.2f".formatted(maxPrice);
+                    return String.format("No products found under $%.2f", maxPrice);
                 }
 
                 StringBuilder resultStr = new StringBuilder();
-                resultStr.append("Here are %d products under $%.2f:\n".formatted(products.getContent().size(), maxPrice));
+                resultStr.append(String.format("Here are %d products under $%.2f:\n", products.getContent().size(), maxPrice));
                 for (ProductDto product : products.getContent()) {
                     resultStr.append(String.format("- %s ($%.2f) - %s\n",
                             product.getName(),
@@ -91,11 +91,11 @@ public class ChatbotTools {
                         .toList();
 
                 if (products.isEmpty()) {
-                    return ("No products found for \"%s\"" + (maxPrice != null ? " under $%.2f" : "")).formatted(query, maxPrice);
+                    return String.format("No products found for \"%s\"" + (maxPrice != null ? " under $%.2f" : ""), query, maxPrice);
                 }
 
                 StringBuilder resultStr = new StringBuilder();
-                resultStr.append("Search results for \"%s\":\n".formatted(query));
+                resultStr.append(String.format("Search results for \"%s\":\n", query));
                 for (ProductDto product : products) {
                     resultStr.append(String.format("- %s ($%.2f) - %s\n",
                             product.getName(),
@@ -126,7 +126,7 @@ public class ChatbotTools {
             details.append(String.format("Product: %s\n", product.getName()));
             details.append(String.format("Description: %s\n", product.getDescription()));
             details.append(String.format("Price: $%.2f\n", product.getMinPrice()));
-            details.append("Active: %s\n".formatted(product.getIsActive() ? "Yes" : "No"));
+            details.append(String.format("Active: %s\n", product.getIsActive() ? "Yes" : "No"));
 
             if (product.getVariants() != null && !product.getVariants().isEmpty()) {
                 details.append("Variants available: ").append(product.getVariants().size()).append("\n");
