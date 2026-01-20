@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
@@ -360,9 +359,9 @@ public class ProductServiceImpl implements ProductService {
         String categoryPrefix = product.getCategory().getName()
                 .substring(0, Math.min(3, product.getCategory().getName().length())).toUpperCase();
         String productPrefix = product.getName().substring(0, Math.min(3, product.getName().length())).toUpperCase();
-        String randomPart = "%04d".formatted((int) (ThreadLocalRandom.current().nextDouble() * 10000));
+        String randomPart = String.format("%04d", (int) (Math.random() * 10000));
 
-        return "%s-%s-%s-%s".formatted(brandPrefix, categoryPrefix, productPrefix, randomPart);
+        return String.format("%s-%s-%s-%s", brandPrefix, categoryPrefix, productPrefix, randomPart);
     }
 
     private Page<ProductDto> addPrimaryImagesToProducts(Page<ProductDto> productDtos) {
@@ -373,7 +372,7 @@ public class ProductServiceImpl implements ProductService {
                         PageRequest.of(0, 1));
 
                 if (!primaryImages.getContent().isEmpty()) {
-                    productDto.setPrimaryImage(primaryImages.getContent().getFirst());
+                    productDto.setPrimaryImage(primaryImages.getContent().get(0));
                 }
             } catch (Exception e) {
                 log.warn("Failed to fetch primary image for product {}: {}", productDto.getId(), e.getMessage());

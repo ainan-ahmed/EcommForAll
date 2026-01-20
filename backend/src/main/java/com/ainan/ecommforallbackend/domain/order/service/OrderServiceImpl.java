@@ -407,7 +407,7 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.getProductId(),
                     PageRequest.of(0, 1));
             if (image.hasContent()) {
-                orderItem.setImageUrl(image.getContent().getFirst().getImageUrl());
+                orderItem.setImageUrl(image.getContent().get(0).getImageUrl());
             }
         });
         return orderItems;
