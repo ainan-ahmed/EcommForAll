@@ -168,8 +168,8 @@ public class AiService {
     private Double extractSimilarityScore(Document document) {
         // Spring AI VectorStore might include similarity score in metadata
         Object score = document.getMetadata().get("score");
-        if (score != null && score instanceof Number number) {
-            return number.doubleValue();
+        if (score != null && score instanceof Number) {
+            return ((Number) score).doubleValue();
         }
         return 0.8; // Default similarity score
     }
@@ -192,7 +192,7 @@ public class AiService {
 
     private String formatPrice(java.math.BigDecimal price) {
         if (price == null) return null;
-        return "$%.2f".formatted(price);
+        return String.format("$%.2f", price);
     }
 
     private ProductDescriptionRequestDto applyDefaults(ProductDescriptionRequestDto request) {

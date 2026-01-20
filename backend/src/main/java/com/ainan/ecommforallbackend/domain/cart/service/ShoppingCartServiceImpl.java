@@ -255,7 +255,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                         PageRequest.of(0, 1));
 
                 if (!primaryImages.getContent().isEmpty()) {
-                    cartItemDto.setImageUrl(primaryImages.getContent().getFirst());
+                    cartItemDto.setImageUrl(primaryImages.getContent().get(0));
                 }
             } catch (Exception e) {
                 log.warn("Failed to fetch primary image for product {}: {}", imageProductId, e.getMessage());
