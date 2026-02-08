@@ -1,6 +1,10 @@
 package com.ainan.ecommforallbackend.domain.ai.service;
 
 import com.ainan.ecommforallbackend.core.util.PromptTemplates;
+import com.ainan.ecommforallbackend.domain.ai.agent.AgentFactory;
+import com.ainan.ecommforallbackend.domain.ai.agent.ProductDescriptionAgent;
+import com.ainan.ecommforallbackend.domain.ai.agent.base.AgentRequest;
+import com.ainan.ecommforallbackend.domain.ai.agent.base.AgentResponse;
 import com.ainan.ecommforallbackend.domain.ai.dto.ProductDescriptionRequestDto;
 import com.ainan.ecommforallbackend.domain.ai.dto.ProductDescriptionResponseDto;
 import com.ainan.ecommforallbackend.domain.ai.dto.SimilarProductsResponseDto;
@@ -14,6 +18,8 @@ import com.ainan.ecommforallbackend.domain.product.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.aspectj.weaver.loadtime.Agent;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -33,33 +39,28 @@ public class AiService {
     private final BrandService brandService;
     private final CategoryService categoryService;
     private final VectorStore vectorStore;
+    private final AgentFactory agentFactory;
 
     public ProductDescriptionResponseDto generateProductDescription(
             ProductDescriptionRequestDto request, UUID productId) {
         try {
             log.info("Processing AI description request for product: {}",
                     productId != null ? "ID " + productId : request.getProductName());
-
+            ProductDescriptionAgent productDescriptionAgent = agentFactory.createProductDescriptionAgent();
+            AgentRequest agentRequest = AgentRequest.builder()
+                    .requestId(UUID.randomUUID())
+                    .requestType("ProductDescription")
+                    .input(Map.of(
+                            "request", request,
+                            "productId", productId))
+                    .build();
+            AgentResponse agentResponse = productDescriptionAgent.execute(agentRequest);
             // Enhance request with product details if productId is provided
-            ProductDescriptionRequestDto finalRequest = request;
-            if (productId != null) {
-                finalRequest = enhanceRequestWithProductDetails(request, productId);
-                log.info("Enhanced request with details from product ID: {}", productId);
-            }
-
-            // Apply default values
-            finalRequest = applyDefaults(finalRequest);
-
-            // Generate description using AI
-            String generatedDescription = generateWithAI(finalRequest);
-            log.info("AI Response received: '{}'", generatedDescription);
-            generatedDescription = postProcessDescription(generatedDescription, finalRequest);
-
-            log.info("Successfully generated description for product: {}", finalRequest.getProductName());
+            log.info("Successfully generated description for product: {}", request.getProductName());
             return ProductDescriptionResponseDto.success(
-                    generatedDescription,
-                    finalRequest.getExistingDescription(),
-                    finalRequest.getTone());
+                    agentResponse.getContent(),
+                    request.getExistingDescription(),
+                    request.getTone());
 
         } catch (Exception e) {
             log.error("Error generating product description: {}", e.getMessage(), e);

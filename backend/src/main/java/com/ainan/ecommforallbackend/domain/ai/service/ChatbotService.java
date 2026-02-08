@@ -1,17 +1,28 @@
 package com.ainan.ecommforallbackend.domain.ai.service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ainan.ecommforallbackend.domain.ai.agent.AgentFactory;
+import com.ainan.ecommforallbackend.domain.ai.agent.ChatbotAgent;
+import com.ainan.ecommforallbackend.domain.ai.agent.base.AgentRequest;
+import com.ainan.ecommforallbackend.domain.ai.agent.base.AgentResponse;
+import com.ainan.ecommforallbackend.domain.ai.dto.ChatHistoryMessageDto;
+import com.ainan.ecommforallbackend.domain.ai.dto.ChatHistoryResponseDto;
 import com.ainan.ecommforallbackend.domain.ai.dto.ChatRequestDto;
 import com.ainan.ecommforallbackend.domain.ai.dto.ChatResponseDto;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,7 +31,7 @@ import java.util.UUID;
 @Transactional
 public class ChatbotService {
 
-    private final ChatClient chatbotClient;
+    private final AgentFactory agentFactory;
     private final ChatMemory chatMemory;
 
     public ChatResponseDto processMessage(ChatRequestDto request) {
@@ -29,70 +40,35 @@ public class ChatbotService {
             if (request.getMessage() == null || request.getMessage().trim().isEmpty()) {
                 throw new IllegalArgumentException("Message cannot be empty");
             }
-            // Analyze intent for response categorization
-            String intent = analyzeIntent(request.getMessage());
-            log.info("Chatbot intent detected: {}", intent);
 
-            // Build a simpler user prompt that works better with Vertex AI
-            String userPrompt = request.getMessage(); // Use the raw message directly
-            log.info("Chatbot user prompt generated: {}", userPrompt);
+            ChatbotAgent agent = agentFactory.createChatbotAgent();
 
-            if (userPrompt.trim().isEmpty()) {
-                throw new IllegalArgumentException("User prompt cannot be empty");
-            }
-            log.info("Processing: {}", request);
+            AgentRequest agentRequest = AgentRequest.builder()
+                    .requestType("CHATBOT_MESSAGE")
+                    .input(Map.of("message", request.getMessage()))
+                    .context(Map.of(
+                            "conversationId", conversationId,
+                            "chatMemory", chatMemory
+                    ))
+                    .build();
 
-            // Get AI response - Use the most minimal approach possible to avoid "parts
-            // field" error
-            String aiResponse;
-            try {
-                // Try the absolute simplest call possible but with memory
-                aiResponse = chatbotClient.prompt()
-                        .user(userPrompt)
-                        .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId.toString()))
-                        .call()
-                        .content();
+            AgentResponse agentResponse = agent.execute(agentRequest);
 
-                log.info("AI response received successfully: {}",
-                        aiResponse != null ? aiResponse.substring(0, Math.min(50, aiResponse.length())) + "..."
-                                : "null");
-            } catch (Exception vertexError) {
-                log.error("Vertex AI call failed with error: {}", vertexError.getMessage());
-
-                // If even the simplest call fails, it's a fundamental Spring AI + Vertex AI
-                // compatibility issue
-                if (vertexError.getMessage().contains("parts field")) {
-                    throw new RuntimeException("Spring AI 1.0.1 has a compatibility issue with Vertex AI Gemini. " +
-                            "The request format is not properly constructed. Consider using a different AI provider or updating Spring AI version.",
-                            vertexError);
-                } else {
-                    throw vertexError;
-                }
+            if (!agentResponse.isSuccess()) {
+                throw new RuntimeException(agentResponse.getErrorMessage());
             }
 
-            // Parse response for UI actions (using simplified intent)
             ChatResponseDto response = parseAgentResponse(
                     conversationId,
-                    aiResponse,
-                    intent);
+                    agentResponse.getContent(),
+                    "GENERAL" // or let agent return intent in metadata
+            );
 
-            log.info("Chat response generated for conversation: {}", conversationId);
             return response;
 
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid request: {}", e.getMessage());
-
-            // For validation errors, don't store anything in memory
-            if (conversationId != null) {
-                removeLastUserMessageFromMemory(conversationId, request.getMessage());
-            }
-            return ChatResponseDto.error(
-                    conversationId != null ? conversationId : UUID.randomUUID(),
-                    "Please provide a valid message.");
         } catch (Exception e) {
             log.error("Error processing chat message for conversation {}: {}", conversationId, e.getMessage(), e);
 
-            // CRITICAL: Remove the user message that was auto-stored but failed to process
             if (conversationId != null) {
                 removeLastUserMessageFromMemory(conversationId, request.getMessage());
             }
@@ -103,65 +79,22 @@ public class ChatbotService {
         }
     }
 
-    private String analyzeIntent(String message) {
-        String lowerMessage = message.toLowerCase();
+    public ChatHistoryResponseDto getConversation(UUID conversationId) {
+        List<Message> history = chatMemory.get(conversationId.toString());
 
-        if (lowerMessage.contains("product") || lowerMessage.contains("search") || lowerMessage.contains("find")) {
-            return "PRODUCT_SEARCH";
-        } else if (lowerMessage.contains("compare") || lowerMessage.contains("vs")
-                || lowerMessage.contains("difference")) {
-            return "PRODUCT_COMPARISON";
-        } else if (lowerMessage.contains("recommend") || lowerMessage.contains("suggest")
-                || lowerMessage.contains("best")) {
-            return "RECOMMENDATION";
-        } else if (lowerMessage.contains("category") || lowerMessage.contains("type")) {
-            return "CATEGORY_BROWSE";
-        } else if (lowerMessage.contains("brand") || lowerMessage.contains("make")) {
-            return "BRAND_INQUIRY";
-        } else if (lowerMessage.contains("price") || lowerMessage.contains("cost") || lowerMessage.contains("cheap")) {
-            return "PRICE_INQUIRY";
-        } else {
-            return "GENERAL";
+        if (history.isEmpty()) {
+            ChatHistoryResponseDto emptyResponse = new ChatHistoryResponseDto();
+            emptyResponse.setConversationId(conversationId);
+            emptyResponse.setMessages(new ArrayList<>());
+            return emptyResponse;
         }
+
+        return convertToChatHistoryWithMetadata(conversationId.toString(), history);
     }
 
-    private String buildUserPrompt(String userMessage, String intent) {
-        StringBuilder prompt = new StringBuilder();
-
-        prompt.append("Customer Intent: ").append(intent).append("\n\n");
-
-        // Add context based on intent
-        switch (intent) {
-            case "PRODUCT_SEARCH":
-                prompt.append(
-                        "The customer is looking for specific products. Use search tools to help them find what they need.\n");
-                break;
-            case "PRODUCT_COMPARISON":
-                prompt.append(
-                        "The customer wants to compare products. Help them compare features, prices, and benefits.\n");
-                break;
-            case "RECOMMENDATION":
-                prompt.append(
-                        "The customer wants product recommendations. Suggest featured products or search based on their preferences.\n");
-                break;
-            case "CATEGORY_BROWSE":
-                prompt.append(
-                        "The customer is browsing by category. Help them explore products in specific categories.\n");
-                break;
-            default:
-                prompt.append("Provide helpful assistance based on the customer's request.\n");
-                break;
-        }
-
-        prompt.append("\nCustomer Message: ").append(userMessage).append("\n\n");
-
-        // Pattern to match price expressions
-        if (userMessage.toLowerCase().matches(".*\\b(under|below|less than|max|maximum)\\s*\\$?\\d+.*")) {
-            prompt.append("Please use the maxPrice parameter when searching");
-        }
-        return prompt.toString();
+    public void clearConversation(String conversationId) {
+        chatMemory.clear(conversationId);
     }
-
     private ChatResponseDto parseAgentResponse(UUID sessionId, String response, String intent) {
         ChatResponseDto dto = ChatResponseDto.success(sessionId, response, intent);
 
@@ -203,6 +136,82 @@ public class ChatbotService {
             }
         } catch (Exception e) {
             log.error("Error removing failed message from memory: {}", e.getMessage());
+        }
+    }
+
+    private ChatHistoryResponseDto convertToChatHistoryWithMetadata(String conversationId, List<Message> messages) {
+        ChatHistoryResponseDto response = new ChatHistoryResponseDto();
+        response.setConversationId(parseConversationId(conversationId));
+        response.setMessages(new ArrayList<>());
+
+        Instant baseTime = Instant.now().minusSeconds(messages.size() * 60);
+
+        for (int i = 0; i < messages.size(); i++) {
+            Message message = messages.get(i);
+
+            if (message.getMessageType() == MessageType.SYSTEM) {
+                continue;
+            }
+
+            ChatHistoryMessageDto historyMessage = new ChatHistoryMessageDto();
+
+            String content = cleanMessageContent(message);
+            historyMessage.setContent(content);
+
+            Instant messageTime = getMessageTimestamp(message, baseTime.plusSeconds(i * 60));
+            historyMessage.setTimestamp(messageTime);
+
+            historyMessage.setSender(mapMessageTypeToSender(message.getMessageType()));
+
+            response.getMessages().add(historyMessage);
+        }
+
+        return response;
+    }
+
+    private String cleanMessageContent(Message message) {
+        String content = message.getText();
+
+        if (message.getMessageType() == MessageType.USER && content.contains("Customer Intent:")) {
+            if (content.contains("Customer Message: ")) {
+                content = content.substring(content.lastIndexOf("Customer Message: ") + 18).trim();
+            }
+        }
+
+        return content;
+    }
+
+    private Instant getMessageTimestamp(Message message, Instant fallbackTime) {
+        if (message.getMetadata() != null && message.getMetadata().containsKey("timestamp")) {
+            try {
+                Object timestamp = message.getMetadata().get("timestamp");
+                if (timestamp instanceof LocalDateTime) {
+                    return ((LocalDateTime) timestamp).atZone(ZoneId.systemDefault()).toInstant();
+                } else if (timestamp instanceof String) {
+                    LocalDateTime parsedDateTime = LocalDateTime.parse((String) timestamp);
+                    return parsedDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                }
+            } catch (Exception e) {
+                log.debug("Could not parse timestamp from message metadata: {}", e.getMessage());
+            }
+        }
+
+        return fallbackTime;
+    }
+
+    private String mapMessageTypeToSender(MessageType messageType) {
+        return switch (messageType) {
+            case USER -> "user";
+            case ASSISTANT -> "assistant";
+            default -> "system";
+        };
+    }
+
+    private UUID parseConversationId(String conversationId) {
+        try {
+            return UUID.fromString(conversationId);
+        } catch (IllegalArgumentException e) {
+            return UUID.nameUUIDFromBytes(conversationId.getBytes());
         }
     }
 }
