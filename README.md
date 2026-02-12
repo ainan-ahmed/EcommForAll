@@ -92,7 +92,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 -   Node.js (v18.x or later recommended)
 -   npm / yarn / pnpm (choose one)
--   Java JDK (version 17 or later for Spring Boot)
+-   Java JDK (version 21 or later for Spring Boot)
 -   Maven
 -   Docker & Docker Compose
 

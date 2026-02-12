@@ -2,7 +2,7 @@
 
 ## Project overview
 
-- Spring Boot 3.4 (Java 17) monolith with domain-based packages under `src/main/java/com/ainan/ecommforallbackend/domain/*`.
+- Spring Boot 3.4 (Java 21) monolith with domain-based packages under `src/main/java/com/ainan/ecommforallbackend/domain/*`.
 - Each domain (product, order, auth, etc.) typically follows `controller/`, `dto/`, `entity/`, `mapper/`, `repository/`, `service/` structure.
 - JPA + PostgreSQL is the primary persistence layer; specifications drive filtering logic (see `core/specification/ProductSpecification`).
 
