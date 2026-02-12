@@ -176,6 +176,15 @@ GCLOUD_PROJECT=your-project-id
 VERTEX_AI_LOCATION=europe-west1
 ```
 
+## 🤖 AI Quick Reference
+
+- Chatbot endpoints: `/api/chatbot/*` (USER or ADMIN required)
+- Description generation: `POST /api/ai/generate-description` (SELLER or ADMIN)
+- Similar products: `GET /api/ai/similar-products/{productId}?limit=5`
+- Embedding sync: `POST /api/admin/sync-embeddings` (ADMIN only)
+
+See `backend/AI_SERVICE_README.md` for full request/response payloads, tools, memory, and troubleshooting.
+
 ### 📊 Database Setup
 
 The application automatically initializes:
