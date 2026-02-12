@@ -92,7 +92,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 -   Node.js (v18.x or later recommended)
 -   npm / yarn / pnpm (choose one)
--   Java JDK (version 17 or later for Spring Boot)
+-   Java JDK (version 21 or later for Spring Boot)
 -   Maven
 -   Docker & Docker Compose
 
@@ -175,6 +175,15 @@ GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
 GCLOUD_PROJECT=your-project-id
 VERTEX_AI_LOCATION=europe-west1
 ```
+
+## 🤖 AI Quick Reference
+
+- Chatbot endpoints: `/api/chatbot/*` (USER or ADMIN required)
+- Description generation: `POST /api/ai/generate-description` (SELLER or ADMIN)
+- Similar products: `GET /api/ai/similar-products/{productId}?limit=5`
+- Embedding sync: `POST /api/admin/sync-embeddings` (ADMIN only)
+
+See `backend/AI_SERVICE_README.md` for full request/response payloads, tools, memory, and troubleshooting.
 
 ### 📊 Database Setup
 

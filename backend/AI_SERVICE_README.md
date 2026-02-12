@@ -2,303 +2,285 @@
 
 ## Overview
 
-The AI Service provides intelligent product description generation capabilities using Spring AI and Google Vertex AI's Gemini models.
-This service helps e-commerce sellers create compelling, SEO-friendly product descriptions automatically.
+The AI domain provides:
+- Conversational chatbot with memory and tool-assisted product actions.
+- Product description generation for sellers/admins.
+- Similar product recommendations via vector search.
+- Admin-only embedding synchronization for products.
 
-## Features
-
--   **Generate Product Descriptions**: Create new descriptions from scratch using product details
--   **Improve Existing Descriptions**: Enhance existing product descriptions with AI
--   **Auto-Populate Product Details**: Generate descriptions for existing products by providing productId
--   **Multiple Tone Options**: Support for professional, casual, technical, and marketing tones
--   **SEO Optimization**: Generate content optimized for search engines
--   **Customizable Length**: Control the maximum word count for descriptions
--   **Product Variant Support**: Handle multiple product variants in description generation
--   **Brand and Category Integration**: Automatically include brand and category details
+This module is built on Spring AI with Vertex AI (Gemini for chat, text-embedding-005 for embeddings) and pgvector for similarity search.
 
 ## Configuration
 
-### 1. Environment Variables
-
-Set your Google Cloud credentials as environment variables:
-
-```bash
-export GOOGLE_CLOUD_PROJECT_ID=ecommforall-ai
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/ecommforall-ai-key.json
-export GOOGLE_CLOUD_LOCATION=europe-west4
-```
-
-### 2. Application Configuration
-
-The service is configured in `application.yml`:
+AI configuration lives in `backend/src/main/resources/application.yml`:
 
 ```yaml
 spring:
     ai:
+        vectorstore:
+            pgvector:
+                initialize-schema: true
+                index-type: HNSW
+                distance-type: COSINE_DISTANCE
+                dimensions: 768
         vertex:
             ai:
                 gemini:
-                    project-id: ${GOOGLE_CLOUD_PROJECT_ID}
-                    location: ${GOOGLE_CLOUD_LOCATION}
+                    project-id: ${GCLOUD_PROJECT:ecommforall-ai}
+                    location: europe-west1
+                    chat:
+                        options:
+                            model: gemini-3-flash
+                            temperature: 0.7
+                embedding:
+                    project-id: ${GCLOUD_PROJECT:ecommforall-ai}
+                    location: europe-west1
+                    text:
+                        options:
+                            model: text-embedding-005
+    chat:
+        memory:
+            repository:
+                jdbc:
+                    initialize-schema: always
+                    platform: postgresql
+chatbot:
+    max-messages: 20
+    enable-tools: true
+    session-timeout-hours: 24
 ```
 
-## API Endpoints
-
-### 1. Generate Product Description
-
-**POST** `/api/ai/generate-description`
-
-Generate a new product description from provided details.
-
-**Request Body:**
-
-```json
-{
-    "productName": "Wireless Bluetooth Headphones",
-    "category": "Electronics",
-    "brand": "TechBrand",
-    "existingDescription": "Optional existing description to improve",
-    "attributes": {
-        "Battery Life": "30 hours",
-        "Connectivity": "Bluetooth 5.0",
-        "Weight": "250g"
-    },
-    "hasVariants": true,
-    "variants": [
-        {
-            "attributeValues": {
-                "Color": "Black",
-                "Style": "Over-ear"
-            },
-            "price": 99.99,
-            "stock": 10
-        },
-        {
-            "attributeValues": {
-                "Color": "White",
-                "Style": "On-ear"
-            },
-            "price": 89.99,
-            "stock": 5
-        }
-    ],
-    "targetAudience": "Music enthusiasts and professionals",
-    "tone": "professional",
-    "maxLength": 150
-}
-```
-
-**Response:**
-
-```json
-{
-    "generatedDescription": "Experience premium audio quality with these Wireless Bluetooth Headphones...",
-    "originalDescription": "Optional existing description to improve",
-    "tone": "professional",
-    "wordCount": 142,
-    "generatedAt": "2025-07-01T14:30:00",
-    "success": true
-}
-```
-
-### 2. Generate Description for Existing Product
-
-**POST** `/api/ai/generate-description?productId={productId}`
-
-Generate a description for an existing product using its stored details.
-
-**Parameters:**
-
--   `productId` (query): UUID of the product to auto-populate product details
--   `tone` (request body, optional): Tone of description (default: "professional")
--   `maxLength` (request body, optional): Maximum words (default: 150)
-
-**Example:**
+Required environment variables:
 
 ```bash
-POST /api/ai/generate-description?productId=123e4567-e89b-12d3-a456-426614174000
+GOOGLE_APPLICATION_CREDENTIALS=./ecommforall-ai-key.json
+GCLOUD_PROJECT=your-project-id
+```
 
+## APIs
+
+Base paths:
+- Chatbot: `/api/chatbot`
+- AI services: `/api/ai`
+- Admin embeddings: `/api/admin`
+
+### Chatbot APIs (`/api/chatbot`)
+
+Auth: requires `USER` or `ADMIN` role for all chatbot endpoints.
+
+#### POST `/api/chatbot/chat`
+Send a chat message.
+
+Request: `ChatRequestDto`
+
+```json
 {
-  "tone": "marketing",
+  "message": "Show me wireless headphones under $100",
+  "conversationId": "550e8400-e29b-41d4-a716-446655440000",
+  "context": "optional",
+  "userAgent": "optional",
+  "ipAddress": "optional",
+  "timestamp": "2025-07-01T14:30:00"
+}
+```
+
+Notes:
+- `message` is required (`@NotBlank`, 1-255 chars).
+- If authenticated, the controller defaults `conversationId` to the user ID.
+- If anonymous and no conversationId, a new UUID is generated.
+- If timestamp is missing, server sets it to now.
+
+Response: `ChatResponseDto`
+
+```json
+{
+  "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+  "message": "Here are some options...",
+  "intent": "PRODUCT_SEARCH",
+  "requiresAction": true,
+  "actionType": "SHOW_PRODUCTS",
+  "timestamp": "2025-07-01T14:30:02",
+  "success": true,
+  "errorMessage": null
+}
+```
+
+Errors:
+- The controller catches errors and still returns HTTP 200 with `success=false` and `intent="ERROR"`.
+
+#### GET `/api/chatbot/chat?conversationId=...`
+Fetch chat history.
+
+Response: `ChatHistoryResponseDto`
+
+```json
+{
+  "conversationId": "550e8400-e29b-41d4-a716-446655440000",
+  "messages": [
+    {
+      "sender": "user",
+      "content": "Find me a laptop",
+      "timestamp": "2025-07-01T14:29:00Z"
+    },
+    {
+      "sender": "assistant",
+      "content": "Here are some options...",
+      "timestamp": "2025-07-01T14:29:05Z"
+    }
+  ],
+  "retrievedAt": "2025-07-01T14:30:00Z",
+  "totalMessages": 2
+}
+```
+
+Notes:
+- If authenticated and `conversationId` is omitted, it defaults to the user ID.
+- If unauthenticated and no `conversationId`, returns 400.
+
+#### DELETE `/api/chatbot/chat/{conversationId}`
+Clears conversation memory for the given conversation ID.
+
+#### GET `/api/chatbot/health`
+Simple health check string for the chatbot service.
+
+### AI APIs (`/api/ai`)
+
+#### POST `/api/ai/generate-description`
+Generate or improve product descriptions.
+
+Auth: requires `SELLER` or `ADMIN` role.
+
+Request: `ProductDescriptionRequestDto`
+
+```json
+{
+  "productName": "Gaming Mechanical Keyboard",
+  "category": "Electronics",
+  "brand": "GameTech",
+  "existingDescription": "Optional existing description",
+  "attributes": {
+    "Switch Type": "Blue Mechanical",
+    "Backlighting": "RGB"
+  },
+  "targetAudience": "Gamers",
+  "hasVariants": true,
+  "variants": [
+    {
+      "attributeValues": { "Color": "Black" },
+      "price": 99.99,
+      "stock": 10
+    }
+  ],
+  "tone": "technical",
   "maxLength": 200
 }
 ```
 
-### 3. Improve Existing Description
+Optional query param: `productId` (UUID). If provided, the service enriches fields from the stored product details.
 
-**POST** `/api/ai/generate-description`
-
-Enhance an existing product description by including the existingDescription field.
-
-**Request Body:**
+Response: `ProductDescriptionResponseDto`
 
 ```json
 {
-    "productName": "Wireless Bluetooth Headphones",
-    "existingDescription": "Basic headphones with good sound quality. Wireless connection.",
-    "tone": "marketing",
-    "maxLength": 150
+  "generatedDescription": "Experience premium audio quality...",
+  "originalDescription": "Optional existing description",
+  "wordCount": 142,
+  "tone": "technical",
+  "generatedAt": "2025-07-01T14:30:00",
+  "success": true,
+  "errorMessage": null
 }
 ```
 
-**Response:**
+Errors:
+- Returns HTTP 400 when `success=false`.
+
+#### GET `/api/ai/similar-products/{productId}?limit=5`
+Find similar products using vector similarity.
+
+Response: `SimilarProductsResponseDto`
 
 ```json
 {
-    "generatedDescription": "Experience premium audio quality with these Wireless Bluetooth Headphones...",
-    "originalDescription": "Basic headphones with good sound quality. Wireless connection.",
-    "tone": "marketing",
-    "wordCount": 142,
-    "generatedAt": "2025-07-01T14:30:00",
-    "success": true
+  "success": true,
+  "message": "Similar products retrieved successfully",
+  "sourceProductId": "550e8400-e29b-41d4-a716-446655440000",
+  "sourceProductName": "Gaming Mechanical Keyboard",
+  "similarProducts": [
+    { "id": "...", "name": "..." }
+  ],
+  "totalFound": 5
 }
 ```
 
-### 4. Health Check
+Notes:
+- `limit` defaults to 5 and is constrained to 1..20.
+- Returns 400 when `success=false`.
 
-**GET** `/api/ai/health`
+#### GET `/api/ai/health`
+Health check that verifies the chat client is reachable.
 
-Check if the AI service is operational.
+### Admin embedding API (`/api/admin`)
 
-**Response:**
+#### POST `/api/admin/sync-embeddings`
+Admin-only endpoint to (re)index all products into the vector store.
 
+Response: `EmbeddingSyncResponseDto`
+
+```json
+{
+  "totalProducts": 120,
+  "indexed": 118,
+  "skipped": 1,
+  "failed": 1
+}
 ```
-AI Service is operational
-```
 
-## Available Tones
+## Chatbot Tools and Memory
 
--   **professional**: Formal, business-oriented language
--   **casual**: Friendly, conversational tone
--   **technical**: Detailed, specification-focused
--   **marketing**: Persuasive, sales-oriented
+Chatbot uses Spring AI tools and memory:
 
-## Security
+- Tools live in `ChatbotTools` and expose:
+  - searchProducts(query, maxPrice, limit)
+  - getProductDetails(productId)
+  - getFeaturedProducts()
+  - getProductsByCategory(categoryId)
+  - compareProducts(productIds)
+- Tools are enabled in `ChatbotConfig` and used via function calling.
+- Memory is backed by JDBC (`JdbcChatMemoryRepository`) with a window size from `chatbot.max-messages`.
+- When available, `QuestionAnswerAdvisor` uses the vector store for retrieval-augmented responses.
 
-All AI endpoints require authentication with `SELLER` or `ADMIN` roles:
+## Agent Architecture
 
--   Users must be logged in
--   Only sellers can generate descriptions for their products
--   Admins have full access to all AI features
+AI workflows use a small agent framework:
+- `BaseAgent` defines validate/setup/build/call/post-process flow.
+- `AgentFactory` creates `ChatbotAgent` and `ProductDescriptionAgent`.
+- `AgentRequest` and `AgentResponse` wrap structured inputs/outputs.
 
 ## Error Handling
 
-The service provides comprehensive error handling:
+- Validation errors are handled centrally in `GlobalExceptionHandler` (400 with field-level errors).
+- Chatbot POST returns HTTP 200 with `success=false` on failures and a friendly error message.
+- AI description and similar-product endpoints return HTTP 400 when `success=false`.
+- Health endpoints return 503 when unhealthy.
 
-**Success Response:**
+## Security
 
-```json
-{
-    "success": true,
-    "generatedDescription": "...",
-    "originalDescription": "...",
-    "tone": "professional",
-    "wordCount": 142,
-    "generatedAt": "2025-07-01T14:30:00"
-}
-```
+- Chatbot endpoints: `USER` or `ADMIN` roles required.
+- Generate description endpoint: `SELLER` or `ADMIN` roles required.
+- Embedding sync: `ADMIN` only.
+- Similar-products and AI health endpoints have no explicit role guard in the controller.
 
-**Error Response:**
+## Implementation Notes
 
-```json
-{
-    "success": false,
-    "errorMessage": "Failed to generate product description: Unable to connect to Google Vertex AI",
-    "generatedAt": "2025-07-01T14:30:00"
-}
-```
-
-## Usage Examples
-
-### Example 1: Generate Description for Electronics
-
-```bash
-curl -X POST "http://localhost:8080/api/ai/generate-description" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "productName": "Gaming Mechanical Keyboard",
-    "category": "Electronics",
-    "brand": "GameTech",
-    "attributes": {
-      "Switch Type": "Blue Mechanical",
-      "Backlighting": "RGB",
-      "Layout": "Full-size with Numpad"
-    },
-    "tone": "technical",
-    "maxLength": 200
-  }'
-```
-
-### Example 2: Improve Existing Description
-
-```bash
-curl -X POST "http://localhost:8080/api/ai/generate-description" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "productName": "Gaming Mechanical Keyboard",
-    "existingDescription": "Basic keyboard for gaming with lights",
-    "tone": "marketing",
-    "maxLength": 200
-  }'
-```
-
-### Example 3: Generate for Existing Product
-
-```bash
-curl -X POST "http://localhost:8080/api/ai/generate-description?productId=123e4567-e89b-12d3-a456-426614174000" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "tone": "casual",
-    "maxLength": 150
-  }'
-```
-
-## Best Practices
-
-1. **Provide Detailed Input**: The more details you provide, the better the generated description
-2. **Include Product Variants**: For products with variants, include them for more comprehensive descriptions
-3. **Choose Appropriate Tone**: Match the tone to your target audience
-4. **Review Generated Content**: Always review AI-generated content before publishing
-5. **Use Attributes Effectively**: Provide detailed attributes to highlight key features
-6. **Set Reasonable Length**: Keep descriptions concise but informative (100-200 words)
-7. **Specify Target Audience**: Include target audience information for more focused content
+- Embeddings are stored in pgvector; `ProductEmbeddingService` builds rich product text and indexes documents.
+- Similar product search builds a query text from product name, description, category, and brand.
+- Chatbot intent detection is based on keywords inside `ChatbotAgent` and influences response metadata.
 
 ## Troubleshooting
 
-### Common Issues:
-
-1. **"Invalid host or port"**: Check that GOOGLE_CLOUD_LOCATION is correctly set
-2. **"Failed to generate content"**: Verify Google Cloud credentials are properly configured
-3. **"PERMISSION_DENIED"**: Ensure service account has proper IAM permissions
-4. **"JSON parse error"**: Check for malformed JSON in your request (e.g., trailing commas)
-5. **"Access denied"**: Ensure user has SELLER or ADMIN role
-
-### Environment Variables:
-
-```bash
-# Required environment variables
-export GOOGLE_CLOUD_PROJECT_ID=ecommforall-ai
-export GOOGLE_APPLICATION_CREDENTIALS=./backend/ecommforall-ai-key.json
-export GOOGLE_CLOUD_LOCATION=europe-west4
-```
-
-## Implementation Details
-
-The AI service is built using:
-
--   Spring AI Framework
--   Google Vertex AI Gemini model
--   Spring Security for endpoint protection
--   Automatic product detail enhancement for better descriptions
-
-## Future Enhancements
-
--   Multi-language description generation
--   Bulk description generation for multiple products
--   A/B testing for different description styles
--   Integration with product analytics for performance tracking
--   SEO keyword suggestion based on generated content
--   Customized AI models for specific product categories
+Common issues:
+- Vertex AI credentials missing or incorrect.
+- pgvector extension not installed.
+- `GCLOUD_PROJECT` or model configuration not set.
+- Vector store empty (run `/api/admin/sync-embeddings` as admin).
