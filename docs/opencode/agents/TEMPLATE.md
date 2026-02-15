@@ -1,7 +1,7 @@
 ---
 description: Brief one-line description of what this agent does
 mode: subagent              # subagent (invoked with @) or primary (can be main agent)
-model: anthropic/claude-sonnet-4-20250514  # or claude-haiku-4-20250514 for faster/cheaper
+model: google/gemini-3-flash
 temperature: 0.2            # 0.0-1.0: lower = deterministic, higher = creative
 tools:
   bash: false              # Execute shell commands
