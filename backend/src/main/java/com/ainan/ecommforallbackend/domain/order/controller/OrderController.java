@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import com.ainan.ecommforallbackend.domain.order.dto.*;
 import com.ainan.ecommforallbackend.domain.order.entity.OrderStatus;
@@ -23,12 +25,14 @@ import java.util.UUID;
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Orders", description = "Order placement and customer order history")
 public class OrderController {
 
     private final OrderService orderService;
     private final UserService userService;
 
     @PostMapping
+    @Operation(summary = "Create order", description = "Creates a new order for the authenticated user.")
     public ResponseEntity<OrderResponseDto> createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto,
             Principal principal) {
         String userId = getCurrentUserId(principal);
@@ -37,6 +41,7 @@ public class OrderController {
     }
 
     @GetMapping
+    @Operation(summary = "List user orders", description = "Returns paginated orders for the current user with optional status filter.")
     public ResponseEntity<Page<OrderSummaryDto>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -60,6 +65,7 @@ public class OrderController {
     }
 
     @GetMapping("/recent")
+    @Operation(summary = "List recent orders", description = "Returns the most recent orders for the current user.")
     public ResponseEntity<List<OrderSummaryDto>> getRecentOrders(
             @RequestParam(defaultValue = "5") int limit,
             Principal principal) {
@@ -70,6 +76,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
+    @Operation(summary = "Get order by ID", description = "Returns order details for the given order ID.")
     public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable UUID orderId, Principal principal) {
         String userId = getCurrentUserId(principal);
         OrderResponseDto order = orderService.getOrderById(orderId, userId);
@@ -77,6 +84,7 @@ public class OrderController {
     }
 
     @PostMapping("/{orderId}/cancel")
+    @Operation(summary = "Cancel order", description = "Cancels an order for the current user with a cancellation reason.")
     public ResponseEntity<Void> cancelOrder(
             @PathVariable UUID orderId,
             @RequestBody OrderCancellationDto cancellationDto,
@@ -88,6 +96,7 @@ public class OrderController {
     }
 
     @GetMapping("/has-active")
+    @Operation(summary = "Check active orders", description = "Returns whether the user has any active orders.")
     public ResponseEntity<Boolean> hasActiveOrders(Principal principal) {
         String userId = getCurrentUserId(principal);
         boolean hasActiveOrders = orderService.userHasActiveOrders(userId);
