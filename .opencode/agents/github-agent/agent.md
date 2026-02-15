@@ -1,7 +1,7 @@
 ---
 description: Specialized GitHub agent for PR management and code review workflows
 mode: subagent
-model: anthropic/claude-sonnet-4-20250514
+model: google/gemini-2.0-flash-exp
 temperature: 0.2
 tools:
   bash: true
