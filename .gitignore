@@ -1,2 +1,9 @@
 backend/tmp
 backend/ecommforall-ai-key.json
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
