@@ -9,6 +9,8 @@ import com.ainan.ecommforallbackend.domain.cart.service.ShoppingCartService;
 import com.ainan.ecommforallbackend.domain.user.service.UserService;
 import com.ainan.ecommforallbackend.domain.wishlist.dto.WishlistCreateDto;
 import com.ainan.ecommforallbackend.domain.wishlist.service.WishlistService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Tag(name = "Authentication", description = "User registration, login, and JWT validation")
 public class AuthController {
     private final AuthService authService;
     private final UserService userservice;
@@ -29,6 +32,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
+    @Operation(summary = "Register a new user", description = "Creates a user account and initializes a default wishlist and shopping cart.")
     public ResponseEntity<UserDto> register(@Valid @RequestBody UserAuthDto registrationDto) {
         System.out.println("Received DTO: " + registrationDto.toString());
         System.out.println("Password received: [" + registrationDto.getPassword() + "]");
@@ -39,6 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Authenticate a user", description = "Validates credentials and returns a JWT token with the user profile.")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
         try {
             // The service will throw BadCredentialsException if credentials are wrong
@@ -55,6 +60,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate")
+    @Operation(summary = "Validate JWT token", description = "Checks whether the provided Authorization token is valid.")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
 
         if (token != null && jwtUtil.validateJwtToken(token)) {
@@ -64,6 +70,7 @@ public class AuthController {
     }
 
     @GetMapping("/user")
+    @Operation(summary = "Get authenticated user", description = "Returns the current user details using the Authorization token and principal.")
     public ResponseEntity<UserDto> getUserDetails(@RequestHeader("Authorization") String token, Principal principal) {
         String username;
         if (token != null && token.startsWith("Bearer ")) {

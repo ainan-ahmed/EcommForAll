@@ -18,6 +18,8 @@ import com.ainan.ecommforallbackend.domain.user.dto.RoleUpdateDto;
 import com.ainan.ecommforallbackend.domain.user.dto.UserDto;
 import com.ainan.ecommforallbackend.domain.wishlist.dto.WishlistCreateDto;
 import com.ainan.ecommforallbackend.domain.wishlist.service.WishlistService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Admin", description = "Administrative user management and maintenance tasks")
 public class AdminController {
 
     private final AdminService adminService;
@@ -35,6 +38,7 @@ public class AdminController {
     private final ProductEmbeddingService embeddingService;
 
     @GetMapping("/users")
+    @Operation(summary = "List users", description = "Returns a paginated list of users with sorting options.")
     public ResponseEntity<Page<UserDto>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -49,6 +53,7 @@ public class AdminController {
     }
 
     @PutMapping("/users/{userId}/changeRole")
+    @Operation(summary = "Update user role", description = "Changes the role for a user account.")
     public ResponseEntity<UserDto> updateUserRole(
             @PathVariable UUID userId,
             @RequestBody RoleUpdateDto roleUpdateDto) {
@@ -56,12 +61,14 @@ public class AdminController {
     }
 
     @PostMapping("/sync-embeddings")
+    @Operation(summary = "Sync product embeddings", description = "Regenerates AI embeddings for all products.")
     public ResponseEntity<EmbeddingSyncResponseDto> syncEmbeddings() {
         EmbeddingSyncResponseDto response = embeddingService.syncAllProducts();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/create-default-wishlists-and-carts")
+    @Operation(summary = "Create default wishlists and carts", description = "Creates a default wishlist and shopping cart for all users.")
     public ResponseEntity<String> createDefaultWishlistsAndCartsForAllUsers() {
         try {
             log.info("Starting creation of default wishlists and shopping carts for all users");

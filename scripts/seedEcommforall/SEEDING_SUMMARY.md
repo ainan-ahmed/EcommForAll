@@ -30,7 +30,7 @@ The script creates entities in the correct order:
 8. **Orders** → **Order Items**
 
 ### ✅ API Integration
-- Maps CSV data to API endpoints from `api-docs.json`
+- Maps CSV data to REST API endpoints (documented at http://localhost:8080/swagger-ui.html)
 - Handles all required fields and data types
 - Supports hierarchical relationships (parent categories, product variants)
 - Includes option values (color, size) for product variants
@@ -101,7 +101,7 @@ python example_usage.py
 
 ## API Endpoints Used
 
-The script uses the following API endpoints (from `api-docs.json`):
+The script uses the following API endpoints (full documentation at http://localhost:8080/swagger-ui.html):
 
 - `POST /api/auth/register` - User registration
 - `POST /api/brands` - Brand creation

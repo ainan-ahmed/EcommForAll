@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -20,12 +22,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/products/{productId}/variants/{variantId}/images")
 @RequiredArgsConstructor
+@Tag(name = "Variant Images", description = "Manage images for product variants")
 public class VariantImageController {
 
     private final VariantImageService variantImageService;
     private final S3Service s3Service;
 
     @GetMapping
+    @Operation(summary = "List variant images", description = "Returns images for a product variant.")
     public ResponseEntity<Page<VariantImageDto>> getAllVariantImages(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
@@ -34,6 +38,7 @@ public class VariantImageController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get variant image", description = "Returns a variant image by ID.")
     public ResponseEntity<VariantImageDto> getVariantImage(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
@@ -42,6 +47,7 @@ public class VariantImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Create variant image", description = "Uploads an image and creates a variant image record.")
     public ResponseEntity<VariantImageDto> createVariantImage(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
@@ -61,6 +67,7 @@ public class VariantImageController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Update variant image", description = "Replaces variant image file and/or updates metadata.")
     public ResponseEntity<VariantImageDto> updateVariantImage(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
@@ -87,6 +94,7 @@ public class VariantImageController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete variant image", description = "Deletes a variant image and removes the file from storage.")
     public ResponseEntity<Void> deleteVariantImage(
             @PathVariable UUID productId,
             @PathVariable UUID variantId,
