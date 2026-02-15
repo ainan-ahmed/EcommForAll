@@ -1,7 +1,7 @@
 # GitHub Agent
 
 **Type**: Subagent  
-**Invocation**: `@GithubAgent` or `@github`  
+**Invocation**: `@github-agent`  
 **Focus**: Pull Request Management & GitHub Operations
 
 ## Overview
@@ -15,21 +15,21 @@ The GitHub Agent is a specialized subagent that handles all GitHub-related opera
 Invoke the agent using the `@` mention:
 
 ```
-@GithubAgent create a PR for my current branch
-@github review PR #123
+@github-agent create a PR for my current branch
+@github-agent review PR #123
 ```
 
 ### Common Commands
 
 | Action | Example |
 |--------|---------|
-| **Create PR** | `@github create a PR to main with a detailed description` |
-| **Review PR** | `@github review PR #456 and provide feedback` |
-| **Check Status** | `@github what's the CI status of PR #789?` |
-| **Update PR** | `@github add label "bug" and assign @reviewer to PR #123` |
-| **List PRs** | `@github show all my open PRs` |
-| **Approve PR** | `@github approve PR #555 if everything looks good` |
-| **Add Comment** | `@github comment on PR #666: "Great work!"` |
+| **Create PR** | `@github-agent create a PR to main with a detailed description` |
+| **Review PR** | `@github-agent review PR #456 and provide feedback` |
+| **Check Status** | `@github-agent what's the CI status of PR #789?` |
+| **Update PR** | `@github-agent add label "bug" and assign @reviewer to PR #123` |
+| **List PRs** | `@github-agent show all my open PRs` |
+| **Approve PR** | `@github-agent approve PR #555 if everything looks good` |
+| **Add Comment** | `@github-agent comment on PR #666: "Great work!"` |
 
 ## Capabilities
 
@@ -96,7 +96,7 @@ Invoke the agent using the `@` mention:
 User: Implement user authentication feature
 [Main agent writes code and commits]
 
-User: @github create a PR for this feature
+User: @github-agent create a PR for this feature
 GitHub Agent:
   → Analyzes all commits since branch diverged
   → Reviews full diff from main branch
@@ -107,7 +107,7 @@ GitHub Agent:
     - Testing instructions
   → Returns PR URL
 
-User: @github check if CI is passing
+User: @github-agent check if CI is passing
 GitHub Agent:
   → Runs gh pr checks
   → Reports status of all CI/CD checks
@@ -117,7 +117,7 @@ GitHub Agent:
 ### Example 2: Code Review Flow
 
 ```
-User: @github review PR #789
+User: @github-agent review PR #789
 GitHub Agent:
   → Fetches PR metadata (title, author, description)
   → Reviews all commits in the PR
@@ -130,7 +130,7 @@ GitHub Agent:
     - Best practices
     - Security concerns
 
-User: @github approve it if everything looks good
+User: @github-agent approve it if everything looks good
 GitHub Agent:
   → Verifies all checks pass
   → Confirms no blocking issues
@@ -140,7 +140,7 @@ GitHub Agent:
 ### Example 3: PR Management Flow
 
 ```
-User: @github show me all open PRs assigned to me
+User: @github-agent show me all open PRs assigned to me
 GitHub Agent:
   → Lists PRs with gh pr list --assignee @me
   → For each PR shows:
@@ -150,7 +150,7 @@ GitHub Agent:
     - Merge conflicts (if any)
   → Provides actionable summary
 
-User: @github merge PR #555 if ready
+User: @github-agent merge PR #555 if ready
 GitHub Agent:
   → Checks CI/CD status (must pass)
   → Verifies required reviews (must be approved)
@@ -180,14 +180,14 @@ The GitHub agent is designed to complement the main OpenCode agent:
 2. User: "commit the changes"  
    → Main agent creates commit
 
-3. User: "@github create a PR"
+3. User: "@github-agent create a PR"
    → GitHub agent analyzes and creates PR
 
 4. Reviewer comments on PR
    → User: "fix the issues mentioned"
    → Main agent makes corrections
 
-5. User: "@github check if ready to merge"
+5. User: "@github-agent check if ready to merge"
    → GitHub agent verifies and merges
 ```
 
@@ -200,7 +200,7 @@ The GitHub agent is designed to complement the main OpenCode agent:
 - Use descriptive branch names
 
 ### Reviewing PRs
-- Review PRs by number: `@github review PR #123`
+- Review PRs by number: `@github-agent review PR #123`
 - Ask for specific checks: "are there security issues?"
 - Request focused analysis: "check error handling patterns"
 
@@ -249,7 +249,7 @@ gh auth status
 ## Troubleshooting
 
 ### Agent Not Found
-**Problem**: `@GithubAgent` doesn't invoke the agent
+**Problem**: `@github-agent` doesn't invoke the agent
 
 **Solutions**:
 1. Verify file exists: `ls .opencode/agents/github/agent.md`
@@ -332,22 +332,22 @@ When creating PRs, automatically add labels based on:
 
 ### Batch Operations
 ```
-@github for each open PR assigned to me, check CI status and report which are ready to merge
+@github-agent for each open PR assigned to me, check CI status and report which are ready to merge
 ```
 
 ### Conditional Operations
 ```
-@github merge PR #123 only if all checks pass and there are at least 2 approvals
+@github-agent merge PR #123 only if all checks pass and there are at least 2 approvals
 ```
 
 ### Cross-reference Analysis
 ```
-@github compare the changes in PR #123 and PR #456 - are there any conflicts?
+@github-agent compare the changes in PR #123 and PR #456 - are there any conflicts?
 ```
 
 ### Historical Analysis
 ```
-@github show me all PRs merged last week and their review times
+@github-agent show me all PRs merged last week and their review times
 ```
 
 ## Additional Resources

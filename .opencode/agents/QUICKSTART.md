@@ -8,7 +8,7 @@
     ├── README.md              # Agent registry and documentation
     ├── TEMPLATE.md            # Template for creating new agents
     ├── .gitignore             # Ignore temporary/sensitive files
-    └── github/                # GitHub agent (example)
+    └── github-agent/                # GitHub agent (example)
         ├── agent.md           # Agent configuration (OpenCode reads this)
         └── README.md          # Agent documentation
 ```
@@ -16,8 +16,8 @@
 ## Using the GitHub Agent
 
 ```
-@GithubAgent create a PR for my current branch
-@github review PR #123
+@github-agent create a PR for my current branch
+@github-agent review PR #123
 ```
 
 ## Creating a New Agent
@@ -53,7 +53,7 @@ See `.opencode/agents/README.md` → "Creating New Agents" section
 .opencode/agents/
 ├── README.md                    # Registry
 ├── TEMPLATE.md                  # Template
-├── github/                      # Agent 1
+├── github-agent/                      # Agent 1
 │   ├── agent.md
 │   └── README.md
 ├── code-reviewer/               # Agent 2
@@ -109,8 +109,8 @@ See `.opencode/agents/README.md` → "Creating New Agents" section
 
 ### Invocation Names
 
-- Directory name: `.opencode/agents/github/` → `@github`
-- Readable name: Use in commands like `@GithubAgent` (OpenCode maps it)
+- Directory name: `.opencode/agents/github-agent/` → `@github`
+- Readable name: Use in commands like `@github-agent` (OpenCode maps it)
 
 ### Conventions
 
@@ -162,7 +162,7 @@ tools:
 
 ## Next Steps
 
-1. **Try the GitHub agent**: `@github help me understand what you can do`
+1. **Try the GitHub agent**: `@github-agent help me understand what you can do`
 2. **Read the registry**: Check `.opencode/agents/README.md`
 3. **Create your own agent**: Use `TEMPLATE.md` as starting point
 4. **Share feedback**: Improve agents based on usage
@@ -198,7 +198,7 @@ cat .opencode/agents/<name>/agent.md
 ## Resources
 
 - **Main Registry**: `.opencode/agents/README.md`
-- **GitHub Agent**: `.opencode/agents/github/README.md`
+- **GitHub Agent**: `.opencode/agents/github-agent/README.md`
 - **Template**: `.opencode/agents/TEMPLATE.md`
 - **OpenCode Docs**: <https://opencode.ai/docs/agents>
 

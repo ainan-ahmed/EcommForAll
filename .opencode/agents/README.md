@@ -17,7 +17,7 @@ This directory contains custom OpenCode agents for this project. Each agent is s
 
 ### 1. GitHub Agent
 
-**Invocation**: `@GithubAgent` or `@github`  
+**Invocation**: `@github-agent`  
 **Type**: Subagent  
 **Focus**: Pull Request Management & GitHub Operations
 
@@ -28,14 +28,14 @@ This directory contains custom OpenCode agents for this project. Each agent is s
 - Manage PR comments, labels, and reviewers
 - Execute GitHub CLI operations
 
-**Location**: `.opencode/agents/github/`  
-**Documentation**: [github/README.md](./github/README.md)
+**Location**: `.opencode/agents/github-agent/`  
+**Documentation**: [github-agent/README.md](./github-agent/README.md)
 
 **Quick Examples**:
 ```
-@github create a PR for my current branch
-@github review PR #123 and check if it's ready to merge
-@github what's the CI status of all my open PRs?
+@github-agent create a PR for my current branch
+@github-agent review PR #123 and check if it's ready to merge
+@github-agent what's the CI status of all my open PRs?
 ```
 
 ---
