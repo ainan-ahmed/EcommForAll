@@ -19,7 +19,7 @@ docs/opencode/agents/        # Documentation only (not loaded as agents)
 ### 1. GitHub Agent
 
 **Invocation**: `@github-agent`  
-**Type**: Subagent  
+**Type**: Both (Primary + Subagent)  
 **Focus**: Pull Request Management & GitHub Operations
 
 **Capabilities**:
@@ -107,7 +107,7 @@ Add your new agent to the "Available Agents" section above.
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `description` | string | Brief agent description | "Reviews code for quality" |
-| `mode` | string | `subagent` or `primary` | `subagent` |
+| `mode` | string | `subagent`, `primary`, or `both` | `subagent` |
 | `model` | string | AI model to use | `anthropic/claude-sonnet-4-20250514` |
 | `temperature` | number | 0.0 to 1.0, controls randomness | `0.2` |
 | `tools` | object | Enable/disable tools | `{bash: true, write: false}` |

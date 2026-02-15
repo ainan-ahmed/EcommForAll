@@ -1,6 +1,6 @@
 ---
 description: Specialized GitHub agent for PR management and code review workflows
-mode: subagent
+mode: both
 model: google/gemini-3-flash
 temperature: 0.2
 tools:
