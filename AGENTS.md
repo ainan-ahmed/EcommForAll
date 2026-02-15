@@ -10,7 +10,7 @@ Custom OpenCode agents for this project are defined in `.opencode/agents/`.
 **Available agents:**
 - **GitHub Agent** (`@github-agent`) - PR management and GitHub operations
 
-See `.opencode/agents/docs/README.md` for complete agent documentation and usage.
+See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 
 ## Repo layout
 - backend/: Spring Boot (Java 21, Maven, JPA, Spring Security, Spring AI)

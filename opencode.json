@@ -6,7 +6,7 @@
       "url": "https://mcp.context7.com/mcp",
       "headers": {
         "CONTEXT7_API_KEY": "ctx7sk-45201922-48c6-4d1c-a213-fa7f1fab15ff"
-      },
+      }
     }
   },
   "plugin": [

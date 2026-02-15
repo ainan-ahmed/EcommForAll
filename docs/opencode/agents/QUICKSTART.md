@@ -5,12 +5,11 @@
 ```
 .opencode/
 └── agents/
-    ├── README.md              # Agent registry and documentation
-    ├── TEMPLATE.md            # Template for creating new agents
-    ├── .gitignore             # Ignore temporary/sensitive files
-    └── github-agent/                # GitHub agent (example)
-        ├── agent.md           # Agent configuration (OpenCode reads this)
-        └── README.md          # Agent documentation
+    └── github-agent.md        # Agent configuration (OpenCode reads this)
+docs/opencode/agents/
+├── README.md
+├── TEMPLATE.md
+└── QUICKSTART.md
 ```
 
 ## Using the GitHub Agent
@@ -24,26 +23,23 @@
 
 ### Quick Method
 
-1. **Copy template structure**:
+1. **Copy template**:
 
 ```bash
-   mkdir -p .opencode/agents/<agent-name>
-   cp .opencode/agents/TEMPLATE.md .opencode/agents/<agent-name>/agent.md
+   cp docs/opencode/agents/TEMPLATE.md .opencode/agents/<agent-name>.md
    ```
 
-1. **Edit configuration**: Update frontmatter in `agent.md`
+1. **Edit configuration**: Update frontmatter in `<agent-name>.md`
 
 2. **Write instructions**: Add agent behavior in markdown body
 
-3. **Create documentation**: Add `README.md` in the agent directory
+3. **Register agent**: Add entry to `docs/opencode/agents/README.md`
 
-4. **Register agent**: Add entry to `.opencode/agents/README.md`
-
-5. **Test**: Restart OpenCode and invoke with `@agent-name`
+4. **Test**: Restart OpenCode and invoke with `@agent-name`
 
 ### Detailed Method
 
-See `.opencode/agents/README.md` → "Creating New Agents" section
+See `docs/opencode/agents/README.md` → "Creating New Agents" section
 
 ## Agent Directory Best Practices
 
@@ -51,20 +47,14 @@ See `.opencode/agents/README.md` → "Creating New Agents" section
 
 ```
 .opencode/agents/
-├── README.md                    # Registry
-├── TEMPLATE.md                  # Template
-├── github-agent/                      # Agent 1
-│   ├── agent.md
-│   └── README.md
-├── code-reviewer/               # Agent 2
-│   ├── agent.md
-│   └── README.md
-└── test-runner/                 # Agent 3
-    ├── agent.md
-    ├── README.md
-    └── examples/                # Optional: examples
-        ├── unit-tests.md
-        └── integration-tests.md
+├── github-agent.md              # Agent 1
+├── code-reviewer.md             # Agent 2
+└── test-runner.md               # Agent 3
+
+docs/opencode/agents/
+├── README.md
+├── TEMPLATE.md
+└── QUICKSTART.md
 ```
 
 ### ❌ Old Structure (Avoid)
@@ -83,7 +73,7 @@ See `.opencode/agents/README.md` → "Creating New Agents" section
 
 ### 🎯 Organization
 
-- **Clear separation**: Each agent has its own directory
+- **Clear separation**: Agent configs and docs live in different folders
 - **Scalable**: Easy to add new agents without clutter
 - **Discoverable**: All agent files in one place
 
@@ -163,7 +153,7 @@ tools:
 ## Next Steps
 
 1. **Try the GitHub agent**: `@github-agent help me understand what you can do`
-2. **Read the registry**: Check `.opencode/agents/README.md`
+2. **Read the registry**: Check `docs/opencode/agents/README.md`
 3. **Create your own agent**: Use `TEMPLATE.md` as starting point
 4. **Share feedback**: Improve agents based on usage
 
@@ -197,7 +187,7 @@ cat .opencode/agents/<name>/agent.md
 
 ## Resources
 
-- **Main Registry**: `.opencode/agents/README.md`
+- **Main Registry**: `docs/opencode/agents/README.md`
 - **GitHub Agent**: `.opencode/agents/github-agent/README.md`
 - **Template**: `.opencode/agents/TEMPLATE.md`
 - **OpenCode Docs**: <https://opencode.ai/docs/agents>

@@ -5,12 +5,13 @@ This directory contains custom OpenCode agents for this project. Each agent is s
 ## Directory Structure
 
 ```
-.opencode/agents/
-├── README.md              # This file - agents registry
-└── <agent-name>/          # Each agent has its own directory
-    ├── agent.md           # Agent configuration (REQUIRED)
-    ├── README.md          # Agent documentation (RECOMMENDED)
-    └── [other files]      # Additional agent-specific resources
+.opencode/
+├── agents/                 # Agent configs only
+│   └── <agent-name>.md      # Agent configuration (REQUIRED)
+docs/opencode/agents/        # Documentation only (not loaded as agents)
+├── README.md                # This file - agents registry
+├── QUICKSTART.md            # Quick reference
+└── TEMPLATE.md              # Template for creating new agents
 ```
 
 ## Available Agents
@@ -28,8 +29,8 @@ This directory contains custom OpenCode agents for this project. Each agent is s
 - Manage PR comments, labels, and reviewers
 - Execute GitHub CLI operations
 
-**Location**: `.opencode/agents/github-agent/`  
-**Documentation**: [github-agent/README.md](./github-agent/README.md)
+**Location**: `.opencode/agents/github-agent.md`  
+**Documentation**: This document
 
 **Quick Examples**:
 ```
@@ -42,21 +43,15 @@ This directory contains custom OpenCode agents for this project. Each agent is s
 
 ## Creating New Agents
 
-### Step 1: Create Agent Directory
+### Step 1: Create Agent Configuration File
 
-```bash
-mkdir -p .opencode/agents/<agent-name>
-```
-
-### Step 2: Create Agent Configuration
-
-Create `agent.md` with YAML frontmatter and instructions:
+Create `.opencode/agents/<agent-name>.md` with YAML frontmatter and instructions:
 
 ```markdown
 ---
 description: Brief description of what this agent does
 mode: subagent          # or "primary"
-model: anthropic/claude-sonnet-4-20250514
+model: google/gemini-3-flash
 temperature: 0.2        # 0.0 (deterministic) to 1.0 (creative)
 tools:
   bash: true           # Enable/disable specific tools
@@ -89,41 +84,15 @@ You are a specialized agent for [purpose].
 [Best practices and examples]
 ```
 
-### Step 3: Create Agent Documentation
+### Step 2: (Optional) Add Documentation
 
-Create `README.md` with comprehensive documentation:
+Keep documentation in `docs/opencode/agents/` so it is not loaded as an agent.
 
-```markdown
-# Agent Name
-
-**Type**: Subagent/Primary  
-**Invocation**: `@AgentName` or `@agent-name`  
-**Focus**: Main focus area
-
-## Overview
-[Brief description]
-
-## Quick Start
-[Common commands and examples]
-
-## Capabilities
-[What the agent can do]
-
-## Configuration
-[Settings and customization]
-
-## Workflow Examples
-[Real-world usage examples]
-
-## Troubleshooting
-[Common issues and solutions]
-```
-
-### Step 4: Register Agent (Update This File)
+### Step 3: Register Agent (Update This File)
 
 Add your new agent to the "Available Agents" section above.
 
-### Step 5: Test Agent
+### Step 4: Test Agent
 
 ```bash
 # Restart OpenCode to load new agent
@@ -320,6 +289,6 @@ Potential agents you might want to create:
 
 ---
 
-**Registry Location**: `.opencode/agents/README.md`  
+**Registry Location**: `docs/opencode/agents/README.md`
 **Project**: EcommForAll  
 **Maintained by**: Project team
