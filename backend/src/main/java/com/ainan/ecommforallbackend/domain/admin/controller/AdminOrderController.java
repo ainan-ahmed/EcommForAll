@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -30,11 +32,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @Slf4j
+@Tag(name = "Admin Orders", description = "Administrative order management and metrics")
 public class AdminOrderController {
 
     private final OrderService orderService;
 
     @GetMapping
+    @Operation(summary = "List orders", description = "Returns paginated orders for admins with sorting options.")
     public ResponseEntity<Page<OrderResponseDto>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -47,6 +51,7 @@ public class AdminOrderController {
     }
 
     @GetMapping("/status/{status}")
+    @Operation(summary = "List orders by status", description = "Returns paginated orders filtered by status.")
     public ResponseEntity<Page<OrderResponseDto>> getOrdersByStatus(
             @PathVariable OrderStatus status,
             @RequestParam(defaultValue = "0") int page,
@@ -58,6 +63,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{orderId}/status")
+    @Operation(summary = "Update order status", description = "Updates the status of an order (admin only).")
     public ResponseEntity<OrderResponseDto> updateOrderStatus(
             @PathVariable UUID orderId,
             @Valid @RequestBody OrderStatusUpdateDto updateDto,
@@ -69,6 +75,7 @@ public class AdminOrderController {
     }
 
     @PutMapping("/{orderId}/payment")
+    @Operation(summary = "Update payment status", description = "Updates the payment status for an order (admin only).")
     public ResponseEntity<OrderResponseDto> updatePaymentStatus(
             @PathVariable UUID orderId,
             @Valid @RequestBody PaymentStatusUpdateDto updateDto,
@@ -80,6 +87,7 @@ public class AdminOrderController {
     }
 
     @GetMapping("/metrics")
+    @Operation(summary = "Get order metrics", description = "Returns aggregate order metrics such as counts and revenue.")
     public ResponseEntity<Map<String, Object>> getOrderMetrics() {
         Map<String, Object> metrics = new HashMap<>();
 
@@ -106,6 +114,7 @@ public class AdminOrderController {
     }
 
     @GetMapping("/top-selling")
+    @Operation(summary = "Get top selling products", description = "Returns top-selling products based on order history.")
     public ResponseEntity<List<ProductSalesDto>> getTopSellingProducts(
             @RequestParam(defaultValue = "10") int limit) {
 

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import com.ainan.ecommforallbackend.domain.product.dto.ProductVariantCreateDto;
 import com.ainan.ecommforallbackend.domain.product.dto.ProductVariantDto;
 import com.ainan.ecommforallbackend.domain.product.service.ProductVariantService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,16 +21,19 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/products/{productId}/variants")
 @RequiredArgsConstructor
+@Tag(name = "Product Variants", description = "Manage product variants and option values")
 public class ProductVariantController {
 
     private final ProductVariantService productVariantService;
 
     @GetMapping
+    @Operation(summary = "List variants", description = "Returns variants for a product.")
     public ResponseEntity<Page<ProductVariantDto>> getAllVariants(@PathVariable UUID productId, Pageable pageable) {
         return ResponseEntity.ok(productVariantService.getVariantsByProductId(productId, pageable));
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get variant", description = "Returns a product variant by ID.")
     public ResponseEntity<ProductVariantDto> getVariant(
             @PathVariable UUID productId,
             @PathVariable UUID id) {
@@ -36,6 +41,7 @@ public class ProductVariantController {
     }
 
     @PostMapping
+    @Operation(summary = "Create variant", description = "Creates a variant for a product using attribute values.")
     public ResponseEntity<ProductVariantDto> createVariant(
             @PathVariable UUID productId,
             @Valid @RequestBody ProductVariantCreateDto variantCreateDto) {
@@ -46,6 +52,7 @@ public class ProductVariantController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update variant", description = "Updates an existing variant's attributes.")
     public ResponseEntity<ProductVariantDto> updateVariant(
             @PathVariable UUID productId,
             @PathVariable UUID id,
@@ -57,6 +64,7 @@ public class ProductVariantController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete variant", description = "Deletes a product variant by ID.")
     public ResponseEntity<Void> deleteVariant(
             @PathVariable UUID productId,
             @PathVariable UUID id) {

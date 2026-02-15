@@ -147,7 +147,7 @@ python seed_from_csv.py --username myuser --password mypass
 
 ### API Endpoints
 
-The script uses the following API endpoints (based on `api-docs.json`):
+The script uses the following API endpoints (full API documentation available at http://localhost:8080/swagger-ui.html):
 
 - `POST /api/auth/register` - User registration
 - `POST /api/brands` - Brand creation

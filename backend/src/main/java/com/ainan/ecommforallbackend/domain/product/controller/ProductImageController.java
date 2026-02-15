@@ -15,6 +15,8 @@ import com.ainan.ecommforallbackend.domain.product.dto.ProductImageCreateDto;
 import com.ainan.ecommforallbackend.domain.product.dto.ProductImageDto;
 import com.ainan.ecommforallbackend.domain.product.service.ProductImageService;
 import com.ainan.ecommforallbackend.domain.product.service.S3Service;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,11 +26,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/products/{productId}/images")
 @RequiredArgsConstructor
+@Tag(name = "Product Images", description = "Manage product gallery images")
 public class ProductImageController {
     private final ProductImageService productImageService;
     private final S3Service s3Service;
 
     @GetMapping
+    @Operation(summary = "List product images", description = "Returns paginated images for a product.")
     public ResponseEntity<Page<ProductImageDto>> getAllProductImages(
             @PathVariable UUID productId,
             Pageable pageable) {
@@ -36,6 +40,7 @@ public class ProductImageController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get product image", description = "Returns a single product image by ID.")
     public ResponseEntity<ProductImageDto> getProductImage(
             @PathVariable UUID productId,
             @PathVariable UUID id) {
@@ -43,6 +48,7 @@ public class ProductImageController {
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Create product image", description = "Uploads an image and creates a product image record.")
     public ResponseEntity<?> createProductImage(
             @PathVariable UUID productId,
             @RequestParam("file") MultipartFile file,
@@ -74,6 +80,7 @@ public class ProductImageController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Update product image", description = "Replaces image file and/or updates metadata.")
     public ResponseEntity<?> updateProductImage(
             @PathVariable UUID productId,
             @PathVariable UUID id,
@@ -130,6 +137,7 @@ public class ProductImageController {
         }
     }
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete product image", description = "Deletes a product image and removes the file from storage.")
     public ResponseEntity<?> deleteProductImage(
             @PathVariable UUID productId,
             @PathVariable UUID id) {
@@ -157,6 +165,7 @@ public class ProductImageController {
         }
     }
     @PutMapping("/reorder")
+    @Operation(summary = "Reorder product images", description = "Updates the sort order of product images.")
     public ResponseEntity<List<ProductImageDto>> reorderProductImages(
             @PathVariable UUID productId,
             @RequestBody List<ImageSortOrderDto> imageOrders) {
