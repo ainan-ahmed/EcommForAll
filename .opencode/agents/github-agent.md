@@ -1,7 +1,7 @@
 ---
 description: Specialized GitHub agent for PR management and code review workflows
 mode: all
-model: google/gemini-3-flash-preview
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.2
 tools:
   bash: true
