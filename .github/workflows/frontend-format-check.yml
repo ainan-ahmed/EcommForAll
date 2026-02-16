@@ -1,0 +1,79 @@
+name: Frontend Format & Lint Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'frontend/**/*.ts'
+      - 'frontend/**/*.tsx'
+      - 'frontend/**/*.css'
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Setup reviewdog
+        uses: reviewdog/action-setup@v1
+        with:
+          reviewdog_version: latest
+
+      - name: Run Prettier check
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd frontend
+          npm run format:check 2>&1 | tee prettier-output.log || true
+          
+          # Parse prettier output and post as PR comments
+          if grep -q "Code style issues found" prettier-output.log; then
+            cat prettier-output.log | reviewdog -f=prettier \
+              -name="prettier" \
+              -reporter=github-pr-review \
+              -filter-mode=nofilter \
+              -fail-on-error=false \
+              -level=warning
+          fi
+
+      - name: Run ESLint
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd frontend
+          npm run lint -- --format=json > eslint-report.json || true
+          
+          # Post ESLint issues as PR comments using reviewdog
+          cat eslint-report.json | reviewdog -f=eslint \
+            -name="eslint" \
+            -reporter=github-pr-review \
+            -filter-mode=nofilter \
+            -fail-on-error=false \
+            -level=warning
+
+      - name: Check if formatting/linting passed
+        run: |
+          cd frontend
+          if ! npm run format:check > /dev/null 2>&1; then
+            echo "::warning::Prettier formatting issues detected. Please run 'npm run format' to fix."
+            exit 1
+          fi
+          if ! npm run lint > /dev/null 2>&1; then
+            echo "::warning::ESLint issues detected. Please fix linting errors."
+            exit 1
+          fi

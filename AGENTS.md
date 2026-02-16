@@ -16,7 +16,10 @@ See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 - backend/: Spring Boot (Java 21, Maven, JPA, Spring Security, Spring AI)
 - frontend/: React + Vite + TypeScript + Mantine + TanStack Router/Query
 - scripts/seedEcommforall/: seed tooling and notes
-- .github/workflows/maven.yml: backend CI build
+- .github/workflows/: CI/CD workflows
+  - maven.yml: backend build check (runs on PRs to dev/main)
+  - frontend-format-check.yml: frontend formatting/linting (runs on PRs)
+  - opencode.yml: OpenCode AI assistant integration
 
 ## Commands (run from repo root unless noted)
 
@@ -25,6 +28,8 @@ See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 - Dev server: `cd frontend && npm run dev`
 - Build (typecheck + bundle): `cd frontend && npm run build`
 - Lint: `cd frontend && npm run lint`
+- Format check: `cd frontend && npm run format:check`
+- Format (auto-fix): `cd frontend && npm run format`
 - Single test: no frontend test runner configured (no test script found)
 
 ### Backend (backend/)
@@ -44,7 +49,8 @@ See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 - Line endings: LF; keep files ASCII when possible
 - Avoid unused imports/variables; keep files clean
 - Do not edit generated files like `frontend/src/routeTree.gen.ts`
-- No formatter configured; preserve existing formatting style in each file
+- Frontend formatting: Prettier is configured (see `frontend/.prettierrc`)
+- Backend formatting: Follow existing style; no automated formatter
 - For up to date documentation and code snippets use `context7` tools
 - Cursor/Copilot rules: none found in `.cursor/rules/`, `.cursorrules`, or `.github/copilot-instructions.md`
 
@@ -122,7 +128,11 @@ See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 - Frontend scripts: `frontend/package.json`
 - Backend Maven config: `backend/pom.xml`
 - Lint config: `frontend/eslint.config.js`
-- CI workflow: `.github/workflows/maven.yml`
+- Prettier config: `frontend/.prettierrc`
+- CI workflows:
+  - Backend build: `.github/workflows/maven.yml`
+  - Frontend format/lint: `.github/workflows/frontend-format-check.yml`
+  - OpenCode integration: `.github/workflows/opencode.yml`
 
 ## When adding new code
 - Match the structure inside the relevant domain folder before creating new ones
@@ -137,7 +147,13 @@ See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 - There is only a placeholder test class currently; add tests alongside new features
 - No frontend tests configured; add a runner only if required by a task
 
-## Linting notes
+## Formatting and linting notes
+- Frontend: Prettier (formatting) + ESLint (linting) configured
+  - Run `npm run format:check` to check formatting
+  - Run `npm run format` to auto-fix formatting issues
+  - Run `npm run lint` to check for linting issues
+  - PR workflows will post inline comments for violations
+- Backend: No automated formatter; follow existing code style
 - ESLint is configured but minimal; do not introduce unused code or eslint-disable comments unless necessary
 - TypeScript strict mode is on; keep types explicit at API boundaries
 
