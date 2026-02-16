@@ -16,9 +16,9 @@ docs/opencode/agents/        # Documentation only (not loaded as agents)
 
 ## Available Agents
 
-### 1. GitHub Agent
+### 1. GitHub Manager Agent
 
-**Invocation**: `@github-agent`  
+**Invocation**: `@gh-bot`  
 **Type**: All (Primary + Subagent)  
 **Focus**: Pull Request Management & GitHub Operations
 
@@ -29,14 +29,14 @@ docs/opencode/agents/        # Documentation only (not loaded as agents)
 - Manage PR comments, labels, and reviewers
 - Execute GitHub CLI operations
 
-**Location**: `.opencode/agents/github-agent.md`  
+**Location**: `.opencode/agents/gh-bot.md`  
 **Documentation**: This document
 
 **Quick Examples**:
 ```
-@github-agent create a PR for my current branch
-@github-agent review PR #123 and check if it's ready to merge
-@github-agent what's the CI status of all my open PRs?
+@gh-bot create a PR for my current branch
+@gh-bot review PR #123 and check if it's ready to merge
+@gh-bot what's the CI status of all my open PRs?
 ```
 
 ---
