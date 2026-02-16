@@ -8,7 +8,7 @@ Keep guidance short, actionable, and aligned with existing code.
 Custom OpenCode agents for this project are defined in `.opencode/agents/`.
 
 **Available agents:**
-- **GitHub Agent** (`@github-agent`) - PR management and GitHub operations
+- **GitHub Manager Agent** (`@gh-bot`) - PR management and GitHub operations
 
 See `docs/opencode/agents/README.md` for complete agent documentation and usage.
 
