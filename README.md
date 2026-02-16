@@ -272,6 +272,7 @@ curl -X POST "http://localhost:8080/api/ai/generate-description" \
 -   **[AI Service Documentation](backend/AI_SERVICE_README.md)** - Detailed AI features and API reference
 -   **[Project Structure](PROJECT-STRUCTURE.MD)** - Complete codebase organization
 -   **[API Endpoints](backend/API_ENDPOINTS.md)** - Comprehensive API documentation
+-   **[CI/CD Workflows](docs/CI-CD.md)** - Automated checks, formatting, and deployment
 -   **[Contributing Guidelines](CONTRIBUTING.md)** - How to contribute to the project
 
 ## 🛠️ Advanced Configuration
