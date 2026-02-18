@@ -36,7 +36,7 @@ docker-compose up --build
 | :--- | :--- | :--- |
 | **Frontend** | React, TypeScript, Vite | Mantine UI, TanStack Router/Query, Zustand, Zod |
 | **Backend** | Java 21, Spring Boot 3.4 | Spring Data JPA, Spring Security, Spring AI, MapStruct |
-| **AI/ML** | Google Vertex AI, pgvector | Gemini 2.5 Pro, Text Embedding 005, HNSW Indexing |
+| **AI/ML** | Google Vertex AI, pgvector | Gemini 3 Flash, Text Embedding 005, HNSW Indexing |
 | **Storage** | PostgreSQL, AWS S3 | Hibernate, Amazon SDK |
 | **DevOps** | Docker, GitHub Actions | Docker Compose, Reviewdog, Maven |
 
@@ -62,10 +62,10 @@ docker-compose up --build
 
 | Component | Detail |
 | :--- | :--- |
-| **Primary Model** | Gemini 2.5 Pro (via Vertex AI) |
+| **Primary Model** | Gemini 3 Flash (via Vertex AI) |
 | **Embeddings** | Google Text Embedding 005 (768 Dimensions) |
 | **Vector Store** | pgvector (PostgreSQL) with HNSW Indexing |
-| **Memory** | JDBC-backed sliding window (Default: 20 messages) |
+| **Memory** | JDBC-backed sliding window (Default: 10 messages) |
 | **Distance Metric** | Cosine Similarity |
 
 *For API payloads and implementation details, see **[AI Service Documentation](backend/AI_SERVICE_README.md)**.*
