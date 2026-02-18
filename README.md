@@ -16,6 +16,7 @@
 
 ## 🚀 Quick Start
 
+### Option A: Docker Compose (Recommended)
 The fastest way to run the entire stack (Frontend, Backend, PostgreSQL + pgvector):
 
 ```bash
@@ -23,6 +24,24 @@ git clone https://github.com/ainan-ahmed/EcommForAll.git
 cd EcommForAll
 docker-compose up --build
 ```
+
+### Option B: Local Development
+For manual setup without Docker:
+
+1. **Prerequisites:** Java 21, Node.js 18+, Maven, PostgreSQL + [pgvector](https://github.com/pgvector/pgvector).
+2. **Database:** Install `pgvector` (e.g., `apt install postgresql-15-pgvector`) and create a database named `ecommforall`.
+3. **Backend:**
+   ```bash
+   cd backend
+   ./mvnw clean install
+   ./mvnw spring-boot:run
+   ```
+4. **Frontend:**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
 - **Frontend:** `http://localhost:5173` | **Backend API:** `http://localhost:8080` | **Swagger:** `/swagger-ui.html`
 
