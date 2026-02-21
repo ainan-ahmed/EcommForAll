@@ -144,7 +144,8 @@ public class ProductDescriptionAgent extends BaseAgent {
                 "tone", requestDto.getTone() != null ? requestDto.getTone() : "professional",
                 "maxLength", requestDto.getMaxLength() != null ? requestDto.getMaxLength() : 150,
                 "existingDescription", existingDescription,
-                "variantInfo", variantInfo);
+                "variantInfo", variantInfo,
+                "prompt", requestDto.getPrompt() != null ? requestDto.getPrompt() : "None");
     }
 
     private String buildVariantInfo() {

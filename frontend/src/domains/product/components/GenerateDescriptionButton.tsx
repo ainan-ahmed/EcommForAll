@@ -39,6 +39,7 @@ export function GenerateDescriptionButton({
     const [tone, setTone] = useState<string>("professional");
     const [maxLength, setMaxLength] = useState<number>(150);
     const [targetAudience, setTargetAudience] = useState<string>("");
+    const [prompt, setPrompt] = useState<string>("");
 
     const { mutate, isPending, error } = useProductDescriptionGenAI({
         onSuccess: (data) => {
@@ -90,6 +91,7 @@ export function GenerateDescriptionButton({
             tone: tone as "professional" | "casual" | "technical" | "marketing",
             maxLength: maxLength,
             targetAudience: targetAudience || undefined,
+            prompt: prompt || undefined,
             category,
             brand,
         };
@@ -189,6 +191,14 @@ export function GenerateDescriptionButton({
                         placeholder="e.g., Fitness enthusiasts, Gamers, etc."
                         value={targetAudience}
                         onChange={(e) => setTargetAudience(e.target.value)}
+                    />
+
+                    <Textarea
+                        label="Additional Instructions (optional)"
+                        placeholder="E.g., Focus on sustainability, mention specific features..."
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        minRows={2}
                     />
 
                     <Textarea

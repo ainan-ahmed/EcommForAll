@@ -95,4 +95,8 @@ public class AgentResponse {
                 .timestamp(LocalDateTime.now())
                 .build();
     }
+
+    public boolean isSuccess() { return success; }
+    public String getAgentName() { return agentName; }
+    public String getContent() { return content; }
 }

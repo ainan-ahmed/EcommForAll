@@ -1,4 +1,5 @@
 package com.ainan.ecommforallbackend.domain.ai.agent.base;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
