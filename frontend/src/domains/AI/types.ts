@@ -11,6 +11,7 @@ export interface ProductDescriptionRequest {
     maxLength?: number;
     hasVariants?: boolean;
     variants?: ProductVariant[];
+    prompt?: string;
 }
 export interface ProductDescriptionResponse {
     generatedDescription: string;

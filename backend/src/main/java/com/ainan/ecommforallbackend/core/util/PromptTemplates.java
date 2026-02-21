@@ -22,6 +22,9 @@ public class PromptTemplates {
             - Avoid technical jargon unless the tone is 'technical'
             - Include a clear call-to-action if appropriate
             
+            Additional Instructions:
+            {prompt}
+            
             Generate only the product description text, without any additional formatting or explanations.
             """;
     public static final String defaultChatBotPrompt = """

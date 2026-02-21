@@ -32,7 +32,7 @@ spring:
                     location: europe-west1
                     chat:
                         options:
-                            model: gemini-3-flash
+                            model: gemini-2.5-flash
                             temperature: 0.7
                 embedding:
                     project-id: ${GCLOUD_PROJECT:ecommforall-ai}
