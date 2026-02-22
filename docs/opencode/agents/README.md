@@ -41,6 +41,31 @@ docs/opencode/agents/        # Documentation only (not loaded as agents)
 
 ---
 
+### 2. UI Test Agent
+
+**Invocation**: `@ui-test`  
+**Type**: All (Primary + Subagent)  
+**Focus**: Browser UI testing with chrome-devtools-mcp
+
+**Capabilities**:
+- Navigate pages, interact with elements, capture screenshots
+- Test in both dark and light Mantine themes
+- Verify hover states, tooltips, and visual feedback
+- Check computed styles and DOM state via JavaScript
+- Inspect console errors and network requests
+- Report structured test results with screenshots
+
+**Location**: `.opencode/agents/ui-test.md`
+
+**Quick Examples**:
+```
+@ui-test test the chatbot widget maximize/restore flow
+@ui-test check the header buttons in both dark and light mode
+@ui-test verify the login form submits and redirects correctly
+```
+
+---
+
 ## Creating New Agents
 
 ### Step 1: Create Agent Configuration File
@@ -285,6 +310,7 @@ Potential agents you might want to create:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 1.1.0 | 2026-02-21 | Added UI Test Agent (@ui-test) |
 | 1.0.0 | 2026-02-15 | Initial registry with GitHub agent |
 
 ---
