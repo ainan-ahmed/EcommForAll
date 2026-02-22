@@ -61,7 +61,7 @@ public class ChatbotService {
             ChatResponseDto response = parseAgentResponse(
                     conversationId,
                     agentResponse.getContent(),
-                    "GENERAL" // or let agent return intent in metadata
+                    String.valueOf(agentResponse.getMetadata().get("intent"))
             );
 
             return response;
