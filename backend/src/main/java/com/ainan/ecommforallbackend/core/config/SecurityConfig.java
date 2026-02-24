@@ -80,7 +80,8 @@ public class SecurityConfig {
                                 "/api/brands/**",
                                 "/api/product-images/**",
                                 "/api/variant-images/**",
-                                "/api/variants/**")
+                                "/api/variants/**",
+                                "/api/ai/similar-products/**")
                         .permitAll()
                         // admin only endpoints
                         .requestMatchers("/api/users/**").hasRole("ADMIN")
