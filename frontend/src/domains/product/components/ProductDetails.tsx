@@ -33,6 +33,7 @@ import {
 import { useState, useMemo, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { Carousel } from "@mantine/carousel";
+import { useIntersection } from "@mantine/hooks";
 import { authStore } from "../../../stores/authStore";
 import { useStore } from "zustand/react";
 import { useNavigate } from "@tanstack/react-router";
@@ -60,12 +61,11 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     // 1. Fetch product data using hook
     const { data: product, isLoading, isError } = useProduct(id);
 
-    // fetch similar products
-    const {
-        data: similarProductsResponse,
-        isLoading: isSimilarProductsLoading,
-        isError: isSimilarProductsError,
-    } = useSimilarProducts(id, !!product); // Only fetch similar products after product is loaded
+    const { entry: similarProductsEntry, ref: similarProductsRef } =
+        useIntersection({
+            rootMargin: "200px",
+            threshold: 0.1,
+        });
 
     // 2. State hooks
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
@@ -89,13 +89,23 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     // 6. Cart hooks
     const addToCartMutation = useAddToCart();
 
+    // fetch similar products
+    const similarProductsLimit = 5;
+    const isSimilarProductsInView =
+        similarProductsEntry?.isIntersecting ?? false;
+    const shouldLoadSimilarProducts = !!product && isSimilarProductsInView;
+    const {
+        data: similarProductsResponse,
+        isLoading: isSimilarProductsLoading,
+        isError: isSimilarProductsError,
+    } = useSimilarProducts(id, shouldLoadSimilarProducts, similarProductsLimit);
+
     // 7. All useMemo and useEffect hooks
     const sortedImages = useMemo(() => {
         return product?.images
             ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
             : [];
     }, [product?.images]);
-    console.log("Sorted Images:", sortedImages);
 
     const combinedImages = useMemo(() => {
         if (!selectedVariant || !product) return sortedImages;
@@ -122,7 +132,6 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         );
 
         if (wishlistWithProduct) {
-            console.log("Product is in wishlist:", wishlistWithProduct.name);
             setActiveWishlistId(wishlistWithProduct.id);
         }
     }, [wishlists, id]);
@@ -146,6 +155,12 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
     const price = currentVariant?.price || product?.minPrice || 0;
     const isInStock = currentVariant ? currentVariant.stock > 0 : true;
+    const similarProducts =
+        similarProductsResponse?.similarProducts?.slice(
+            0,
+            similarProductsLimit
+        ) || [];
+    const hasSimilarProductsResponse = !!similarProductsResponse;
 
     // ✅ NOW we can have conditional returns AFTER all hooks are called
 
@@ -662,60 +677,98 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                 </Tabs.Panel>
             </Tabs>
 
-            {isAuthenticated &&
-                <div>
-                    {/* Related Products */}
-            <Title order={2} mt={50}>
-                You May Also Like
-            </Title>
-            <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} mt="md">
-                {isSimilarProductsLoading && <LoadingOverlay visible={true} />}
-                {isSimilarProductsError && (
-                    <Text>Error loading similar products</Text>
-                )}
-                {similarProductsResponse?.similarProducts &&
-                    similarProductsResponse.similarProducts.map(
-                        (product: Product) => (
-                            <Card
-                                key={product.id}
-                                shadow="sm"
-                                padding="md"
-                                radius="md"
-                                withBorder
-                                onClick={() => handleViewProduct(product.id)}
-                            >
-                                <Card.Section>
-                                    <Image
-                                        src={product.primaryImage?.imageUrl}
-                                        height={160}
-                                        alt={product.name}
-                                    />
-                                </Card.Section>
-                                <Text fw={500} mt="md" lineClamp={1}>
-                                    {product.name}
-                                </Text>
-                                <Text
-                                    mt="xs"
-                                    c="dimmed"
-                                    size="sm"
-                                    lineClamp={1}
-                                >
-                                    {product.description}
-                                </Text>
-                                <Group justify="space-between" mt="md">
-                                    <Text fw={700}>
-                                        From ${product.minPrice.toFixed(2)}
-                                    </Text>
-                                    <Button variant="light" size="xs" onClick={() => handleViewProduct(product.id)}>
-                                        View
-                                    </Button>
-                                </Group>
-                            </Card>
-                        )
+            <Box mt={50} ref={similarProductsRef}>
+                <Title order={2}>Similar Products</Title>
+                <Box pos="relative" mt="md">
+                    <LoadingOverlay visible={isSimilarProductsLoading} />
+                    {isSimilarProductsError && (
+                        <Text>Error loading similar products</Text>
                     )}
-            </SimpleGrid>
-                </div>
-            }
+                    {!isSimilarProductsLoading &&
+                        !isSimilarProductsError &&
+                        similarProducts.length > 0 && (
+                            <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
+                                {similarProducts.map(
+                                    (similarProduct: Product) => (
+                                        <Card
+                                            key={similarProduct.id}
+                                            shadow="sm"
+                                            padding="md"
+                                            radius="md"
+                                            withBorder
+                                            style={{ cursor: "pointer" }}
+                                            onClick={() =>
+                                                handleViewProduct(
+                                                    similarProduct.id
+                                                )
+                                            }
+                                        >
+                                            <Card.Section>
+                                                <Image
+                                                    src={
+                                                        similarProduct
+                                                            .primaryImage
+                                                            ?.imageUrl ||
+                                                        "https://placehold.co/300x200?text=No+Image"
+                                                    }
+                                                    height={160}
+                                                    alt={similarProduct.name}
+                                                    loading="lazy"
+                                                />
+                                            </Card.Section>
+                                            <Text
+                                                fw={500}
+                                                mt="md"
+                                                lineClamp={1}
+                                            >
+                                                {similarProduct.name}
+                                            </Text>
+                                            <Text
+                                                mt="xs"
+                                                c="dimmed"
+                                                size="sm"
+                                                lineClamp={1}
+                                            >
+                                                {similarProduct.description}
+                                            </Text>
+                                            <Group
+                                                justify="space-between"
+                                                mt="md"
+                                            >
+                                                <Text fw={700}>
+                                                    From $
+                                                    {similarProduct.minPrice.toFixed(
+                                                        2
+                                                    )}
+                                                </Text>
+                                                <Button
+                                                    variant="light"
+                                                    size="xs"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        handleViewProduct(
+                                                            similarProduct.id
+                                                        );
+                                                    }}
+                                                >
+                                                    View
+                                                </Button>
+                                            </Group>
+                                        </Card>
+                                    )
+                                )}
+                            </SimpleGrid>
+                        )}
+                    {!isSimilarProductsLoading &&
+                        !isSimilarProductsError &&
+                        hasSimilarProductsResponse &&
+                        similarProducts.length === 0 && (
+                            <Paper withBorder p="md">
+                                <Text>No similar products found yet.</Text>
+                            </Paper>
+                        )}
+                </Box>
+            </Box>
         </Container>
     );
 }
