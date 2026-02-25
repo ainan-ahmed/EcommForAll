@@ -15,13 +15,11 @@ import com.ainan.ecommforallbackend.domain.category.service.CategoryService;
 import com.ainan.ecommforallbackend.domain.product.dto.ProductDto;
 import com.ainan.ecommforallbackend.domain.product.dto.ProductVariantDto;
 import com.ainan.ecommforallbackend.domain.product.service.ProductService;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.aspectj.weaver.loadtime.Agent;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
@@ -81,9 +79,9 @@ public class AiService {
             // Create query text from source product for similarity search
             String queryText = createProductTextForSimilarity(sourceProduct);
             log.debug("Query text for similarity search: {}", queryText);
-            
+
             // Use VectorStore's built-in similarity search
-            List<Document> similarDocuments = vectorStore.similaritySearch(queryText);
+            List<Document> similarDocuments = vectorStore.similaritySearch(SearchRequest.builder().query(queryText).topK(5).similarityThreshold(0.7).build());
 
             // Convert documents to ProductDto
             List<ProductDto> similarProducts = convertDocumentsToProductDtos(similarDocuments, productId, limit);
