@@ -3,10 +3,7 @@
   "mcp": {
     "context7": {
       "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "headers": {
-        "context7_api_key": "ctx7sk-45201922-48c6-4d1c-a213-fa7f1fab15ff"
-      }
+      "url": "https://mcp.context7.com/mcp"
     },
     "chrome-devtools": {
       "type": "local",
