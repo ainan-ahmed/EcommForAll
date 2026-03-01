@@ -15,14 +15,6 @@ export function ReviewsList({ productId }: ReviewsListProps) {
 
     const { data: reviewsData, isLoading, isError, error } = useProductReviews(productId, page, pageSize);
 
-    // Handle authentication errors gracefully
-    if (isError && error?.message?.includes("Authentication required")) {
-        return (
-            <Alert icon={<IconAlertCircle size={16} />} title="Authentication Required" color="blue">
-                Please log in to view product reviews.
-            </Alert>
-        );
-    }
 
     if (isLoading) {
         return (

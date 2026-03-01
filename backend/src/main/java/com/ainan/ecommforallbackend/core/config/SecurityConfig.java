@@ -3,7 +3,6 @@ package com.ainan.ecommforallbackend.core.config;
 import com.ainan.ecommforallbackend.core.security.JwtAuthenticationFilter;
 import com.ainan.ecommforallbackend.domain.auth.service.CustomUserDetailsService;
 import com.ainan.ecommforallbackend.domain.user.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,9 +28,12 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity(debug = true)
 @EnableMethodSecurity(prePostEnabled = true)
-@AllArgsConstructor
 public class SecurityConfig {
     private final UserRepository userRepository;
+
+    public SecurityConfig(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public CustomUserDetailsService customUserDetailsService() {
@@ -41,7 +43,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173", "http://172.18.0.4:5173"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://172.20.0.4:5173"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -72,7 +79,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // public endpoints
-                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**")
+                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products/**",
@@ -81,7 +88,8 @@ public class SecurityConfig {
                                 "/api/product-images/**",
                                 "/api/variant-images/**",
                                 "/api/variants/**",
-                                "/api/ai/similar-products/**")
+                                "/api/ai/similar-products/**",
+                                "/api/review/*/reviews")
                         .permitAll()
                         // admin only endpoints
                         .requestMatchers("/api/users/**").hasRole("ADMIN")

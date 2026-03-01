@@ -4,8 +4,6 @@ import { IconMessageCircle, IconPlus } from "@tabler/icons-react";
 import { ReviewForm } from "./ReviewForm";
 import { ReviewsList } from "./ReviewsList";
 import { RatingSummary } from "./RatingSummary";
-import { useStore } from "zustand/react";
-import { authStore } from "../../../stores/authStore";
 
 interface ReviewsSectionProps {
     productId: string;
@@ -13,7 +11,6 @@ interface ReviewsSectionProps {
 
 export function ReviewsSection({ productId }: ReviewsSectionProps) {
     const [showReviewForm, setShowReviewForm] = useState(false);
-    const { isAuthenticated } = useStore(authStore);
 
     const handleReviewSuccess = () => {
         setShowReviewForm(false);
@@ -51,15 +48,7 @@ export function ReviewsSection({ productId }: ReviewsSectionProps) {
             <RatingSummary productId={productId} />
             
             {/* Reviews List */}
-            {isAuthenticated ? (
-                <ReviewsList productId={productId} />
-            ) : (
-                <div style={{ textAlign: "center", padding: "2rem" }}>
-                    <Text c="dimmed" size="lg">
-                        Please log in to view product reviews
-                    </Text>
-                </div>
-            )}
+            <ReviewsList productId={productId} />
         </Stack>
     );
 }
