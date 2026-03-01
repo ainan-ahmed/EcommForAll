@@ -1,4 +1,4 @@
-import { Group, Text, Rating, Badge, Stack, Progress, Grid } from "@mantine/core";
+import { Group, Text, Rating, Stack, Progress, Grid } from "@mantine/core";
 import { IconStar } from "@tabler/icons-react";
 import { useProductReviews } from "../hooks/useReviews";
 
@@ -7,7 +7,7 @@ interface RatingSummaryProps {
 }
 
 export function RatingSummary({ productId }: RatingSummaryProps) {
-    const { data: reviewsData, isLoading, isError } = useProductReviews(productId, 0, 100); // Get all reviews for summary
+    const { data: reviewsData, isLoading } = useProductReviews(productId, 0, 100); // Get all reviews for summary
     
     if (isLoading || !reviewsData || reviewsData.totalElements === 0) {
         return null;
