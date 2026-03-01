@@ -275,7 +275,7 @@ export function Chatbot({
 
                             {onToggleMaximize && (
                                 <Tooltip
-                                    label={isMaximized ? "Restore size" : "Minimize"}
+                                    label={isMaximized ? "Restore size" : "Maximize"}
                                     withArrow
                                     position="bottom"
                                 >
