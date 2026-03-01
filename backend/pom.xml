@@ -156,6 +156,13 @@
             <artifactId>spring-ai-advisors-vector-store</artifactId>
         </dependency>
 
+        <!-- SnapAdmin: auto-generated CRUD database admin panel -->
+        <dependency>
+            <groupId>tech.ailef</groupId>
+            <artifactId>snap-admin</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>

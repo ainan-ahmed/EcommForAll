@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import tech.ailef.snapadmin.external.annotations.ComputedColumn;
+import tech.ailef.snapadmin.external.annotations.DisplayFormat;
+import tech.ailef.snapadmin.external.annotations.DisplayName;
+import tech.ailef.snapadmin.external.annotations.Filterable;
+import tech.ailef.snapadmin.external.annotations.ReadOnly;
 
 import com.ainan.ecommforallbackend.domain.brand.entity.Brand;
 import com.ainan.ecommforallbackend.domain.category.entity.Category;
@@ -38,13 +43,16 @@ public class Product {
     @Column(unique = true)
     private String sku;
 
+    @Filterable
     @Column(name = "is_active")
     private Boolean isActive = true;
 
+    @Filterable
     @Column(name = "is_featured")
     private Boolean isFeatured = false;
 
     // Price for products without variants
+    @DisplayFormat(format = "$%.2f")
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
@@ -52,9 +60,11 @@ public class Product {
     private Integer stock = 0;
 
     // Calculated minimum price from variants
+    @DisplayFormat(format = "$%.2f")
     @Column(name = "min_price", precision = 10, scale = 2)
     private BigDecimal minPrice;
 
+    @Filterable
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private Brand brand;
@@ -63,22 +73,31 @@ public class Product {
     @JoinColumn(name = "seller_id", nullable = false)
     private User seller;
 
+    @Filterable
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductVariant> variants;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<ProductImage> images;
 
+    @ReadOnly
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @ReadOnly
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @DisplayName
+    public String getDisplayName() {
+        return name + (sku != null ? " [" + sku + "]" : "");
+    }
 
     // Helper method to get effective price
     public BigDecimal getEffectivePrice() {
@@ -90,6 +109,7 @@ public class Product {
     }
 
     // Helper method to get effective stock
+    @ComputedColumn(name = "Total Stock")
     public Integer getEffectiveStock() {
         if (hasVariants()) {
             return variants.stream()

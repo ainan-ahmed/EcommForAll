@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tech.ailef.snapadmin.external.annotations.DisplayName;
+import tech.ailef.snapadmin.external.annotations.Filterable;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ public class Wishlist {
     @Column(nullable = false)
     private String name;
 
+    @Filterable
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -54,5 +57,10 @@ public class Wishlist {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @DisplayName
+    public String getDisplayName() {
+        return name;
     }
 }
