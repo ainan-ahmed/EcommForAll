@@ -9,8 +9,32 @@ Custom OpenCode agents for this project are defined in `.opencode/agents/`.
 
 **Available agents:**
 - **GitHub Manager Agent** (`@gh-bot`) - PR management and GitHub operations
+- **UI Test Agent** (`@ui-test`) - Browser UI testing using chrome-devtools-mcp
 
 See `docs/opencode/agents/README.md` for complete agent documentation and usage.
+
+## Agent model IDs
+
+When setting or changing the `model:` field in an agent's frontmatter, always look up the exact provider-prefixed model ID at **https://models.dev** before committing.
+
+- Bare model names (e.g. `google/gemini-3-flash`) cause `ProviderModelNotFoundError` at runtime.
+- Model IDs must be provider-prefixed as configured in OpenCode (e.g. `github-copilot/claude-sonnet-4.6`, `github-copilot/gemini-3-flash-preview`).
+- `https://models.dev` lists all available models with their exact IDs grouped by provider.
+
+## UI Testing with chrome-devtools-mcp
+
+Browser automation is available via the `chrome-devtools-mcp` MCP server (configured in `opencode.json`).
+The `@ui-test` agent (`.opencode/agents/ui-test.md`) is the primary way to run UI tests — invoke it directly with `@ui-test`.
+The `browser-testing` skill (`.opencode/skills/browser-testing/SKILL.md`) is a lighter reference used when loading the skill inline.
+
+**Rules:**
+1. If the user asks to test something in the UI — load the `browser-testing` skill and run the test. Return a structured report with screenshots.
+2. After any frontend code edit:
+   - **Small edit** (1-3 files, cosmetic or isolated): test automatically without asking.
+   - **Large edit** (multiple domains, new features, auth flows, routing): ask the user first before testing.
+
+**Dev server:** `http://localhost:5173` (run `cd frontend && npm run dev` if not started).
+Always verify the page loads before interacting.
 
 ## Repo layout
 - backend/: Spring Boot (Java 21, Maven, JPA, Spring Security, Spring AI)

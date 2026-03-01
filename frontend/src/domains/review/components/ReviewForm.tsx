@@ -11,11 +11,12 @@ import {
     Paper,
     Title,
 } from "@mantine/core";
-import { IconStar, IconSend } from "@tabler/icons-react";
+import { IconSend } from "@tabler/icons-react";
 import { useCreateReview } from "../hooks/useReviews";
 import { ReviewCreateRequest } from "../types";
 import { useStore } from "zustand/react";
 import { authStore } from "../../../stores/authStore";
+import { useNavigate } from "@tanstack/react-router";
 import { reviewSchema } from "../schemas/reviewSchema";
 
 interface ReviewFormProps {
@@ -25,7 +26,9 @@ interface ReviewFormProps {
 
 export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
     const { user } = useStore(authStore);
-    const [rating, setRating] = useState(5);
+    const [rating, setRating] = useState(0);
+
+    const navigate = useNavigate();
 
     const form = useForm({
         initialValues: {
@@ -51,7 +54,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
         createReviewMutation.mutate(reviewData, {
             onSuccess: () => {
                 form.reset();
-                setRating(5);
+                setRating(0);
                 onSuccess?.();
             },
         });
@@ -59,10 +62,19 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
 
     if (!user) {
         return (
-            <Paper p="md" withBorder>
-                <Text c="dimmed" ta="center">
-                    Please log in to leave a review
-                </Text>
+            <Paper p="xl" withBorder radius="md" shadow="sm">
+                <Stack align="center" gap="md">
+                    <Text fw={600} size="lg">Share your thoughts</Text>
+                    <Text c="dimmed" ta="center">
+                        You need to be logged in to write a review for this product.
+                    </Text>
+                    <Button 
+                        variant="light" 
+                        onClick={() => navigate({ to: "/login", search: { redirect: window.location.pathname } })}
+                    >
+                        Log in to Review
+                    </Button>
+                </Stack>
             </Paper>
         );
     }
@@ -99,7 +111,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                         <Text size="xs" c="dimmed" mt={4}>
                             Click on the stars to rate this product • 
                             <Text span c={rating <= 2 ? 'red' : rating === 3 ? 'yellow' : 'green'} fw={500}>
-                                {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Very Good' : 'Excellent'}
+                                {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Very Good' : rating === 5 ? 'Excellent' : 'No Rating'}
                             </Text>
                         </Text>
                     </div>

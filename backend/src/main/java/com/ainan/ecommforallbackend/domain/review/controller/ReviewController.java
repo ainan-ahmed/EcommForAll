@@ -1,17 +1,17 @@
 package com.ainan.ecommforallbackend.domain.review.controller;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.ainan.ecommforallbackend.domain.review.dto.ReviewCreateDto;
 import com.ainan.ecommforallbackend.domain.review.dto.ReviewDto;
 import com.ainan.ecommforallbackend.domain.review.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
@@ -21,6 +21,13 @@ import java.util.UUID;
 @Tag(name = "Reviews", description = "Product reviews and ratings")
 public class ReviewController {
     private final ReviewService reviewService;
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "List all reviews", description = "Returns all reviews (admin only).")
+    public ResponseEntity<Page<ReviewDto>> getAllReviews(Pageable pageable) {
+        return ResponseEntity.ok(reviewService.getAllReviews(pageable));
+    }
 
     @GetMapping("/{productId}/reviews")
     @Operation(summary = "List product reviews", description = "Returns reviews for a product.")

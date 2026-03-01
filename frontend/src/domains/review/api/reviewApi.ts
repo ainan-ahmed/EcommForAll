@@ -7,17 +7,16 @@ export async function fetchProductReviews(
     size: number = 10
 ): Promise<ReviewsResponse> {
     const token = localStorage.getItem("authToken");
-    if (!token) {
-        throw new Error("Authentication required");
+    const headers: HeadersInit = {};
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
     }
 
     const response = await fetch(
         `${API.BASE_URL}${API.ENDPOINTS.REVIEW.PRODUCT_REVIEWS}/${productId}/reviews?page=${page}&size=${size}`,
         {
             method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
+            headers,
         }
     );
 

@@ -9,11 +9,11 @@ import com.ainan.ecommforallbackend.domain.review.mapper.ReviewMapper;
 import com.ainan.ecommforallbackend.domain.review.repository.ReviewRepository;
 import com.ainan.ecommforallbackend.domain.user.entity.User;
 import com.ainan.ecommforallbackend.domain.user.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -24,16 +24,24 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
+    @Transactional(readOnly = true)
     public ReviewDto getReviewById(UUID id) {
         return reviewRepository.findById(id)
                 .map(ReviewMapper.INSTANCE::toDto)
                 .orElseThrow(() -> new RuntimeException("Review not found with id: " + id));
     }
 
+    @Transactional(readOnly = true)
     public Page<ReviewDto> getReviewsByProductId(UUID productId, Pageable pageable) {
         return reviewRepository.findAllByProductId(pageable, productId).map(ReviewMapper.INSTANCE::toDto);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ReviewDto> getAllReviews(Pageable pageable) {
+        return reviewRepository.findAll(pageable).map(ReviewMapper.INSTANCE::toDto);
+    }
+
+    @Transactional
     public ReviewDto createReview(ReviewCreateDto reviewCreateDto) {
         Review newReview = ReviewMapper.INSTANCE.ReviewCreateDtoToReview(reviewCreateDto);
         User user = userRepository.findById(reviewCreateDto.getUserId())

@@ -1,0 +1,177 @@
+/* FORCE OVERRIDES FOR CHATSCOPE - SPECIFICITY FIX */
+
+/* 1. Main Container & Chat Container */
+.chatbot-widget__shell,
+.cs-main-container,
+.cs-chat-container {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 2. Header */
+.cs-conversation-header {
+  background-color: var(--mantine-color-body) !important;
+  border-bottom: 1px solid var(--mantine-color-default-border) !important;
+  color: var(--mantine-color-text) !important;
+}
+
+.cs-conversation-header__user-name {
+  color: var(--mantine-color-text) !important;
+  background-color: transparent !important;
+}
+
+.cs-conversation-header__info {
+  color: var(--mantine-color-dimmed) !important;
+  background-color: transparent !important;
+}
+
+/* 3. Message List Area */
+.cs-message-list {
+  background-color: var(--mantine-color-body) !important;
+  overscroll-behavior: contain !important;
+}
+
+.cs-message-list__scroll-wrapper {
+  background-color: transparent !important;
+  padding: 0 12px 12px !important;
+}
+
+/* 4. Messages */
+.cs-message__content {
+  border-radius: var(--mantine-radius-md) !important;
+  padding: 8px 12px !important;
+}
+
+/* Incoming (AI) — adapts to light/dark via --mantine-color-default */
+.cs-message--incoming .cs-message__content {
+  background-color: var(--mantine-color-default) !important;
+  color: var(--mantine-color-text) !important;
+  border: 1px solid var(--mantine-color-default-border) !important;
+  box-shadow: none !important;
+}
+
+/* Outgoing (User) */
+.cs-message--outgoing .cs-message__content {
+  background: linear-gradient(120deg, var(--mantine-primary-color-filled), var(--mantine-primary-color-filled-hover)) !important;
+  color: var(--mantine-color-white) !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25) !important;
+}
+
+.cs-message__footer {
+  color: var(--mantine-color-dimmed) !important;
+  font-size: 11px !important;
+  margin-top: 4px !important;
+}
+
+/* 5. Input Area */
+
+/* Outer container */
+.cs-message-input,
+.cs-chat-container .cs-message-input {
+  background-color: var(--mantine-color-body) !important;
+  border-top: 1px solid var(--mantine-color-default-border) !important;
+  padding: 14px 18px !important;
+}
+
+/* The "pill" wrapper around the text */
+.cs-message-input__content-editor-wrapper {
+  background-color: var(--mantine-color-default) !important;
+  border: 1px solid var(--mantine-color-default-border) !important;
+  border-radius: 999px !important;
+  padding: 6px 16px !important;
+  box-shadow: none !important;
+}
+
+/* The container inside the wrapper */
+.cs-message-input__content-editor-container {
+  background-color: transparent !important;
+}
+
+/* The actual editable text div */
+.cs-message-input__content-editor {
+  background-color: transparent !important;
+  color: var(--mantine-color-text) !important;
+}
+
+/* Placeholder */
+.cs-message-input__content-editor:empty:before {
+  color: var(--mantine-color-placeholder) !important;
+  background-color: transparent !important;
+}
+
+/* 6. Buttons & Icons */
+.cs-button--send {
+  color: var(--mantine-primary-color-filled) !important;
+  padding: 10px !important;
+}
+
+.cs-message-input__tools .cs-button {
+  background-color: transparent !important;
+}
+
+/* 7. Typing Indicator */
+.cs-typing-indicator {
+  background-color: var(--mantine-color-default) !important;
+  color: var(--mantine-color-dimmed) !important;
+  border: 1px solid var(--mantine-color-default-border) !important;
+}
+
+.cs-typing-indicator__dot {
+  background-color: var(--mantine-color-dimmed) !important;
+}
+
+/* 8. Separator */
+.cs-message-separator {
+  background-color: transparent !important;
+  color: var(--mantine-color-dimmed) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* 9. Avatar */
+.cs-avatar {
+  background-color: var(--mantine-color-default) !important;
+}
+
+/* 10. Message sender name in footer */
+.cs-message__sender-name,
+.cs-message__sent-time {
+  color: var(--mantine-color-dimmed) !important;
+}
+
+/* Widget shell refinements */
+.chatbot-widget__titlebar {
+  background: linear-gradient(130deg, #0f172a, #1d4ed8);
+  padding: 12px 16px;
+  color: white;
+  min-height: 72px;
+}
+
+.chatbot-widget__titleblock {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chatbot-widget__titletext {
+  white-space: nowrap;
+}
+
+.chatbot-widget__subtitle {
+  min-width: 0;
+}
+
+.chatbot-widget__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.chatbot-inline-actions {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mantine-color-default-border);
+}

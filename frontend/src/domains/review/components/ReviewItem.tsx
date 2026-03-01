@@ -1,4 +1,4 @@
-import { Card, Group, Text, Stack, Badge, ActionIcon, Menu, Rating } from "@mantine/core";
+import { Card, Group, Text, Stack, Badge, ActionIcon, Menu, Rating, Avatar } from "@mantine/core";
 import { IconDots, IconTrash, IconStar } from "@tabler/icons-react";
 import { Review } from "../types";
 import { useStore } from "zustand/react";
@@ -37,28 +37,38 @@ export function ReviewItem({ review }: ReviewItemProps) {
     };
 
     return (
-        <Card withBorder p="md" mb="md">
-            <Stack gap="sm">
+        <Card withBorder p="lg" mb="md" radius="md" shadow="sm">
+            <Stack gap="md">
                 {/* Header */}
                 <Group justify="space-between" align="flex-start">
-                    <Stack gap={4}>
-                        <Group gap="xs">
-                            <Text fw={600} size="sm">
-                                {review.user.firstName} {review.user.lastName}
+                    <Group gap="sm">
+                        <Avatar
+                            src={null}
+                            alt={`${review.user.firstName} ${review.user.lastName}`}
+                            radius="xl"
+                            color="blue"
+                        >
+                            {(review.user.firstName?.[0] || "") + (review.user.lastName?.[0] || "")}
+                        </Avatar>
+                        <Stack gap={0}>
+                            <Group gap="xs">
+                                <Text fw={600} size="sm">
+                                    {review.user.firstName} {review.user.lastName}
+                                </Text>
+                                {isOwnReview && (
+                                    <Badge size="xs" color="blue" variant="light">
+                                        You
+                                    </Badge>
+                                )}
+                            </Group>
+                            <Text size="xs" c="dimmed">
+                                {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
                             </Text>
-                            {isOwnReview && (
-                                <Badge size="xs" color="blue" variant="light">
-                                    You
-                                </Badge>
-                            )}
-                        </Group>
-                        <Text size="xs" c="dimmed">
-                            {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
-                        </Text>
-                    </Stack>
+                        </Stack>
+                    </Group>
 
                     {canDelete && (
-                        <Menu>
+                        <Menu position="bottom-end" shadow="md">
                             <Menu.Target>
                                 <ActionIcon variant="subtle" size="sm">
                                     <IconDots size={16} />
@@ -78,23 +88,25 @@ export function ReviewItem({ review }: ReviewItemProps) {
                     )}
                 </Group>
 
-                {/* Rating */}
-                <Group gap="xs">
-                    {renderStars(review.rating)}
-                    <Text size="sm" c="dimmed">
-                        {review.rating}/5
+                <Stack gap="xs">
+                    {/* Rating */}
+                    <Group gap="xs">
+                        {renderStars(review.rating)}
+                        <Text size="sm" fw={500}>
+                            {review.rating}/5
+                        </Text>
+                    </Group>
+
+                    {/* Title */}
+                    <Text fw={700} size="md">
+                        {review.title}
                     </Text>
-                </Group>
 
-                {/* Title */}
-                <Text fw={500} size="md">
-                    {review.title}
-                </Text>
-
-                {/* Comment */}
-                <Text size="sm" style={{ whiteSpace: "pre-wrap" }}>
-                    {review.comment}
-                </Text>
+                    {/* Comment */}
+                    <Text size="sm" style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>
+                        {review.comment}
+                    </Text>
+                </Stack>
             </Stack>
         </Card>
     );

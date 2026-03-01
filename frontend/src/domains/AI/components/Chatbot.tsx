@@ -1,30 +1,30 @@
 // src/domains/AI/components/Chatbot.tsx
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Paper, ActionIcon, Tooltip, LoadingOverlay, Alert } from "@mantine/core";
 import {
-    Paper,
-    Stack,
-    TextInput,
-    Button,
-    ScrollArea,
-    Group,
-    Text,
-    Avatar,
-    ActionIcon,
-    Tooltip,
-    Badge,
-    LoadingOverlay,
-    Alert,
-    Box,
-    Transition,
-} from "@mantine/core";
-import {
-    IconSend,
-    IconRobot,
-    IconTrash,
+    IconAlertCircle,
+    IconArrowsMaximize,
+    IconArrowsMinimize,
+    IconX,
     IconRefresh,
-    IconArrowDown,
+    IconRotateClockwise,
+    IconTrash,
 } from "@tabler/icons-react";
+import {
+    MainContainer,
+    ChatContainer,
+    ConversationHeader,
+    MessageList,
+    Message,
+    MessageInput,
+    MessageSeparator,
+    Avatar,
+    TypingIndicator,
+} from "@chatscope/chat-ui-kit-react";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import "./chatbot.css";
 import { notifications } from "@mantine/notifications";
+
 import {
     useSendMessage,
     useChatHistory,
@@ -33,103 +33,59 @@ import {
 } from "../hooks/useChatbot";
 import { useStore } from "zustand";
 import { authStore } from "../../../stores/authStore";
-import { ChatMessageComponent } from "./ChatMessageComponent";
 import { ChatMessage } from "../types";
+
+const MAX_DISPLAY_MESSAGES = 200;
 
 interface ChatbotProps {
     conversationId?: string;
-    height?: number;
+    height?: number | string;
+    isMaximized?: boolean;
+    onToggleMaximize?: () => void;
+    onClose?: () => void;
+    headerTitle?: string;
+    headerSubtitle?: string;
 }
 
-export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
+export function Chatbot({
+    conversationId,
+    height = 600,
+    isMaximized = false,
+    onToggleMaximize,
+    onClose,
+    headerTitle = "AI Assistant",
+    headerSubtitle,
+}: ChatbotProps) {
     const { user, isAuthenticated } = useStore(authStore);
-    const [message, setMessage] = useState("");
     const [currentConversationId, setCurrentConversationId] = useState(
         conversationId || user?.id || ""
     );
-    const [isUserScrolled, setIsUserScrolled] = useState(false);
-    const [showScrollButton, setShowScrollButton] = useState(false);
-
-    // Add state to track pending message
-    const [pendingMessage, setPendingMessage] = useState<ChatMessage | null>(
-        null
-    );
-    const [failedMessage, setFailedMessage] = useState<ChatMessage | null>(
-        null
-    );
+    const [pendingMessage, setPendingMessage] = useState<ChatMessage | null>(null);
+    const [failedMessage, setFailedMessage] = useState<ChatMessage | null>(null);
     const [lastSentMessageStatus, setLastSentMessageStatus] = useState<
         "sending" | "sent" | "failed"
     >("sent");
 
-    // ScrollArea viewport ref for better control
-    const scrollAreaViewportRef = useRef<HTMLDivElement>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    // Only fetch if authenticated
     const {
         data: chatHistory,
         isLoading,
         refetch,
-        error: historyError,
     } = useChatHistory(isAuthenticated ? currentConversationId : undefined);
-
     const { data: isHealthy } = useChatbotHealth();
-
-    // Improved scroll to bottom function using ScrollArea API
-    const scrollToBottom = useCallback((smooth = true) => {
-        if (scrollAreaViewportRef.current) {
-            const scrollHeight = scrollAreaViewportRef.current.scrollHeight;
-            const clientHeight = scrollAreaViewportRef.current.clientHeight;
-
-            scrollAreaViewportRef.current.scrollTo({
-                top: scrollHeight - clientHeight,
-                behavior: smooth ? "smooth" : "auto",
-            });
-
-            setIsUserScrolled(false);
-            setShowScrollButton(false);
-        }
-    }, []);
-
-    // Handle scroll events to detect user scrolling
-    const handleScroll = useCallback(() => {
-        if (!scrollAreaViewportRef.current) return;
-
-        const { scrollTop, scrollHeight, clientHeight } =
-            scrollAreaViewportRef.current;
-        const scrolledFromBottom = scrollHeight - scrollTop - clientHeight;
-        const threshold = 100; // pixels from bottom
-
-        const isNearBottom = scrolledFromBottom < threshold;
-        setIsUserScrolled(!isNearBottom);
-        setShowScrollButton(
-            !isNearBottom &&
-                chatHistory?.messages !== undefined &&
-                chatHistory.messages.length > 3
-        );
-    }, [chatHistory?.messages]);
 
     const sendMessageMutation = useSendMessage({
         onSuccess: (response) => {
-            console.log("Message sent successfully:", response);
-
-            // Clear both pending and failed messages
             setPendingMessage(null);
             setFailedMessage(null);
             setLastSentMessageStatus("sent");
 
             if (response.success) {
-                if (
-                    response.sessionId &&
-                    response.sessionId !== currentConversationId
-                ) {
+                if (response.sessionId && response.sessionId !== currentConversationId) {
                     setCurrentConversationId(response.sessionId);
                 }
-                setMessage("");
 
                 setTimeout(() => {
                     refetch();
-                    setTimeout(() => scrollToBottom(), 200);
                 }, 100);
             } else {
                 notifications.show({
@@ -140,14 +96,8 @@ export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
             }
         },
         onError: (error) => {
-            console.error("Message send error:", error);
-
-            // Move pending message to failed message
             if (pendingMessage) {
-                setFailedMessage({
-                    ...pendingMessage,
-                    status: "failed",
-                });
+                setFailedMessage({ ...pendingMessage, status: "failed" });
             }
             setPendingMessage(null);
             setLastSentMessageStatus("failed");
@@ -158,11 +108,6 @@ export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
                 color: "red",
             });
 
-            // Auto-remove failed message after 10 seconds
-            setTimeout(() => {
-                setFailedMessage(null);
-            }, 10000);
-
             if (error.message.includes("Authentication failed")) {
                 authStore.getState().checkAuth();
             }
@@ -171,44 +116,23 @@ export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
 
     const clearConversationMutation = useClearConversation();
 
-    // Auto-scroll when new messages arrive (only if user is near bottom)
-    useEffect(() => {
-        if (chatHistory?.messages && !isUserScrolled) {
-            // Small delay to ensure DOM has rendered the new message
-            const timer = setTimeout(() => scrollToBottom(), 150);
-            return () => clearTimeout(timer);
-        }
-    }, [chatHistory?.messages?.length, isUserScrolled, scrollToBottom]);
+    const handleSendMessage = (text: string) => {
+        const trimmed = text.trim();
+        if (!trimmed || sendMessageMutation.isPending) return;
 
-    // Initial scroll to bottom when chat loads
-    useEffect(() => {
-        if (chatHistory?.messages && chatHistory.messages.length > 0) {
-            // Immediate scroll without animation for initial load
-            setTimeout(() => scrollToBottom(false), 100);
-        }
-    }, [chatHistory?.messages?.length, scrollToBottom]);
-
-    const handleSendMessage = () => {
-        if (!message.trim() || sendMessageMutation.isPending) return;
-
-        // Reset scroll state when sending a new message
-        setIsUserScrolled(false);
-        setShowScrollButton(false);
         setLastSentMessageStatus("sending");
 
-        // Create pending message for optimistic UI
-        const newPendingMessage: ChatMessage = {
-            content: message.trim(),
+        const optimisticMessage: ChatMessage = {
+            content: trimmed,
             sender: "user",
             timestamp: new Date().toISOString(),
             status: "sending",
-            isLastMessage: true,
         };
 
-        setPendingMessage(newPendingMessage);
+        setPendingMessage(optimisticMessage);
 
         sendMessageMutation.mutate({
-            message: message.trim(),
+            message: trimmed,
             conversationId: currentConversationId || undefined,
             timestamp: new Date().toISOString(),
         });
@@ -219,25 +143,21 @@ export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
 
         clearConversationMutation.mutate(currentConversationId, {
             onSuccess: () => {
-                setIsUserScrolled(false);
-                setShowScrollButton(false);
                 notifications.show({
                     title: "Conversation Cleared",
                     message: "Chat history has been cleared",
                     color: "blue",
                 });
+                refetch();
             },
         });
     };
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            handleSendMessage();
-        }
+    const handleRetryMessage = (messageToRetry: ChatMessage) => {
+        setFailedMessage(null);
+        handleSendMessage(messageToRetry.content);
     };
 
-    // Show authentication error if not authenticated
     if (!isAuthenticated) {
         return (
             <Paper p="md" withBorder style={{ height }}>
@@ -248,254 +168,196 @@ export function Chatbot({ conversationId, height = 600 }: ChatbotProps) {
         );
     }
 
-    // Update messagesWithStatus to handle both pending and failed messages
     const messagesWithStatus = useMemo(() => {
         if (!chatHistory?.messages) return [];
 
-        const messages = [...chatHistory.messages];
+        const trimmedHistory = chatHistory.messages.slice(-MAX_DISPLAY_MESSAGES);
 
-        // Add pending message if sending
+        const messages = [...trimmedHistory];
+
         if (pendingMessage && pendingMessage.status === "sending") {
             messages.push(pendingMessage);
         }
 
-        // Add failed message temporarily
         if (failedMessage) {
             messages.push(failedMessage);
         }
 
         return messages.map((msg, index) => {
-            const isLastUserMessage =
-                index === messages.length - 1 && msg.sender === "user";
-            const isSecondLastUserMessage =
-                index === messages.length - 2 &&
-                msg.sender === "user" &&
-                messages[messages.length - 1]?.sender !== "user";
-
-            return {
-                ...msg,
-                status:
-                    msg.status ||
-                    (isLastUserMessage || isSecondLastUserMessage
-                        ? lastSentMessageStatus
-                        : "sent"),
-                isLastMessage: isLastUserMessage,
-            };
+            const isLastUserMessage = index === messages.length - 1 && msg.sender === "user";
+            const status = msg.status || (isLastUserMessage ? lastSentMessageStatus : "sent");
+            return { ...msg, status };
         });
-    }, [
-        chatHistory?.messages,
-        pendingMessage,
-        failedMessage,
-        lastSentMessageStatus,
-    ]);
+    }, [chatHistory?.messages, failedMessage, pendingMessage, lastSentMessageStatus]);
 
-    // In your Chatbot component, add retry functionality
-    const handleRetryMessage = (failedMessage: ChatMessage) => {
-        console.log("Retrying message:", failedMessage.content);
-
-        // Clear the failed message
-        setFailedMessage(null);
-
-        // Set the message input to the failed message content
-        setMessage(failedMessage.content);
-
-        // Or automatically retry:
-        // sendMessageMutation.mutate({
-        //     message: failedMessage.content,
-        //     conversationId: currentConversationId || undefined,
-        //     timestamp: new Date().toISOString(),
-        // });
+    const formatTime = (isoString: string) => {
+        try {
+            return new Date(isoString).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+            });
+        } catch (error) {
+            return "";
+        }
     };
 
+    const statusLabel = headerSubtitle ?? (isHealthy ? "Online" : "Offline");
+
+    const renderRefreshButton = () => (
+        <Tooltip label="Refresh chat" withArrow position="bottom">
+            <ActionIcon
+                variant="subtle"
+                color="blue"
+                size="md"
+                onClick={() => refetch()}
+                aria-label="Refresh chat"
+            >
+                <IconRefresh size={18} />
+            </ActionIcon>
+        </Tooltip>
+    );
+
+    const renderClearButton = () => (
+        <Tooltip label="Clear conversation" withArrow position="bottom">
+            <ActionIcon
+                variant="subtle"
+                color="red"
+                size="md"
+                onClick={handleClearConversation}
+                aria-label="Clear conversation"
+                loading={clearConversationMutation.isPending}
+            >
+                <IconTrash size={18} />
+            </ActionIcon>
+        </Tooltip>
+    );
+
     return (
-        <Paper p="md" withBorder style={{ height }}>
+        <Paper
+            style={{
+                height,
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                backgroundColor: "var(--mantine-color-body)",
+            }}
+        >
             <LoadingOverlay visible={isLoading && !chatHistory} />
 
-            <Stack h="100%" gap="md">
-                {/* Header */}
-                <Group justify="space-between" pb="xs">
-                    <Group>
-                        <Avatar color="blue" radius="xl" size="md">
-                            <IconRobot size={20} />
-                        </Avatar>
-                        <Stack gap={2}>
-                            <Text size="sm" fw={600}>
-                                AI Assistant
-                            </Text>
-                            <Badge
-                                size="xs"
-                                color={isHealthy ? "green" : "red"}
-                                variant="dot"
-                            >
-                                {isHealthy ? "Online" : "Offline"}
-                            </Badge>
-                        </Stack>
-                    </Group>
+            {!isHealthy && (
+                <Alert color="yellow" icon={<IconAlertCircle size={16} />}>
+                    AI Assistant is currently offline. Messages may not be processed.
+                </Alert>
+            )}
 
-                    <Group gap="xs">
-                        <Tooltip label="Refresh chat">
-                            <ActionIcon
-                                variant="subtle"
-                                onClick={() => refetch()}
-                                loading={isLoading}
-                                size="sm"
-                            >
-                                <IconRefresh size={16} />
-                            </ActionIcon>
-                        </Tooltip>
-
-                        {chatHistory?.messages &&
-                            chatHistory.messages.length > 0 && (
-                                <Tooltip label="Clear conversation">
+            <MainContainer style={{ flex: 1, backgroundColor: "transparent" }}>
+                <ChatContainer style={{ backgroundColor: "transparent" }}>
+                    <ConversationHeader style={{ backgroundColor: "transparent" }}>
+                        <Avatar name="AI" />
+                        <ConversationHeader.Content userName={headerTitle} info={statusLabel} />
+                        <ConversationHeader.Actions>
+                            {onClose && (
+                                <Tooltip label="Close chat" withArrow position="bottom">
                                     <ActionIcon
                                         variant="subtle"
-                                        color="red"
-                                        onClick={handleClearConversation}
-                                        loading={
-                                            clearConversationMutation.isPending
-                                        }
-                                        size="sm"
+                                        color="gray"
+                                        size="md"
+                                        onClick={onClose}
+                                        aria-label="Close chat"
                                     >
-                                        <IconTrash size={16} />
+                                        <IconX size={18} />
                                     </ActionIcon>
                                 </Tooltip>
                             )}
-                    </Group>
-                </Group>
 
-                {/* Health warning */}
-                {!isHealthy && (
-                    <Alert color="yellow">
-                        AI Assistant is currently offline. Messages may not be
-                        processed.
-                    </Alert>
-                )}
+                            {chatHistory?.messages && chatHistory.messages.length > 0 &&
+                                renderClearButton()}
 
-                {/* Messages ScrollArea */}
-                <Box style={{ position: "relative", flex: 1 }}>
-                    <ScrollArea
-                        h="100%"
-                        scrollbarSize={6}
-                        scrollHideDelay={1000}
-                        viewportRef={scrollAreaViewportRef}
-                        onScrollPositionChange={handleScroll}
-                        type="scroll"
-                    >
-                        <Stack gap="md" pr="xs" pb="sm">
-                            {messagesWithStatus.length === 0 ? (
-                                <Paper
-                                    p="xl"
-                                    withBorder
-                                    ta="center"
-                                    bg="gray.0"
-                                    style={{ marginTop: "20%" }}
+                            {onToggleMaximize && (
+                                <Tooltip
+                                    label={isMaximized ? "Restore size" : "Maximize"}
+                                    withArrow
+                                    position="bottom"
                                 >
-                                    <Avatar
-                                        color="blue"
-                                        size="lg"
-                                        mx="auto"
-                                        mb="md"
+                                    <ActionIcon
+                                        variant="subtle"
+                                        color="gray"
+                                        size="md"
+                                        onClick={onToggleMaximize}
+                                        aria-label={isMaximized ? "Restore size" : "Maximize"}
                                     >
-                                        <IconRobot size={32} />
-                                    </Avatar>
-                                    <Text size="lg" fw={500} mb="sm">
-                                        Welcome to AI Assistant!
-                                    </Text>
-                                    <Text c="dimmed" size="sm">
-                                        Start a conversation by typing a message
-                                        below.
-                                    </Text>
-                                </Paper>
-                            ) : (
-                                <>
-                                    {messagesWithStatus.map((msg, index) => (
-                                        <ChatMessageComponent
-                                            key={`${msg.timestamp}-${index}`}
-                                            message={msg}
-                                            showStatusIcon={
-                                                msg.sender === "user"
-                                            }
-                                            onRetry={
-                                                msg.status === "failed"
-                                                    ? handleRetryMessage
-                                                    : undefined
-                                            }
-                                        />
-                                    ))}
-
-                                    {sendMessageMutation.isPending &&
-                                        !pendingMessage && (
-                                            <ChatMessageComponent
-                                                message={{
-                                                    content: "Thinking...",
-                                                    sender: "assistant",
-                                                    timestamp:
-                                                        new Date().toISOString(),
-                                                }}
-                                                isLoading
-                                            />
+                                        {isMaximized ? (
+                                            <IconArrowsMinimize size={18} />
+                                        ) : (
+                                            <IconArrowsMaximize size={18} />
                                         )}
-
-                                    <div
-                                        ref={messagesEndRef}
-                                        style={{ height: 1 }}
-                                    />
-                                </>
+                                    </ActionIcon>
+                                </Tooltip>
                             )}
-                        </Stack>
-                    </ScrollArea>
 
-                    {/* Scroll to bottom button */}
-                    <Transition
-                        mounted={showScrollButton}
-                        transition="slide-up"
-                        duration={200}
+                            {renderRefreshButton()}
+                        </ConversationHeader.Actions>
+                    </ConversationHeader>
+
+                    <MessageList
+                        style={{ backgroundColor: "transparent" }}
+                        typingIndicator={
+                            sendMessageMutation.isPending && !pendingMessage ? (
+                                <TypingIndicator content="AI is thinking" />
+                            ) : null
+                        }
                     >
-                        {(styles) => (
-                            <ActionIcon
-                                style={{
-                                    ...styles,
-                                    position: "absolute",
-                                    bottom: 10,
-                                    right: 10,
-                                    zIndex: 100,
-                                }}
-                                variant="filled"
-                                color="blue"
-                                size="lg"
-                                onClick={() => scrollToBottom()}
-                                radius="xl"
-                            >
-                                <IconArrowDown size={18} />
-                            </ActionIcon>
+                        {messagesWithStatus.length === 0 && !isLoading && (
+                            <MessageSeparator content="Start a conversation" />
                         )}
-                    </Transition>
-                </Box>
 
-                {/* Input */}
-                <Group gap="sm" align="flex-end">
-                    <TextInput
-                        flex={1}
-                        placeholder="Type your message..."
-                        value={message}
-                        onChange={(e) => setMessage(e.currentTarget.value)}
-                        onKeyDown={handleKeyPress}
-                        disabled={sendMessageMutation.isPending || !isHealthy}
-                        maxLength={1000}
-                        size="sm"
+                        {messagesWithStatus.map((msg, index) => (
+                            <Message
+                                key={`${msg.timestamp}-${index}`}
+                                model={{
+                                    message: msg.content,
+                                    sentTime: formatTime(msg.timestamp),
+                                    sender: msg.sender,
+                                    direction: msg.sender === "user" ? "outgoing" : "incoming",
+                                    position: "single",
+                                }}
+                            >
+                                <Message.Footer
+                                    sender={msg.sender === "user" ? "You" : "AI Assistant"}
+                                    sentTime={formatTime(msg.timestamp)}
+                                />
+                                {msg.status === "failed" && (
+                                    <Message.CustomContent>
+                                        <div
+                                            style={{
+                                                color: "var(--mantine-color-red-6)",
+                                                fontSize: "0.8rem",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: 6,
+                                            }}
+                                        >
+                                            <span>Failed to send</span>
+                                            <IconRotateClockwise
+                                                size={14}
+                                                style={{ cursor: "pointer" }}
+                                                onClick={() => handleRetryMessage(msg)}
+                                            />
+                                        </div>
+                                    </Message.CustomContent>
+                                )}
+                            </Message>
+                        ))}
+                    </MessageList>
+
+                    <MessageInput
+                        placeholder="Type message here..."
+                        onSend={(_, textContent) => handleSendMessage(textContent)}
+                        disabled={!isHealthy || sendMessageMutation.isPending}
+                        attachButton={false}
                     />
-                    <ActionIcon
-                        size="lg"
-                        onClick={handleSendMessage}
-                        loading={sendMessageMutation.isPending}
-                        disabled={!message.trim() || !isHealthy}
-                        variant="filled"
-                        color="blue"
-                    >
-                        <IconSend size={18} />
-                    </ActionIcon>
-                </Group>
-            </Stack>
+                </ChatContainer>
+            </MainContainer>
         </Paper>
     );
 }
