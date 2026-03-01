@@ -9,7 +9,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/carousel/styles.css";
-import '@mantine/tiptap/styles.css';
+import "@mantine/tiptap/styles.css";
 const queryClient = new QueryClient(); // Export queryClient so it can be imported in route files
 
 const router = createRouter({
@@ -36,11 +36,7 @@ if (!rootElement.innerHTML) {
             <MantineProvider defaultColorScheme="dark">
                 <QueryClientProvider client={queryClient}>
                     <RouterProvider router={router} />
-                    <Notifications
-                        autoClose={5000}
-                        position="top-right"
-                        zIndex={1000}
-                    />
+                    <Notifications autoClose={5000} position="top-right" zIndex={1000} />
                 </QueryClientProvider>
             </MantineProvider>
         </StrictMode>

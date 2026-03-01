@@ -26,7 +26,7 @@ export function ReviewsSection({ productId }: ReviewsSectionProps) {
                         Customer Reviews
                     </Text>
                 </Group>
-                
+
                 <Button
                     variant={showReviewForm ? "outline" : "filled"}
                     leftSection={<IconPlus size={16} />}
@@ -46,7 +46,7 @@ export function ReviewsSection({ productId }: ReviewsSectionProps) {
 
             {/* Rating Summary */}
             <RatingSummary productId={productId} />
-            
+
             {/* Reviews List */}
             <ReviewsList productId={productId} />
         </Stack>

@@ -8,10 +8,7 @@ import { Navigate, useNavigate } from "@tanstack/react-router";
 import { useStore } from "zustand";
 import { authStore } from "../../../stores/authStore";
 import { useCreateProduct } from "../hooks/useCreateProduct";
-import {
-    updateProductImagesOrder,
-    uploadProductImage,
-} from "../api/productImageApi";
+import { updateProductImagesOrder, uploadProductImage } from "../api/productImageApi";
 
 export function ProductCreate() {
     const { user, isAuthenticated } = useStore(authStore);
@@ -19,8 +16,10 @@ export function ProductCreate() {
     const navigate = useNavigate();
 
     // Fetch categories for dropdown
-    const { data: categoriesData, isLoading: isLoadingCategories } =
-        useCategories({ page: 0, size: 100 });
+    const { data: categoriesData, isLoading: isLoadingCategories } = useCategories({
+        page: 0,
+        size: 100,
+    });
     const categories = categoriesData?.content || [];
 
     // Fetch brands for dropdown
@@ -45,15 +44,10 @@ export function ProductCreate() {
                 variants: productData.variants.map((variant) => ({
                     ...variant,
                     // Remove temporary images from variants when sending to API
-                    images:
-                        variant.images?.filter(
-                            (img) => !img.id.startsWith("temp-")
-                        ) ?? [],
+                    images: variant.images?.filter((img) => !img.id.startsWith("temp-")) ?? [],
                 })),
                 // Remove temporary images when sending to API
-                images: productData.images.filter(
-                    (img) => !img.id.startsWith("temp-")
-                ),
+                images: productData.images.filter((img) => !img.id.startsWith("temp-")),
             });
 
             // Track which steps succeeded and which failed
@@ -71,10 +65,7 @@ export function ProductCreate() {
                 if (tempImages.length > 0) {
                     for (const img of tempImages) {
                         if (img.file) {
-                            await uploadProductImage(
-                                createdProduct.id,
-                                img.file
-                            );
+                            await uploadProductImage(createdProduct.id, img.file);
                         }
                     }
                 }

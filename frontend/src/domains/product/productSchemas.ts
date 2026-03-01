@@ -29,9 +29,7 @@ export const productVariantSchema = z.object({
 export const productSchema = z.object({
     id: z.string().uuid(),
     name: z.string().min(1, { message: "Product name is required" }),
-    description: z
-        .string()
-        .min(1, { message: "Product description is required" }),
+    description: z.string().min(1, { message: "Product description is required" }),
     sku: z.string(),
     isActive: z.boolean(),
     isFeatured: z.boolean(),

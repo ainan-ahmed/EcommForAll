@@ -36,12 +36,7 @@ export function OrderList({
         ...initialFilters,
     });
 
-    const {
-        data: ordersResponse,
-        isLoading,
-        error,
-        refetch,
-    } = useUserOrders(filters);
+    const { data: ordersResponse, isLoading, error, refetch } = useUserOrders(filters);
 
     const cancelOrderMutation = useCancelOrder();
     const reorderMutation = useReorder();
@@ -96,14 +91,8 @@ export function OrderList({
                     color="red"
                     variant="light"
                 >
-                    {error.message ||
-                        "Failed to load orders. Please try again."}
-                    <Button
-                        variant="light"
-                        size="sm"
-                        mt="sm"
-                        onClick={() => refetch()}
-                    >
+                    {error.message || "Failed to load orders. Please try again."}
+                    <Button variant="light" size="sm" mt="sm" onClick={() => refetch()}>
                         Try Again
                     </Button>
                 </Alert>
@@ -167,10 +156,7 @@ export function OrderList({
                                 </Button>
                             )}
                             {Object.keys(filters).length > 3 && (
-                                <Button
-                                    variant="outline"
-                                    onClick={handleClearFilters}
-                                >
+                                <Button variant="outline" onClick={handleClearFilters}>
                                     Clear Filters
                                 </Button>
                             )}
@@ -186,8 +172,7 @@ export function OrderList({
                                 onReorder={handleReorder}
                                 onDownloadInvoice={handleDownloadInvoice}
                                 isLoading={
-                                    cancelOrderMutation.isPending ||
-                                    reorderMutation.isPending
+                                    cancelOrderMutation.isPending || reorderMutation.isPending
                                 }
                             />
                         ))}

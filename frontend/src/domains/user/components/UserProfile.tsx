@@ -42,9 +42,7 @@ export function UserProfile() {
 
     // Order-related state
     const [orderPage, setOrderPage] = useState(0);
-    const [orderStatus, setOrderStatus] = useState<OrderStatus | undefined>(
-        undefined
-    );
+    const [orderStatus, setOrderStatus] = useState<OrderStatus | undefined>(undefined);
     const [sortBy, setSortBy] = useState<string>("createdAt,desc");
 
     // Fetch user orders with proper parameters
@@ -120,19 +118,14 @@ export function UserProfile() {
         }
     };
 
-    const handleOrderFiltersChange = (filters: {
-        status?: OrderStatus;
-        sortBy?: string;
-    }) => {
+    const handleOrderFiltersChange = (filters: { status?: OrderStatus; sortBy?: string }) => {
         setOrderStatus(filters.status);
         setSortBy(filters.sortBy || "createdAt,desc");
         setOrderPage(0); // Reset to first page when filters change
     };
 
     // Helper function to safely count orders by status
-    const countOrdersByStatus = (
-        status: OrderStatus | OrderStatus[]
-    ): number => {
+    const countOrdersByStatus = (status: OrderStatus | OrderStatus[]): number => {
         if (!ordersResponse?.content) return 0;
 
         const statuses = Array.isArray(status) ? status : [status];
@@ -190,9 +183,7 @@ export function UserProfile() {
                             <Text size="sm" c="dimmed">
                                 Member since{" "}
                                 {user.createdAt
-                                    ? new Date(
-                                          user.createdAt
-                                      ).toLocaleDateString()
+                                    ? new Date(user.createdAt).toLocaleDateString()
                                     : "N/A"}
                             </Text>
                         </Group>
@@ -212,28 +203,16 @@ export function UserProfile() {
 
             <Tabs value={activeTab} onChange={setActiveTab}>
                 <Tabs.List mb="md">
-                    <Tabs.Tab
-                        value="profile"
-                        leftSection={<IconSettings size={16} />}
-                    >
+                    <Tabs.Tab value="profile" leftSection={<IconSettings size={16} />}>
                         Profile Details
                     </Tabs.Tab>
-                    <Tabs.Tab
-                        value="wishlists"
-                        leftSection={<IconHeart size={16} />}
-                    >
+                    <Tabs.Tab value="wishlists" leftSection={<IconHeart size={16} />}>
                         My Wishlists
                     </Tabs.Tab>
-                    <Tabs.Tab
-                        value="orders"
-                        leftSection={<IconShoppingBag size={16} />}
-                    >
+                    <Tabs.Tab value="orders" leftSection={<IconShoppingBag size={16} />}>
                         Order History ({ordersResponse?.totalElements || 0})
                     </Tabs.Tab>
-                    <Tabs.Tab
-                        value="security"
-                        leftSection={<IconKey size={16} />}
-                    >
+                    <Tabs.Tab value="security" leftSection={<IconKey size={16} />}>
                         Security
                     </Tabs.Tab>
                 </Tabs.List>
@@ -285,10 +264,7 @@ export function UserProfile() {
                     <Stack gap="lg">
                         <Group justify="space-between">
                             <Title order={3}>Order History</Title>
-                            <Button
-                                variant="light"
-                                onClick={() => navigate({ to: "/products" })}
-                            >
+                            <Button variant="light" onClick={() => navigate({ to: "/products" })}>
                                 Continue Shopping
                             </Button>
                         </Group>
@@ -335,37 +311,23 @@ export function UserProfile() {
                                     {ordersResponse?.content &&
                                     ordersResponse.content.length > 0 ? (
                                         <Stack gap="md">
-                                            {ordersResponse.content.map(
-                                                (order) => (
-                                                    <OrderCard
-                                                        key={order.id}
-                                                        order={order}
-                                                        onCancel={
-                                                            handleOrderCancel
-                                                        }
-                                                        onReorder={
-                                                            handleReorder
-                                                        }
-                                                        onDownloadInvoice={
-                                                            handleDownloadInvoice
-                                                        }
-                                                    />
-                                                )
-                                            )}
+                                            {ordersResponse.content.map((order) => (
+                                                <OrderCard
+                                                    key={order.id}
+                                                    order={order}
+                                                    onCancel={handleOrderCancel}
+                                                    onReorder={handleReorder}
+                                                    onDownloadInvoice={handleDownloadInvoice}
+                                                />
+                                            ))}
 
                                             {/* Pagination */}
                                             {ordersResponse.totalPages > 1 && (
                                                 <Center mt="lg">
                                                     <Pagination
-                                                        total={
-                                                            ordersResponse.totalPages
-                                                        }
+                                                        total={ordersResponse.totalPages}
                                                         value={orderPage + 1}
-                                                        onChange={(page) =>
-                                                            setOrderPage(
-                                                                page - 1
-                                                            )
-                                                        }
+                                                        onChange={(page) => setOrderPage(page - 1)}
                                                         size="sm"
                                                     />
                                                 </Center>
@@ -374,16 +336,9 @@ export function UserProfile() {
                                     ) : (
                                         <Paper p="xl" withBorder ta="center">
                                             <Stack align="center" gap="md">
-                                                <IconShoppingBag
-                                                    size={48}
-                                                    color="gray"
-                                                />
+                                                <IconShoppingBag size={48} color="gray" />
                                                 <div>
-                                                    <Text
-                                                        size="lg"
-                                                        fw={500}
-                                                        mb="xs"
-                                                    >
+                                                    <Text size="lg" fw={500} mb="xs">
                                                         {orderStatus
                                                             ? `No ${orderStatus.toLowerCase()} orders found`
                                                             : "No orders yet"}
@@ -412,46 +367,43 @@ export function UserProfile() {
                         </div>
 
                         {/* Order Summary Stats */}
-                        {ordersResponse?.content &&
-                            ordersResponse.content.length > 0 && (
-                                <Paper p="md" withBorder bg="gray.0">
-                                    <Group justify="space-around">
-                                        <div style={{ textAlign: "center" }}>
-                                            <Text size="xl" fw={700} c="blue">
-                                                {ordersResponse.totalElements}
-                                            </Text>
-                                            <Text size="sm" c="dimmed">
-                                                Total Orders
-                                            </Text>
-                                        </div>
-                                        <Divider orientation="vertical" />
-                                        <div style={{ textAlign: "center" }}>
-                                            <Text size="xl" fw={700} c="green">
-                                                {countOrdersByStatus(
-                                                    "DELIVERED"
-                                                )}
-                                            </Text>
-                                            <Text size="sm" c="dimmed">
-                                                Delivered
-                                            </Text>
-                                        </div>
-                                        <Divider orientation="vertical" />
-                                        <div style={{ textAlign: "center" }}>
-                                            <Text size="xl" fw={700} c="orange">
-                                                {countOrdersByStatus([
-                                                    "PENDING",
-                                                    "CONFIRMED",
-                                                    "PROCESSING",
-                                                    "SHIPPED",
-                                                ])}
-                                            </Text>
-                                            <Text size="sm" c="dimmed">
-                                                Active
-                                            </Text>
-                                        </div>
-                                    </Group>
-                                </Paper>
-                            )}
+                        {ordersResponse?.content && ordersResponse.content.length > 0 && (
+                            <Paper p="md" withBorder bg="gray.0">
+                                <Group justify="space-around">
+                                    <div style={{ textAlign: "center" }}>
+                                        <Text size="xl" fw={700} c="blue">
+                                            {ordersResponse.totalElements}
+                                        </Text>
+                                        <Text size="sm" c="dimmed">
+                                            Total Orders
+                                        </Text>
+                                    </div>
+                                    <Divider orientation="vertical" />
+                                    <div style={{ textAlign: "center" }}>
+                                        <Text size="xl" fw={700} c="green">
+                                            {countOrdersByStatus("DELIVERED")}
+                                        </Text>
+                                        <Text size="sm" c="dimmed">
+                                            Delivered
+                                        </Text>
+                                    </div>
+                                    <Divider orientation="vertical" />
+                                    <div style={{ textAlign: "center" }}>
+                                        <Text size="xl" fw={700} c="orange">
+                                            {countOrdersByStatus([
+                                                "PENDING",
+                                                "CONFIRMED",
+                                                "PROCESSING",
+                                                "SHIPPED",
+                                            ])}
+                                        </Text>
+                                        <Text size="sm" c="dimmed">
+                                            Active
+                                        </Text>
+                                    </div>
+                                </Group>
+                            </Paper>
+                        )}
                     </Stack>
                 </Tabs.Panel>
 
@@ -466,8 +418,7 @@ export function UserProfile() {
                                 <div>
                                     <Text fw={500}>Password</Text>
                                     <Text size="sm" c="dimmed">
-                                        Change your password to protect your
-                                        account
+                                        Change your password to protect your account
                                     </Text>
                                 </div>
                                 <Button
@@ -494,8 +445,7 @@ export function UserProfile() {
                                         Delete Account
                                     </Text>
                                     <Text size="sm" c="dimmed">
-                                        Permanently delete your account and all
-                                        associated data
+                                        Permanently delete your account and all associated data
                                     </Text>
                                 </div>
                                 <Button
@@ -505,8 +455,7 @@ export function UserProfile() {
                                     onClick={() => {
                                         notifications.show({
                                             title: "Feature Not Available",
-                                            message:
-                                                "Account deletion is not implemented yet.",
+                                            message: "Account deletion is not implemented yet.",
                                             color: "orange",
                                         });
                                     }}

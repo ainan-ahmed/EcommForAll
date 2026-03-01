@@ -39,10 +39,7 @@ import { useStore } from "zustand/react";
 import { useNavigate } from "@tanstack/react-router";
 import { useProduct } from "../hooks/useProduct";
 import DOMPurify from "dompurify";
-import {
-    useUserWishlists,
-    useIsProductInWishlist,
-} from "../../user/hooks/useWishlist";
+import { useUserWishlists, useIsProductInWishlist } from "../../user/hooks/useWishlist";
 import { addToWishlist, removeFromWishlist } from "../../user/api/wishlistApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { Product, WishlistProductSummary } from "../types";
@@ -61,18 +58,15 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     // 1. Fetch product data using hook
     const { data: product, isLoading, isError } = useProduct(id);
 
-    const { entry: similarProductsEntry, ref: similarProductsRef } =
-        useIntersection({
-            rootMargin: "200px",
-            threshold: 0.1,
-        });
+    const { entry: similarProductsEntry, ref: similarProductsRef } = useIntersection({
+        rootMargin: "200px",
+        threshold: 0.1,
+    });
 
     // 2. State hooks
     const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
     const [quantity, setQuantity] = useState(1);
-    const [activeWishlistId, setActiveWishlistId] = useState<string | null>(
-        null
-    );
+    const [activeWishlistId, setActiveWishlistId] = useState<string | null>(null);
 
     // 3. Store hooks
     const { user, isAuthenticated } = useStore(authStore);
@@ -83,16 +77,17 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
     // 5. Wishlist hooks
     const { data: wishlists = [] } = useUserWishlists();
-    const { data: isInFavorites = false, isLoading: isCheckingFavorites } =
-        useIsProductInWishlist(activeWishlistId || undefined, id);
+    const { data: isInFavorites = false, isLoading: isCheckingFavorites } = useIsProductInWishlist(
+        activeWishlistId || undefined,
+        id
+    );
 
     // 6. Cart hooks
     const addToCartMutation = useAddToCart();
 
     // fetch similar products
     const similarProductsLimit = 5;
-    const isSimilarProductsInView =
-        similarProductsEntry?.isIntersecting ?? false;
+    const isSimilarProductsInView = similarProductsEntry?.isIntersecting ?? false;
     const shouldLoadSimilarProducts = !!product && isSimilarProductsInView;
     const {
         data: similarProductsResponse,
@@ -102,33 +97,25 @@ export function ProductDetails({ id }: ProductDetailsProps) {
 
     // 7. All useMemo and useEffect hooks
     const sortedImages = useMemo(() => {
-        return product?.images
-            ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder)
-            : [];
+        return product?.images ? [...product.images].sort((a, b) => a.sortOrder - b.sortOrder) : [];
     }, [product?.images]);
 
     const combinedImages = useMemo(() => {
         if (!selectedVariant || !product) return sortedImages;
 
-        const variantObj = product.variants.find(
-            (v) => v.id === selectedVariant
-        );
+        const variantObj = product.variants.find((v) => v.id === selectedVariant);
         const variantImages = variantObj?.images || [];
 
         return [
             ...variantImages.map((img) => ({ ...img, isVariantImage: true })),
-            ...sortedImages.filter(
-                (img) => !variantImages.some((vImg) => vImg.id === img.id)
-            ),
+            ...sortedImages.filter((img) => !variantImages.some((vImg) => vImg.id === img.id)),
         ];
     }, [selectedVariant, sortedImages, product?.variants]);
 
     // 8. useEffect hooks
     useEffect(() => {
         const wishlistWithProduct = wishlists.find((wishlist) =>
-            wishlist.products?.some(
-                (product: WishlistProductSummary) => product.id === id
-            )
+            wishlist.products?.some((product: WishlistProductSummary) => product.id === id)
         );
 
         if (wishlistWithProduct) {
@@ -137,8 +124,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     }, [wishlists, id]);
 
     // 9. Computed values that depend on hooks
-    const isProductOwner =
-        isAuthenticated && product && user?.id === product.sellerId;
+    const isProductOwner = isAuthenticated && product && user?.id === product.sellerId;
 
     const variantOptions =
         product?.variants?.map((variant) => ({
@@ -156,10 +142,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
     const price = currentVariant?.price || product?.minPrice || 0;
     const isInStock = currentVariant ? currentVariant.stock > 0 : true;
     const similarProducts =
-        similarProductsResponse?.similarProducts?.slice(
-            0,
-            similarProductsLimit
-        ) || [];
+        similarProductsResponse?.similarProducts?.slice(0, similarProductsLimit) || [];
     const hasSimilarProductsResponse = !!similarProductsResponse;
 
     // ✅ NOW we can have conditional returns AFTER all hooks are called
@@ -196,15 +179,10 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             return;
         }
 
-        if (
-            product.variants &&
-            product.variants.length > 1 &&
-            !selectedVariant
-        ) {
+        if (product.variants && product.variants.length > 1 && !selectedVariant) {
             notifications.show({
                 title: "Please Select Variant",
-                message:
-                    "Please select a product variant before adding to cart",
+                message: "Please select a product variant before adding to cart",
                 color: "orange",
             });
             return;
@@ -240,8 +218,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         if (!isAuthenticated) {
             notifications.show({
                 title: "Please Sign In",
-                message:
-                    "You need to be logged in to add items to your wishlist",
+                message: "You need to be logged in to add items to your wishlist",
                 color: "blue",
             });
             navigate({ to: "/login", search: { redirect: `/products/${id}` } });
@@ -258,9 +235,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
             });
         } catch (error: unknown) {
             const errorMessage =
-                error instanceof Error
-                    ? error.message
-                    : "Failed to add product to wishlist";
+                error instanceof Error ? error.message : "Failed to add product to wishlist";
 
             notifications.show({
                 title: "Error",
@@ -274,8 +249,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
         if (!isAuthenticated) {
             notifications.show({
                 title: "Please Sign In",
-                message:
-                    "You need to be logged in to remove items from your wishlist",
+                message: "You need to be logged in to remove items from your wishlist",
                 color: "blue",
             });
             navigate({ to: "/login", search: { redirect: `/products/${id}` } });
@@ -327,10 +301,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                                 src={image.imageUrl}
                                                 height={400}
                                                 fit="contain"
-                                                alt={
-                                                    image.altText ||
-                                                    product.name
-                                                }
+                                                alt={image.altText || product.name}
                                                 style={
                                                     image.isVariantImage
                                                         ? {
@@ -405,20 +376,13 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                         </Group>
 
                         <Group>
-                            <Badge
-                                color={isInStock ? "green" : "red"}
-                                size="lg"
-                            >
+                            <Badge color={isInStock ? "green" : "red"} size="lg">
                                 {isInStock ? "In Stock" : "Out of Stock"}
                             </Badge>
 
                             {selectedVariant && currentVariant && (
                                 <Badge
-                                    color={
-                                        currentVariant.stock <= 5
-                                            ? "orange"
-                                            : "blue"
-                                    }
+                                    color={currentVariant.stock <= 5 ? "orange" : "blue"}
                                     size="lg"
                                 >
                                     {currentVariant.stock <= 5
@@ -501,12 +465,8 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                         <Button
                                             size="lg"
                                             variant="outline"
-                                            leftSection={
-                                                <IconHeart size={20} />
-                                            }
-                                            rightSection={
-                                                <IconChevronDown size={16} />
-                                            }
+                                            leftSection={<IconHeart size={20} />}
+                                            rightSection={<IconChevronDown size={16} />}
                                         >
                                             In Favorites
                                         </Button>
@@ -514,12 +474,8 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                         <Button
                                             size="lg"
                                             variant="filled"
-                                            leftSection={
-                                                <IconHeart size={20} />
-                                            }
-                                            rightSection={
-                                                <IconChevronDown size={16} />
-                                            }
+                                            leftSection={<IconHeart size={20} />}
+                                            rightSection={<IconChevronDown size={16} />}
                                         >
                                             Add to Wishlist
                                         </Button>
@@ -530,43 +486,29 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                     <Menu.Label>Save to Wishlist</Menu.Label>
                                     {wishlists.length === 0 ? (
                                         <Menu.Item disabled>
-                                            No wishlists found. Create one in
-                                            your profile.
+                                            No wishlists found. Create one in your profile.
                                         </Menu.Item>
                                     ) : (
                                         wishlists.map((wishlist) => {
                                             const isActive =
-                                                activeWishlistId ===
-                                                    wishlist.id || false;
+                                                activeWishlistId === wishlist.id || false;
 
                                             return (
                                                 <Menu.Item
                                                     key={wishlist.id}
                                                     rightSection={
                                                         isActive ? (
-                                                            <IconHeart
-                                                                size={16}
-                                                                color="green"
-                                                            />
+                                                            <IconHeart size={16} color="green" />
                                                         ) : (
-                                                            <IconHeart
-                                                                size={16}
-                                                                color="gray"
-                                                            />
+                                                            <IconHeart size={16} color="gray" />
                                                         )
                                                     }
                                                     onClick={() => {
                                                         isActive
-                                                            ? handleRemoveFromWishlist(
-                                                                  wishlist.id
-                                                              )
-                                                            : handleAddToWishlist(
-                                                                  wishlist.id
-                                                              );
+                                                            ? handleRemoveFromWishlist(wishlist.id)
+                                                            : handleAddToWishlist(wishlist.id);
                                                         setActiveWishlistId(
-                                                            isActive
-                                                                ? null
-                                                                : wishlist.id
+                                                            isActive ? null : wishlist.id
                                                         );
 
                                                         notifications.show({
@@ -576,9 +518,7 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                                                     ? "removed from"
                                                                     : "added to"
                                                             } ${wishlist.name}`,
-                                                            color: isInFavorites
-                                                                ? "blue"
-                                                                : "green",
+                                                            color: isInFavorites ? "blue" : "green",
                                                         });
                                                     }}
                                                 >
@@ -598,12 +538,8 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                                 <Text fw={500}>Shipping & Returns</Text>
                             </Group>
                             <List spacing="xs" size="sm">
-                                <List.Item>
-                                    Free shipping on orders over $50
-                                </List.Item>
-                                <List.Item>
-                                    Standard delivery: 3-5 business days
-                                </List.Item>
+                                <List.Item>Free shipping on orders over $50</List.Item>
+                                <List.Item>Standard delivery: 3-5 business days</List.Item>
                                 <List.Item>30-day return policy</List.Item>
                             </List>
                         </Paper>
@@ -634,38 +570,27 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                     <Paper p="md">
                         <Accordion>
                             <Accordion.Item value="materials">
-                                <Accordion.Control>
-                                    Materials & Care
-                                </Accordion.Control>
+                                <Accordion.Control>Materials & Care</Accordion.Control>
                                 <Accordion.Panel>
                                     <Text size="sm">
-                                        Materials information would be displayed
-                                        here.
+                                        Materials information would be displayed here.
                                     </Text>
                                 </Accordion.Panel>
                             </Accordion.Item>
 
                             <Accordion.Item value="dimensions">
-                                <Accordion.Control>
-                                    Dimensions
-                                </Accordion.Control>
+                                <Accordion.Control>Dimensions</Accordion.Control>
                                 <Accordion.Panel>
                                     <Text size="sm">
-                                        Product dimensions would be displayed
-                                        here.
+                                        Product dimensions would be displayed here.
                                     </Text>
                                 </Accordion.Panel>
                             </Accordion.Item>
 
                             <Accordion.Item value="warranty">
-                                <Accordion.Control>
-                                    Warranty Information
-                                </Accordion.Control>
+                                <Accordion.Control>Warranty Information</Accordion.Control>
                                 <Accordion.Panel>
-                                    <Text size="sm">
-                                        Warranty details would be displayed
-                                        here.
-                                    </Text>
+                                    <Text size="sm">Warranty details would be displayed here.</Text>
                                 </Accordion.Panel>
                             </Accordion.Item>
                         </Accordion>
@@ -681,82 +606,55 @@ export function ProductDetails({ id }: ProductDetailsProps) {
                 <Title order={2}>Similar Products</Title>
                 <Box pos="relative" mt="md">
                     <LoadingOverlay visible={isSimilarProductsLoading} />
-                    {isSimilarProductsError && (
-                        <Text>Error loading similar products</Text>
-                    )}
+                    {isSimilarProductsError && <Text>Error loading similar products</Text>}
                     {!isSimilarProductsLoading &&
                         !isSimilarProductsError &&
                         similarProducts.length > 0 && (
                             <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }}>
-                                {similarProducts.map(
-                                    (similarProduct: Product) => (
-                                        <Card
-                                            key={similarProduct.id}
-                                            shadow="sm"
-                                            padding="md"
-                                            radius="md"
-                                            withBorder
-                                            style={{ cursor: "pointer" }}
-                                            onClick={() =>
-                                                handleViewProduct(
-                                                    similarProduct.id
-                                                )
-                                            }
-                                        >
-                                            <Card.Section>
-                                                <Image
-                                                    src={
-                                                        similarProduct
-                                                            .primaryImage
-                                                            ?.imageUrl ||
-                                                        "https://placehold.co/300x200?text=No+Image"
-                                                    }
-                                                    height={160}
-                                                    alt={similarProduct.name}
-                                                    loading="lazy"
-                                                />
-                                            </Card.Section>
-                                            <Text
-                                                fw={500}
-                                                mt="md"
-                                                lineClamp={1}
-                                            >
-                                                {similarProduct.name}
+                                {similarProducts.map((similarProduct: Product) => (
+                                    <Card
+                                        key={similarProduct.id}
+                                        shadow="sm"
+                                        padding="md"
+                                        radius="md"
+                                        withBorder
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => handleViewProduct(similarProduct.id)}
+                                    >
+                                        <Card.Section>
+                                            <Image
+                                                src={
+                                                    similarProduct.primaryImage?.imageUrl ||
+                                                    "https://placehold.co/300x200?text=No+Image"
+                                                }
+                                                height={160}
+                                                alt={similarProduct.name}
+                                                loading="lazy"
+                                            />
+                                        </Card.Section>
+                                        <Text fw={500} mt="md" lineClamp={1}>
+                                            {similarProduct.name}
+                                        </Text>
+                                        <Text mt="xs" c="dimmed" size="sm" lineClamp={1}>
+                                            {similarProduct.description}
+                                        </Text>
+                                        <Group justify="space-between" mt="md">
+                                            <Text fw={700}>
+                                                From ${similarProduct.minPrice.toFixed(2)}
                                             </Text>
-                                            <Text
-                                                mt="xs"
-                                                c="dimmed"
-                                                size="sm"
-                                                lineClamp={1}
+                                            <Button
+                                                variant="light"
+                                                size="xs"
+                                                onClick={(event) => {
+                                                    event.stopPropagation();
+                                                    handleViewProduct(similarProduct.id);
+                                                }}
                                             >
-                                                {similarProduct.description}
-                                            </Text>
-                                            <Group
-                                                justify="space-between"
-                                                mt="md"
-                                            >
-                                                <Text fw={700}>
-                                                    From $
-                                                    {similarProduct.minPrice.toFixed(
-                                                        2
-                                                    )}
-                                                </Text>
-                                                <Button
-                                                    variant="light"
-                                                    size="xs"
-                                                    onClick={(event) => {
-                                                        event.stopPropagation();
-                                                        handleViewProduct(
-                                                            similarProduct.id
-                                                        );
-                                                    }}
-                                                >
-                                                    View
-                                                </Button>
-                                            </Group>
-                                        </Card>
-                                    )
-                                )}
+                                                View
+                                            </Button>
+                                        </Group>
+                                    </Card>
+                                ))}
                             </SimpleGrid>
                         )}
                     {!isSimilarProductsLoading &&

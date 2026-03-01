@@ -15,13 +15,7 @@ import {
     Image,
     Box,
 } from "@mantine/core";
-import {
-    IconPlus,
-    IconTrash,
-    IconCopy,
-    IconKey,
-    IconPhoto,
-} from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconCopy, IconKey, IconPhoto } from "@tabler/icons-react";
 import { ProductVariant } from "../types";
 
 interface VariantsTabProps {
@@ -29,11 +23,7 @@ interface VariantsTabProps {
     onAdd: () => void;
     onDelete: (variantId: string) => void;
     onDuplicate: (variant: ProductVariant) => void;
-    onUpdateField: (
-        variantId: string,
-        field: keyof ProductVariant,
-        value: any
-    ) => void;
+    onUpdateField: (variantId: string, field: keyof ProductVariant, value: any) => void;
     onUpdateAttribute: (variantId: string, key: string, value: string) => void;
     onAddAttribute: (variantId: string, key: string) => void;
     onRemoveAttribute: (variantId: string, key: string) => void;
@@ -76,10 +66,7 @@ export function VariantsTab({
                     <Text c="dimmed" mb="md">
                         This product has no variants yet
                     </Text>
-                    <Button
-                        leftSection={<IconPlus size={18} />}
-                        onClick={onAdd}
-                    >
+                    <Button leftSection={<IconPlus size={18} />} onClick={onAdd}>
                         Add First Variant
                     </Button>
                 </Paper>
@@ -91,15 +78,9 @@ export function VariantsTab({
                                 <Group justify="space-between">
                                     <div>
                                         <Text fw={500}>
-                                            {Object.entries(
-                                                variant.attributeValues
-                                            )
-                                                .map(
-                                                    ([key, value]) =>
-                                                        `${key}: ${value}`
-                                                )
-                                                .join(", ") ||
-                                                `Variant ${variantIndex + 1}`}
+                                            {Object.entries(variant.attributeValues)
+                                                .map(([key, value]) => `${key}: ${value}`)
+                                                .join(", ") || `Variant ${variantIndex + 1}`}
                                         </Text>
                                         <Text size="sm" c="dimmed">
                                             SKU: {variant.sku}
@@ -116,11 +97,7 @@ export function VariantsTab({
                                             label="SKU"
                                             value={variant.sku}
                                             onChange={(e) =>
-                                                onUpdateField(
-                                                    variant.id,
-                                                    "sku",
-                                                    e.target.value
-                                                )
+                                                onUpdateField(variant.id, "sku", e.target.value)
                                             }
                                             required
                                         />
@@ -130,11 +107,7 @@ export function VariantsTab({
                                             label="Price"
                                             value={variant.price}
                                             onChange={(val) =>
-                                                onUpdateField(
-                                                    variant.id,
-                                                    "price",
-                                                    val
-                                                )
+                                                onUpdateField(variant.id, "price", val)
                                             }
                                             decimalScale={2}
                                             fixedDecimalScale
@@ -148,11 +121,7 @@ export function VariantsTab({
                                             label="Stock"
                                             value={variant.stock}
                                             onChange={(val) =>
-                                                onUpdateField(
-                                                    variant.id,
-                                                    "stock",
-                                                    val
-                                                )
+                                                onUpdateField(variant.id, "stock", val)
                                             }
                                             allowNegative={false}
                                             min={0}
@@ -168,45 +137,38 @@ export function VariantsTab({
                                             my="md"
                                         />
 
-                                        {Object.entries(
-                                            variant.attributeValues
-                                        ).map(([key, value]) => (
-                                            <Group
-                                                key={key}
-                                                mb="sm"
-                                                align="flex-end"
-                                            >
-                                                <TextInput
-                                                    label="Attribute Name"
-                                                    value={key}
-                                                    readOnly
-                                                    style={{ flex: 1 }}
-                                                />
-                                                <TextInput
-                                                    label="Value"
-                                                    value={value}
-                                                    onChange={(e) =>
-                                                        onUpdateAttribute(
-                                                            variant.id,
-                                                            key,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                    style={{ flex: 2 }}
-                                                />
-                                                <ActionIcon
-                                                    color="red"
-                                                    onClick={() =>
-                                                        onRemoveAttribute(
-                                                            variant.id,
-                                                            key
-                                                        )
-                                                    }
-                                                >
-                                                    <IconTrash size={16} />
-                                                </ActionIcon>
-                                            </Group>
-                                        ))}
+                                        {Object.entries(variant.attributeValues).map(
+                                            ([key, value]) => (
+                                                <Group key={key} mb="sm" align="flex-end">
+                                                    <TextInput
+                                                        label="Attribute Name"
+                                                        value={key}
+                                                        readOnly
+                                                        style={{ flex: 1 }}
+                                                    />
+                                                    <TextInput
+                                                        label="Value"
+                                                        value={value}
+                                                        onChange={(e) =>
+                                                            onUpdateAttribute(
+                                                                variant.id,
+                                                                key,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        style={{ flex: 2 }}
+                                                    />
+                                                    <ActionIcon
+                                                        color="red"
+                                                        onClick={() =>
+                                                            onRemoveAttribute(variant.id, key)
+                                                        }
+                                                    >
+                                                        <IconTrash size={16} />
+                                                    </ActionIcon>
+                                                </Group>
+                                            )
+                                        )}
 
                                         <Group mt="md">
                                             <TextInput
@@ -216,19 +178,13 @@ export function VariantsTab({
                                             />
                                             <Button
                                                 variant="light"
-                                                leftSection={
-                                                    <IconKey size={16} />
-                                                }
+                                                leftSection={<IconKey size={16} />}
                                                 onClick={() => {
-                                                    const input =
-                                                        document.getElementById(
-                                                            `new-attr-${variant.id}`
-                                                        ) as HTMLInputElement;
+                                                    const input = document.getElementById(
+                                                        `new-attr-${variant.id}`
+                                                    ) as HTMLInputElement;
                                                     if (input && input.value) {
-                                                        onAddAttribute(
-                                                            variant.id,
-                                                            input.value
-                                                        );
+                                                        onAddAttribute(variant.id, input.value);
                                                         input.value = "";
                                                     }
                                                 }}
@@ -247,24 +203,17 @@ export function VariantsTab({
                                             my="md"
                                         />
 
-                                        {variant.images &&
-                                        variant.images.length > 0 ? (
+                                        {variant.images && variant.images.length > 0 ? (
                                             <SimpleGrid
                                                 cols={{ base: 2, sm: 3, md: 4 }}
                                                 spacing="xs"
                                             >
                                                 {variant.images.map((image) => (
-                                                    <Box
-                                                        key={image.id}
-                                                        pos="relative"
-                                                    >
+                                                    <Box key={image.id} pos="relative">
                                                         <Image
                                                             src={image.imageUrl}
                                                             height={100}
-                                                            alt={
-                                                                image.altText ||
-                                                                "Variant image"
-                                                            }
+                                                            alt={image.altText || "Variant image"}
                                                         />
                                                         <ActionIcon
                                                             color="red"
@@ -272,54 +221,35 @@ export function VariantsTab({
                                                             radius="xl"
                                                             size="sm"
                                                             style={{
-                                                                position:
-                                                                    "absolute",
+                                                                position: "absolute",
                                                                 top: 5,
                                                                 right: 5,
                                                             }}
                                                             onClick={() =>
-                                                                onDeleteImage(
-                                                                    variant.id,
-                                                                    image.id
-                                                                )
+                                                                onDeleteImage(variant.id, image.id)
                                                             }
                                                         >
-                                                            <IconTrash
-                                                                size={12}
-                                                            />
+                                                            <IconTrash size={12} />
                                                         </ActionIcon>
                                                     </Box>
                                                 ))}
                                             </SimpleGrid>
                                         ) : (
-                                            <Text
-                                                c="dimmed"
-                                                ta="center"
-                                                size="sm"
-                                                mb="md"
-                                            >
+                                            <Text c="dimmed" ta="center" size="sm" mb="md">
                                                 No variant-specific images
                                             </Text>
                                         )}
 
                                         <Button
-                                            leftSection={
-                                                <IconPhoto size={16} />
-                                            }
+                                            leftSection={<IconPhoto size={16} />}
                                             mt="md"
                                             variant="light"
                                             onClick={() =>
                                                 onOpenImageModal(
                                                     variant.id,
-                                                    Object.entries(
-                                                        variant.attributeValues
-                                                    )
-                                                        .map(
-                                                            ([key, value]) =>
-                                                                `${key}: ${value}`
-                                                        )
-                                                        .join(", ") ||
-                                                        `Variant ${variantIndex + 1}`
+                                                    Object.entries(variant.attributeValues)
+                                                        .map(([key, value]) => `${key}: ${value}`)
+                                                        .join(", ") || `Variant ${variantIndex + 1}`
                                                 )
                                             }
                                         >
@@ -334,23 +264,15 @@ export function VariantsTab({
                                             <Button
                                                 color="red"
                                                 variant="outline"
-                                                leftSection={
-                                                    <IconTrash size={18} />
-                                                }
-                                                onClick={() =>
-                                                    onDelete(variant.id)
-                                                }
+                                                leftSection={<IconTrash size={18} />}
+                                                onClick={() => onDelete(variant.id)}
                                             >
                                                 Delete Variant
                                             </Button>
                                             <Button
                                                 variant="outline"
-                                                leftSection={
-                                                    <IconCopy size={18} />
-                                                }
-                                                onClick={() =>
-                                                    onDuplicate(variant)
-                                                }
+                                                leftSection={<IconCopy size={18} />}
+                                                onClick={() => onDuplicate(variant)}
                                             >
                                                 Duplicate Variant
                                             </Button>

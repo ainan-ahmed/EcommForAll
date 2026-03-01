@@ -1,37 +1,28 @@
 import { API } from "../../../config/api";
 import { ChatRequest, ChatResponse, ChatHistory } from "../types";
 
-export async function sendChatMessage(
-    request: ChatRequest
-): Promise<ChatResponse> {
+export async function sendChatMessage(request: ChatRequest): Promise<ChatResponse> {
     const token = await getAuthToken();
     console.log("request:", request);
-    
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.CHATBOT.SEND_MESSAGE}`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(request),
-        }
-    );
+
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CHATBOT.SEND_MESSAGE}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(request),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to send message: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to send message: ${response.status}`);
     }
 
     return response.json();
 }
 
-export async function getChatHistory(
-    conversationId?: string
-): Promise<ChatHistory> {
+export async function getChatHistory(conversationId?: string): Promise<ChatHistory> {
     const token = await getAuthToken();
 
     const url = new URL(`${API.BASE_URL}${API.ENDPOINTS.CHATBOT.CHAT_HISTORY}`);
@@ -48,10 +39,7 @@ export async function getChatHistory(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to get chat history: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to get chat history: ${response.status}`);
     }
 
     return response.json();
@@ -78,15 +66,12 @@ export async function clearConversation(conversationId: string): Promise<void> {
 export async function checkChatbotHealth(): Promise<boolean> {
     try {
         const token = await getAuthToken();
-        const response = await fetch(
-            `${API.BASE_URL}${API.ENDPOINTS.CHATBOT.HEALTH}`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CHATBOT.HEALTH}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
         return response.ok;
     } catch {
         return false;

@@ -36,10 +36,7 @@ export function useAllOrders(params: OrderQueryParams = {}) {
 /**
  * Hook to fetch seller orders (seller privilege)
  */
-export function useSellerOrders(
-    sellerId: string,
-    params: OrderQueryParams = {}
-) {
+export function useSellerOrders(sellerId: string, params: OrderQueryParams = {}) {
     return useQuery({
         queryKey: ["seller", "orders", sellerId, params],
         queryFn: () => fetchSellerOrders(sellerId, params),
@@ -63,11 +60,7 @@ export function useOrderAdmin(orderId: string, enabled: boolean = true) {
 /**
  * Hook to fetch order statistics (admin/seller dashboard)
  */
-export function useOrderStatsAdmin(
-    sellerId?: string,
-    dateFrom?: string,
-    dateTo?: string
-) {
+export function useOrderStatsAdmin(sellerId?: string, dateFrom?: string, dateTo?: string) {
     return useQuery({
         queryKey: ["admin", "orders", "stats", { sellerId, dateFrom, dateTo }],
         queryFn: () => fetchOrderStats(sellerId, dateFrom, dateTo),
@@ -110,20 +103,10 @@ export function useUpdateOrderStatusAdmin() {
             notes?: string;
             trackingNumber?: string;
             estimatedDelivery?: string;
-        }) =>
-            updateOrderStatus(
-                orderId,
-                status,
-                notes,
-                trackingNumber,
-                estimatedDelivery
-            ),
+        }) => updateOrderStatus(orderId, status, notes, trackingNumber, estimatedDelivery),
         onSuccess: (updatedOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", updatedOrder.id],
-                updatedOrder
-            );
+            queryClient.setQueryData(["admin", "orders", updatedOrder.id], updatedOrder);
             queryClient.setQueryData(["orders", updatedOrder.id], updatedOrder);
 
             // Invalidate orders lists and stats
@@ -168,14 +151,8 @@ export function useForceCancelOrder() {
         }) => forceCancelOrder(orderId, reason, refundAmount),
         onSuccess: (cancelledOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", cancelledOrder.id],
-                cancelledOrder
-            );
-            queryClient.setQueryData(
-                ["orders", cancelledOrder.id],
-                cancelledOrder
-            );
+            queryClient.setQueryData(["admin", "orders", cancelledOrder.id], cancelledOrder);
+            queryClient.setQueryData(["orders", cancelledOrder.id], cancelledOrder);
 
             // Invalidate orders lists
             queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
@@ -213,10 +190,7 @@ export function useUpdateShippingDetails() {
         }) => updateShippingDetails(orderId, shippingDetails),
         onSuccess: (updatedOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", updatedOrder.id],
-                updatedOrder
-            );
+            queryClient.setQueryData(["admin", "orders", updatedOrder.id], updatedOrder);
             queryClient.setQueryData(["orders", updatedOrder.id], updatedOrder);
 
             // Invalidate orders lists
@@ -324,8 +298,7 @@ export function useBulkUpdateOrderStatus() {
  */
 export function useExportOrdersToCSV() {
     return useMutation({
-        mutationFn: (params: OrderQueryParams = {}) =>
-            exportOrdersToCSV(params),
+        mutationFn: (params: OrderQueryParams = {}) => exportOrdersToCSV(params),
         onSuccess: (blob) => {
             // Create download link
             const url = window.URL.createObjectURL(blob);
@@ -379,14 +352,8 @@ export function useProcessRefund() {
         }) => processRefund(orderId, refundData),
         onSuccess: (refundedOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", refundedOrder.id],
-                refundedOrder
-            );
-            queryClient.setQueryData(
-                ["orders", refundedOrder.id],
-                refundedOrder
-            );
+            queryClient.setQueryData(["admin", "orders", refundedOrder.id], refundedOrder);
+            queryClient.setQueryData(["orders", refundedOrder.id], refundedOrder);
 
             // Invalidate orders lists
             queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
@@ -430,10 +397,7 @@ export function useMarkOrderAsShipped() {
         }) => markOrderAsShipped(orderId, shippingData),
         onSuccess: (shippedOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", shippedOrder.id],
-                shippedOrder
-            );
+            queryClient.setQueryData(["admin", "orders", shippedOrder.id], shippedOrder);
             queryClient.setQueryData(["orders", shippedOrder.id], shippedOrder);
 
             // Invalidate orders lists
@@ -472,14 +436,8 @@ export function useConfirmOrder() {
         }) => confirmOrder(orderId, estimatedProcessingTime),
         onSuccess: (confirmedOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["admin", "orders", confirmedOrder.id],
-                confirmedOrder
-            );
-            queryClient.setQueryData(
-                ["orders", confirmedOrder.id],
-                confirmedOrder
-            );
+            queryClient.setQueryData(["admin", "orders", confirmedOrder.id], confirmedOrder);
+            queryClient.setQueryData(["orders", confirmedOrder.id], confirmedOrder);
 
             // Invalidate orders lists
             queryClient.invalidateQueries({ queryKey: ["seller", "orders"] });

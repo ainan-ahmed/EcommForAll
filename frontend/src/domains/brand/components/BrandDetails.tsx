@@ -38,11 +38,7 @@ export function BrandDetails({ id }: BrandDetailsProps) {
     const pageSize = 8;
     const { user, isAuthenticated } = useStore(authStore);
     // Fetch brand details
-    const {
-        data: brand,
-        isLoading: isBrandLoading,
-        isError: isBrandError,
-    } = useBrand(id);
+    const { data: brand, isLoading: isBrandLoading, isError: isBrandError } = useBrand(id);
 
     // Fetch products by brand ID
     const {
@@ -77,10 +73,7 @@ export function BrandDetails({ id }: BrandDetailsProps) {
                     {Array(4)
                         .fill(0)
                         .map((_, i) => (
-                            <Grid.Col
-                                key={i}
-                                span={{ base: 12, sm: 6, md: 4, lg: 3 }}
-                            >
+                            <Grid.Col key={i} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
                                 <Skeleton height={180} radius="md" mb="sm" />
                                 <Skeleton height={20} width="80%" mb="sm" />
                                 <Skeleton height={15} width="50%" />
@@ -98,9 +91,7 @@ export function BrandDetails({ id }: BrandDetailsProps) {
                 <Title order={2} c="red" mb="md">
                     Error Loading Brand
                 </Title>
-                <Text size="lg">
-                    We couldn't load the brand details. Please try again later.
-                </Text>
+                <Text size="lg">We couldn't load the brand details. Please try again later.</Text>
                 <Button mt="xl" variant="outline" component="a" href="/brands">
                     Return to Brands
                 </Button>
@@ -143,10 +134,7 @@ export function BrandDetails({ id }: BrandDetailsProps) {
                                 variant="light"
                                 leftSection={<IconCalendar size={14} />}
                             >
-                                Since{" "}
-                                {brand.createdAt
-                                    ? formatDate(brand.createdAt)
-                                    : "N/A"}
+                                Since {brand.createdAt ? formatDate(brand.createdAt) : "N/A"}
                             </Badge>
                         </Group>
                     </Stack>
@@ -188,9 +176,7 @@ export function BrandDetails({ id }: BrandDetailsProps) {
                 {/* Description & Website */}
                 <Paper p="md" withBorder>
                     <Stack>
-                        {brand.description && (
-                            <Text size="lg">{brand.description}</Text>
-                        )}
+                        {brand.description && <Text size="lg">{brand.description}</Text>}
 
                         {brand.website && (
                             <Group>
@@ -216,14 +202,8 @@ export function BrandDetails({ id }: BrandDetailsProps) {
                 <Grid>
                     {products.length > 0 ? (
                         products.map((product) => (
-                            <Grid.Col
-                                key={product.id}
-                                span={{ base: 12, sm: 6, md: 4, lg: 3 }}
-                            >
-                                <ProductCard
-                                    product={product}
-                                    showAddToCart={true}
-                                />
+                            <Grid.Col key={product.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+                                <ProductCard product={product} showAddToCart={true} />
                             </Grid.Col>
                         ))
                     ) : (

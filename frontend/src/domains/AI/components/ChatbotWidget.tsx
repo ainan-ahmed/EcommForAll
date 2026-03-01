@@ -136,7 +136,8 @@ export function ChatbotWidget() {
                                     overflow: "hidden",
                                     zIndex: maximized ? 1500 : 1000,
                                     borderWidth: 1,
-                                    transition: "width 250ms ease, height 250ms ease, top 250ms ease, left 250ms ease, transform 250ms ease, bottom 250ms ease, right 250ms ease",
+                                    transition:
+                                        "width 250ms ease, height 250ms ease, top 250ms ease, left 250ms ease, transform 250ms ease, bottom 250ms ease, right 250ms ease",
                                 }}
                             >
                                 <Chatbot

@@ -17,8 +17,7 @@ export async function fetchSimilarProducts(
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to fetch similar products: ${response.status}`
+            errorData.message || `Failed to fetch similar products: ${response.status}`
         );
     }
 

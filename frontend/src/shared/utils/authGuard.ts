@@ -31,11 +31,7 @@ export async function authGuard({ location }: { location: { href: string } }) {
     return;
 }
 
-export async function sellerGuard({
-    location,
-}: {
-    location: { href: string };
-}) {
+export async function sellerGuard({ location }: { location: { href: string } }) {
     // Get the initial auth state
     const { isAuthenticated, user } = authStore.getState();
 
@@ -44,13 +40,11 @@ export async function sellerGuard({
         await authStore.getState().checkAuth();
 
         // Check the updated auth state
-        const { isAuthenticated: refreshedAuth, user: refreshedUser } =
-            authStore.getState();
+        const { isAuthenticated: refreshedAuth, user: refreshedUser } = authStore.getState();
 
         if (
             !refreshedAuth ||
-            (refreshedUser?.role !== "SELLER" &&
-                refreshedUser?.role !== "ADMIN")
+            (refreshedUser?.role !== "SELLER" && refreshedUser?.role !== "ADMIN")
         ) {
             throw redirect({
                 to: "/login",
@@ -79,8 +73,7 @@ export async function adminGuard({ location }: { location: { href: string } }) {
         await authStore.getState().checkAuth();
 
         // Check the updated auth state
-        const { isAuthenticated: refreshedAuth, user: refreshedUser } =
-            authStore.getState();
+        const { isAuthenticated: refreshedAuth, user: refreshedUser } = authStore.getState();
 
         if (!refreshedAuth || refreshedUser?.role !== "ADMIN") {
             throw redirect({

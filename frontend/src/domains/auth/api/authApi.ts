@@ -1,11 +1,11 @@
 import { API } from "../../../config/api.ts";
-import { 
-    LoginFormValues, 
-    RegisterFormValues, 
-    ForgotPasswordFormValues, 
+import {
+    LoginFormValues,
+    RegisterFormValues,
+    ForgotPasswordFormValues,
     ResetPasswordFormValues,
     ForgotPasswordResponse,
-    ResetPasswordResponse
+    ResetPasswordResponse,
 } from "../types.ts";
 
 export async function login(data: LoginFormValues) {
@@ -25,14 +25,11 @@ export async function login(data: LoginFormValues) {
 export async function register(data: RegisterFormValues) {
     const { confirmPassword, ...registerData } = data;
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.AUTH.REGISTER}`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(registerData),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.REGISTER}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registerData),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -49,15 +46,12 @@ export async function validateToken(): Promise<boolean> {
     }
 
     try {
-        const response = await fetch(
-            `${API.BASE_URL}${API.ENDPOINTS.AUTH.VALIDATE}`,
-            {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+        const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.VALIDATE}`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
         return response.ok;
     } catch (error) {
@@ -71,15 +65,12 @@ export async function getCurrentUser() {
         throw new Error("No authentication token found");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.AUTH.CURRENT_USER}`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.CURRENT_USER}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error("Failed to fetch current user");
@@ -88,7 +79,9 @@ export async function getCurrentUser() {
     return response.json();
 }
 
-export async function forgotPassword(data: ForgotPasswordFormValues): Promise<ForgotPasswordResponse> {
+export async function forgotPassword(
+    data: ForgotPasswordFormValues
+): Promise<ForgotPasswordResponse> {
     const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.AUTH.FORGOT_PASSWORD}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

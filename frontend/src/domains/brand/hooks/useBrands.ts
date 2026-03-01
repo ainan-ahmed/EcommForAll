@@ -1,8 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { BrandsResponse } from '../types';
-import { fetchBrands } from '../api/brandApi';
-
-
+import { useQuery } from "@tanstack/react-query";
+import { BrandsResponse } from "../types";
+import { fetchBrands } from "../api/brandApi";
 
 interface BrandParams {
     page?: number;

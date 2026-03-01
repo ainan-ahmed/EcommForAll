@@ -14,12 +14,7 @@ import {
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import {
-    IconSearch,
-    IconFilter,
-    IconX,
-    IconCalendar,
-} from "@tabler/icons-react";
+import { IconSearch, IconFilter, IconX, IconCalendar } from "@tabler/icons-react";
 import { OrderStatus, OrderQueryParams } from "../types";
 
 interface OrderFiltersProps {
@@ -55,8 +50,7 @@ export function OrderFilters({
     onClearFilters,
     isLoading = false,
 }: OrderFiltersProps) {
-    const [advancedFiltersOpened, { toggle: toggleAdvancedFilters }] =
-        useDisclosure(false);
+    const [advancedFiltersOpened, { toggle: toggleAdvancedFilters }] = useDisclosure(false);
 
     const form = useForm({
         initialValues: {
@@ -227,17 +221,13 @@ export function OrderFilters({
 
                         {filters.dateFrom && (
                             <Badge variant="light" color="violet" size="sm">
-                                From:{" "}
-                                {new Date(
-                                    filters.dateFrom
-                                ).toLocaleDateString()}
+                                From: {new Date(filters.dateFrom).toLocaleDateString()}
                             </Badge>
                         )}
 
                         {filters.dateTo && (
                             <Badge variant="light" color="violet" size="sm">
-                                To:{" "}
-                                {new Date(filters.dateTo).toLocaleDateString()}
+                                To: {new Date(filters.dateTo).toLocaleDateString()}
                             </Badge>
                         )}
 

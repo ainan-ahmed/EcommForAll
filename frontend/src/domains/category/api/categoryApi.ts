@@ -22,9 +22,7 @@ export async function fetchCategories(
 
 export async function fetchCategoryBySlug(slug: string): Promise<Category> {
     console.log(slug, API.BASE_URL);
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/slug/${slug}`
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/slug/${slug}`);
     if (!response.ok) {
         throw new Error("Failed to fetch category");
     }
@@ -57,25 +55,19 @@ export async function createCategory(
  * @param categoryId ID of the category to upload image for
  * @param file Image file to upload
  */
-export async function uploadCategoryImage(
-    categoryId: string,
-    file: File
-): Promise<Category> {
+export async function uploadCategoryImage(categoryId: string, file: File): Promise<Category> {
     const token = localStorage.getItem("authToken");
 
     const formData = new FormData();
     formData.append("image", file);
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}/image`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}/image`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to upload category image: ${response.status}`);
@@ -95,17 +87,14 @@ export async function updateCategory(
 ): Promise<Category> {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(category),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(category),
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to update category: ${response.status}`);
@@ -121,15 +110,12 @@ export async function updateCategory(
 export async function deleteCategory(categoryId: string): Promise<void> {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}`,
-        {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.CATEGORIES}/${categoryId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to delete category: ${response.status}`);

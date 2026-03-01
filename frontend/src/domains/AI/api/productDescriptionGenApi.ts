@@ -27,8 +27,7 @@ export async function generateProductDescription(
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.errorMessage ||
-                `Failed to generate description: ${response.status}`
+            errorData.errorMessage || `Failed to generate description: ${response.status}`
         );
     }
 

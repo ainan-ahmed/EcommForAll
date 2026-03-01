@@ -110,9 +110,7 @@ export function AdminOrderList({
         <Stack gap="lg">
             <Group justify="space-between">
                 <Title order={2}>Order Management</Title>
-                <Button leftSection={<IconDownload size={16} />}>
-                    Export Orders
-                </Button>
+                <Button leftSection={<IconDownload size={16} />}>Export Orders</Button>
             </Group>
 
             {/* Filters */}
@@ -134,9 +132,7 @@ export function AdminOrderList({
                         <Select
                             placeholder="Filter by status"
                             value={filters.status}
-                            onChange={(value) =>
-                                setFilters({ ...filters, status: value || "" })
-                            }
+                            onChange={(value) => setFilters({ ...filters, status: value || "" })}
                             data={[
                                 { value: "", label: "All statuses" },
                                 { value: "PENDING", label: "Pending" },
@@ -206,16 +202,13 @@ export function AdminOrderList({
                                 <Table.Tr>
                                     <Table.Td colSpan={7}>
                                         <Center py="xl">
-                                            <Text c="dimmed">
-                                                No orders found
-                                            </Text>
+                                            <Text c="dimmed">No orders found</Text>
                                         </Center>
                                     </Table.Td>
                                 </Table.Tr>
                             ) : (
                                 orders.map((order) => {
-                                    const StatusIcon =
-                                        statusIcons[order.status];
+                                    const StatusIcon = statusIcons[order.status];
                                     return (
                                         <Table.Tr key={order.id}>
                                             <Table.Td>
@@ -236,67 +229,44 @@ export function AdminOrderList({
                                                         radius="xl"
                                                     />
                                                     <Stack gap={0}>
-                                                        <Text
-                                                            size="sm"
-                                                            fw={500}
-                                                        >
+                                                        <Text size="sm" fw={500}>
                                                             {order.user
                                                                 ? `${order.user.firstName} ${order.user.lastName}`
                                                                 : "Unknown User"}
                                                         </Text>
-                                                        <Text
-                                                            size="xs"
-                                                            c="dimmed"
-                                                        >
-                                                            {order.user
-                                                                ?.email ||
-                                                                "No email"}
+                                                        <Text size="xs" c="dimmed">
+                                                            {order.user?.email || "No email"}
                                                         </Text>
                                                     </Stack>
                                                 </Group>
                                             </Table.Td>
                                             <Table.Td>
                                                 <Text size="sm">
-                                                    {new Date(
-                                                        order.createdAt
-                                                    ).toLocaleDateString()}
+                                                    {new Date(order.createdAt).toLocaleDateString()}
                                                 </Text>
                                             </Table.Td>
                                             <Table.Td>
                                                 <Text size="sm">
                                                     {order.items.length} item
-                                                    {order.items.length !== 1
-                                                        ? "s"
-                                                        : ""}
+                                                    {order.items.length !== 1 ? "s" : ""}
                                                 </Text>
                                             </Table.Td>
                                             <Table.Td>
                                                 <Text fw={500}>
-                                                    {new Intl.NumberFormat(
-                                                        "en-US",
-                                                        {
-                                                            style: "currency",
-                                                            currency: "USD",
-                                                        }
-                                                    ).format(order.totalAmount)}
+                                                    {new Intl.NumberFormat("en-US", {
+                                                        style: "currency",
+                                                        currency: "USD",
+                                                    }).format(order.totalAmount)}
                                                 </Text>
                                             </Table.Td>
                                             <Table.Td>
                                                 <Badge
-                                                    color={
-                                                        statusColors[
-                                                            order.status
-                                                        ]
-                                                    }
+                                                    color={statusColors[order.status]}
                                                     variant="light"
-                                                    leftSection={
-                                                        <StatusIcon size={12} />
-                                                    }
+                                                    leftSection={<StatusIcon size={12} />}
                                                 >
                                                     {order.status.charAt(0) +
-                                                        order.status
-                                                            .slice(1)
-                                                            .toLowerCase()}
+                                                        order.status.slice(1).toLowerCase()}
                                                 </Badge>
                                             </Table.Td>
                                             <Table.Td>
@@ -304,39 +274,22 @@ export function AdminOrderList({
                                                     <Tooltip label="View details">
                                                         <ActionIcon
                                                             variant="subtle"
-                                                            onClick={() =>
-                                                                onOrderView(
-                                                                    order.id
-                                                                )
-                                                            }
+                                                            onClick={() => onOrderView(order.id)}
                                                         >
-                                                            <IconEye
-                                                                size={16}
-                                                            />
+                                                            <IconEye size={16} />
                                                         </ActionIcon>
                                                     </Tooltip>
-                                                    <Menu
-                                                        shadow="md"
-                                                        width={200}
-                                                    >
+                                                    <Menu shadow="md" width={200}>
                                                         <Menu.Target>
                                                             <ActionIcon variant="subtle">
-                                                                <IconDots
-                                                                    size={16}
-                                                                />
+                                                                <IconDots size={16} />
                                                             </ActionIcon>
                                                         </Menu.Target>
                                                         <Menu.Dropdown>
-                                                            <Menu.Label>
-                                                                Update Status
-                                                            </Menu.Label>
+                                                            <Menu.Label>Update Status</Menu.Label>
                                                             <Menu.Item
                                                                 leftSection={
-                                                                    <IconCheck
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
+                                                                    <IconCheck size={14} />
                                                                 }
                                                                 onClick={() =>
                                                                     handleStatusChange(
@@ -345,19 +298,14 @@ export function AdminOrderList({
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "CONFIRMED"
+                                                                    order.status === "CONFIRMED"
                                                                 }
                                                             >
                                                                 Confirm Order
                                                             </Menu.Item>
                                                             <Menu.Item
                                                                 leftSection={
-                                                                    <IconPackage
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
+                                                                    <IconPackage size={14} />
                                                                 }
                                                                 onClick={() =>
                                                                     handleStatusChange(
@@ -366,19 +314,14 @@ export function AdminOrderList({
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "PROCESSING"
+                                                                    order.status === "PROCESSING"
                                                                 }
                                                             >
                                                                 Mark Processing
                                                             </Menu.Item>
                                                             <Menu.Item
                                                                 leftSection={
-                                                                    <IconTruck
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
+                                                                    <IconTruck size={14} />
                                                                 }
                                                                 onClick={() =>
                                                                     handleStatusChange(
@@ -387,19 +330,14 @@ export function AdminOrderList({
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "SHIPPED"
+                                                                    order.status === "SHIPPED"
                                                                 }
                                                             >
                                                                 Mark Shipped
                                                             </Menu.Item>
                                                             <Menu.Item
                                                                 leftSection={
-                                                                    <IconCheck
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
+                                                                    <IconCheck size={14} />
                                                                 }
                                                                 onClick={() =>
                                                                     handleStatusChange(
@@ -408,21 +346,14 @@ export function AdminOrderList({
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "DELIVERED"
+                                                                    order.status === "DELIVERED"
                                                                 }
                                                             >
                                                                 Mark Delivered
                                                             </Menu.Item>
                                                             <Menu.Divider />
                                                             <Menu.Item
-                                                                leftSection={
-                                                                    <IconX
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
-                                                                }
+                                                                leftSection={<IconX size={14} />}
                                                                 color="red"
                                                                 onClick={() =>
                                                                     handleStatusChange(
@@ -431,29 +362,19 @@ export function AdminOrderList({
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "CANCELLED"
+                                                                    order.status === "CANCELLED"
                                                                 }
                                                             >
                                                                 Cancel Order
                                                             </Menu.Item>
                                                             <Menu.Item
                                                                 leftSection={
-                                                                    <IconRefresh
-                                                                        size={
-                                                                            14
-                                                                        }
-                                                                    />
+                                                                    <IconRefresh size={14} />
                                                                 }
                                                                 color="orange"
-                                                                onClick={() =>
-                                                                    onRefund(
-                                                                        order.id
-                                                                    )
-                                                                }
+                                                                onClick={() => onRefund(order.id)}
                                                                 disabled={
-                                                                    order.status ===
-                                                                    "REFUNDED"
+                                                                    order.status === "REFUNDED"
                                                                 }
                                                             >
                                                                 Issue Refund

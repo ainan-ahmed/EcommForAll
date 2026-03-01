@@ -1,11 +1,6 @@
 // src/domains/cart/api/cartApi.ts
 import { API } from "../../../config/api";
-import {
-    Cart,
-    CartItem,
-    AddToCartRequest,
-    UpdateCartItemRequest,
-} from "../types";
+import { Cart, CartItem, AddToCartRequest, UpdateCartItemRequest } from "../types";
 
 /**
  * Get current user's cart
@@ -52,9 +47,7 @@ export async function addToCart(request: AddToCartRequest): Promise<CartItem> {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to add to cart: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to add to cart: ${response.status}`);
     }
 
     return response.json();

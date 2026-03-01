@@ -11,12 +11,8 @@ import { notifications } from "@mantine/notifications";
 export function useProductFormState(initialData?: Product) {
     const [isUploading, setIsUploading] = useState<boolean>(false);
     // State for managing variants and images
-    const [variants, setVariants] = useState<ProductVariant[]>(
-        initialData?.variants || []
-    );
-    const [productImages, setProductImages] = useState<ProductImage[]>(
-        initialData?.images || []
-    );
+    const [variants, setVariants] = useState<ProductVariant[]>(initialData?.variants || []);
+    const [productImages, setProductImages] = useState<ProductImage[]>(initialData?.images || []);
 
     // State for variant image modal
     const [variantImageModal, setVariantImageModal] = useState({
@@ -74,10 +70,7 @@ export function useProductFormState(initialData?: Product) {
                         .map((img) => img.id);
 
                     if (imageIds.length > 0) {
-                        await updateProductImagesOrder(
-                            initialData.id,
-                            imageIds
-                        );
+                        await updateProductImagesOrder(initialData.id, imageIds);
                     }
                 } catch (error) {
                     console.error("Failed to update image order:", error);
@@ -143,9 +136,7 @@ export function useProductFormState(initialData?: Product) {
             // For local images (temporary IDs), just update state
             if (imageId.startsWith("temp-")) {
                 setProductImages(
-                    productImages.map((img) =>
-                        img.id === imageId ? { ...img, altText } : img
-                    )
+                    productImages.map((img) => (img.id === imageId ? { ...img, altText } : img))
                 );
                 return;
             }
@@ -164,19 +155,14 @@ export function useProductFormState(initialData?: Product) {
                 imageUrl: URL.createObjectURL(file),
                 altText: file.name,
                 sortOrder:
-                    (variants.find((v) => v.id === variantId)?.images?.length ||
-                        0) +
-                    index +
-                    1,
+                    (variants.find((v) => v.id === variantId)?.images?.length || 0) + index + 1,
                 // Store the file for later upload when the product is saved
                 file: file,
             }));
 
             setVariants(
                 variants.map((v) =>
-                    v.id === variantId
-                        ? { ...v, images: [...(v.images || []), ...newImages] }
-                        : v
+                    v.id === variantId ? { ...v, images: [...(v.images || []), ...newImages] } : v
                 )
             );
 
@@ -237,11 +223,7 @@ export function useProductFormState(initialData?: Product) {
     // Update variant field
     const updateVariantField = useCallback(
         (variantId: string, field: keyof ProductVariant, value: any) => {
-            setVariants(
-                variants.map((v) =>
-                    v.id === variantId ? { ...v, [field]: value } : v
-                )
-            );
+            setVariants(variants.map((v) => (v.id === variantId ? { ...v, [field]: value } : v)));
         },
         [variants]
     );

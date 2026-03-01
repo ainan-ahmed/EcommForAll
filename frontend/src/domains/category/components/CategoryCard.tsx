@@ -18,10 +18,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
         >
             <Card.Section>
                 <Image
-                    src={
-                        category.imageUrl ||
-                        "https://placehold.co/600x400?text=Category"
-                    }
+                    src={category.imageUrl || "https://placehold.co/600x400?text=Category"}
                     height={160}
                     alt={category.name}
                 />
@@ -35,8 +32,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
             </Group>
 
             <Text size="sm" c="dimmed" lineClamp={2}>
-                {category.description ||
-                    `Browse our collection of ${category.name}`}
+                {category.description || `Browse our collection of ${category.name}`}
             </Text>
         </Card>
     );

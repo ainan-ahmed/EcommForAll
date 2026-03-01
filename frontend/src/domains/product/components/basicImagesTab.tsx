@@ -34,9 +34,7 @@ export function BasicImagesTab({
     onUpdateAltText,
     isUploading = false,
 }: ImagesTabProps) {
-    const [deletingImageIds, setDeletingImageIds] = useState<Set<string>>(
-        new Set()
-    );
+    const [deletingImageIds, setDeletingImageIds] = useState<Set<string>>(new Set());
 
     const handleDelete = async (imageId: string) => {
         setDeletingImageIds((prev) => new Set(prev).add(imageId));
@@ -56,12 +54,7 @@ export function BasicImagesTab({
                 <Text size="lg" fw={500}>
                     Product Images
                 </Text>
-                <FileButton
-                    onChange={onUpload}
-                    accept="image/*"
-                    multiple
-                    disabled={isUploading}
-                >
+                <FileButton onChange={onUpload} accept="image/*" multiple disabled={isUploading}>
                     {(props) => (
                         <Button
                             leftSection={<IconUpload size={18} />}
@@ -75,8 +68,7 @@ export function BasicImagesTab({
             </Group>
 
             <Text c="dimmed" size="sm">
-                Drag and drop to reorder images. The first image will be the
-                main product image.
+                Drag and drop to reorder images. The first image will be the main product image.
             </Text>
 
             <DragDropContext onDragEnd={onDragEnd}>
@@ -92,11 +84,7 @@ export function BasicImagesTab({
                             }}
                         >
                             {productImages.map((image, index) => (
-                                <Draggable
-                                    key={image.id}
-                                    draggableId={image.id}
-                                    index={index}
-                                >
+                                <Draggable key={image.id} draggableId={image.id} index={index}>
                                     {(provided) => (
                                         <div
                                             ref={provided.innerRef}
@@ -108,19 +96,14 @@ export function BasicImagesTab({
                                                 p="xs"
                                                 style={{
                                                     width: "150px",
-                                                    opacity:
-                                                        deletingImageIds.has(
-                                                            image.id
-                                                        )
-                                                            ? 0.5
-                                                            : 1,
+                                                    opacity: deletingImageIds.has(image.id)
+                                                        ? 0.5
+                                                        : 1,
                                                 }}
                                                 pos="relative"
                                             >
                                                 <LoadingOverlay
-                                                    visible={deletingImageIds.has(
-                                                        image.id
-                                                    )}
+                                                    visible={deletingImageIds.has(image.id)}
                                                 />
                                                 <Card.Section>
                                                     <Image
@@ -129,24 +112,13 @@ export function BasicImagesTab({
                                                         alt={image.altText}
                                                     />
                                                 </Card.Section>
-                                                <Group
-                                                    justify="space-between"
-                                                    mt="xs"
-                                                >
-                                                    <Badge size="sm">
-                                                        {index + 1}
-                                                    </Badge>
+                                                <Group justify="space-between" mt="xs">
+                                                    <Badge size="sm">{index + 1}</Badge>
                                                     <ActionIcon
                                                         color="red"
                                                         variant="subtle"
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                image.id
-                                                            )
-                                                        }
-                                                        disabled={deletingImageIds.has(
-                                                            image.id
-                                                        )}
+                                                        onClick={() => handleDelete(image.id)}
+                                                        disabled={deletingImageIds.has(image.id)}
                                                     >
                                                         <IconTrash size={16} />
                                                     </ActionIcon>
@@ -157,14 +129,9 @@ export function BasicImagesTab({
                                                     placeholder="Alt text"
                                                     value={image.altText || ""}
                                                     onChange={(e) => {
-                                                        onUpdateAltText(
-                                                            image.id,
-                                                            e.target.value
-                                                        );
+                                                        onUpdateAltText(image.id, e.target.value);
                                                     }}
-                                                    disabled={deletingImageIds.has(
-                                                        image.id
-                                                    )}
+                                                    disabled={deletingImageIds.has(image.id)}
                                                 />
                                             </Card>
                                         </div>

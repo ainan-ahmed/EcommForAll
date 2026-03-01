@@ -33,7 +33,7 @@ export function ForgotPasswordForm({ onSuccess }: ForgotPasswordFormProps) {
             <Text size="lg" fw={500} ta="center">
                 Forgot your password?
             </Text>
-            
+
             <Text size="sm" c="dimmed" ta="center">
                 Enter your email address and we'll send you a link to reset your password.
             </Text>

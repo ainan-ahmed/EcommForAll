@@ -12,7 +12,7 @@ interface ResetPasswordFormProps {
 
 export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     const navigate = useNavigate();
-    
+
     const form = useForm<ResetPasswordFormValues>({
         initialValues: {
             token,
@@ -40,7 +40,7 @@ export function ResetPasswordForm({ token }: ResetPasswordFormProps) {
             <Text size="lg" fw={500} ta="center">
                 Reset Your Password
             </Text>
-            
+
             <Text size="sm" c="dimmed" ta="center">
                 Enter your new password below.
             </Text>

@@ -1,13 +1,7 @@
 // src/domains/cart/hooks/useCart.ts
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { notifications } from "@mantine/notifications";
-import {
-    getCart,
-    addToCart,
-    updateCartItem,
-    removeFromCart,
-    clearCart,
-} from "../api/cartApi";
+import { getCart, addToCart, updateCartItem, removeFromCart, clearCart } from "../api/cartApi";
 import { AddToCartRequest, UpdateCartItemRequest } from "../types";
 
 // Hook to fetch cart
@@ -54,13 +48,8 @@ export function useUpdateCartItem() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            itemId,
-            request,
-        }: {
-            itemId: string;
-            request: UpdateCartItemRequest;
-        }) => updateCartItem(itemId, request),
+        mutationFn: ({ itemId, request }: { itemId: string; request: UpdateCartItemRequest }) =>
+            updateCartItem(itemId, request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["cart"] });
         },

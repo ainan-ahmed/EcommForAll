@@ -1,12 +1,8 @@
 .footer {
     margin-top: 80px;
     padding-top: 40px;
-    background-color: light-dark(
-        var(--mantine-color-gray-0),
-        var(--mantine-color-dark-8)
-    );
-    border-top: 1px solid
-        light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+    background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+    border-top: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
 }
 
 .footer a {

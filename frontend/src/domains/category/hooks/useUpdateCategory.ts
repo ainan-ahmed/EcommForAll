@@ -11,8 +11,7 @@ export function useUpdateCategory() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ id, data }: UpdateCategoryParams) =>
-            updateCategory(id, data),
+        mutationFn: ({ id, data }: UpdateCategoryParams) => updateCategory(id, data),
         onSuccess: (data) => {
             // Invalidate both slug-based and ID-based queries
             queryClient.invalidateQueries({

@@ -58,10 +58,7 @@ export function RouteComponent() {
                     Enter your credentials to register
                 </Text>
 
-                <RegisterForm
-                    onSubmit={handleSubmit}
-                    isLoading={registerMutation.isPending}
-                />
+                <RegisterForm onSubmit={handleSubmit} isLoading={registerMutation.isPending} />
             </Paper>
         </Container>
     );

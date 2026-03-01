@@ -27,10 +27,7 @@ const profileSchema = z.object({
         .string()
         .min(3, "Username must be at least 3 characters")
         .max(30, "Username must be less than 30 characters")
-        .regex(
-            /^[a-zA-Z0-9_]+$/,
-            "Username can only contain letters, numbers, and underscores"
-        ),
+        .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
     email: z.string().email("Please enter a valid email address"),
 });
 
@@ -74,9 +71,7 @@ export function EditUserProfile() {
             navigate({ to: "/profile" });
         } catch (err: unknown) {
             const errorMessage =
-                err instanceof Error
-                    ? err.message
-                    : "Failed to update profile. Please try again.";
+                err instanceof Error ? err.message : "Failed to update profile. Please try again.";
 
             setError(errorMessage);
             notifications.show({

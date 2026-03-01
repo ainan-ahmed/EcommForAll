@@ -1,14 +1,5 @@
 import { useForm, zodResolver } from "@mantine/form";
-import {
-    TextInput,
-    Textarea,
-    Button,
-    FileInput,
-    Group,
-    Stack,
-    Paper,
-    Select,
-} from "@mantine/core";
+import { TextInput, Textarea, Button, FileInput, Group, Stack, Paper, Select } from "@mantine/core";
 import { IconUpload, IconCheck } from "@tabler/icons-react";
 import { Category } from "../types";
 import { categorySchema } from "../categorySchemas";
@@ -28,11 +19,11 @@ export function CategoryForm({
     onCancel,
     categories = [], // Default to empty array if not provided
 }: CategoryFormProps) {
-    const form = useForm<Omit<Category, "productCount" | "id" | "slug" >>({
+    const form = useForm<Omit<Category, "productCount" | "id" | "slug">>({
         initialValues: {
             name: initialData?.name || "",
             description: initialData?.description || "",
-            parent: initialData?.parent ?? "",      // always a string
+            parent: initialData?.parent ?? "", // always a string
             imageUrl: initialData?.imageUrl || null,
         },
         validate: zodResolver(categorySchema),
@@ -42,7 +33,7 @@ export function CategoryForm({
     const parentOptions = categories
         .filter((category) => category.id !== initialData?.id && category.id != null)
         .map((category) => ({
-            value: String(category.id),           // force string
+            value: String(category.id), // force string
             label: category.name,
         }));
 
@@ -54,7 +45,7 @@ export function CategoryForm({
         const formData = { ...values };
 
         // If parentId is empty string or null, remove it from the submission
-        if (!formData.parent) { 
+        if (!formData.parent) {
             delete formData.parent;
         }
 
@@ -103,11 +94,7 @@ export function CategoryForm({
                     />
 
                     <Group justify="flex-end" mt="md">
-                        <Button
-                            variant="default"
-                            onClick={onCancel}
-                            disabled={isLoading}
-                        >
+                        <Button variant="default" onClick={onCancel} disabled={isLoading}>
                             Cancel
                         </Button>
                         <Button
@@ -115,9 +102,7 @@ export function CategoryForm({
                             leftSection={<IconCheck size={18} />}
                             loading={isLoading}
                         >
-                            {initialData
-                                ? "Update Category"
-                                : "Create Category"}
+                            {initialData ? "Update Category" : "Create Category"}
                         </Button>
                     </Group>
                 </Stack>

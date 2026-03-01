@@ -1,12 +1,4 @@
-import {
-    Paper,
-    Text,
-    Group,
-    Loader,
-    ThemeIcon,
-    Box,
-    Tooltip,
-} from "@mantine/core";
+import { Paper, Text, Group, Loader, ThemeIcon, Box, Tooltip } from "@mantine/core";
 import { IconCheck, IconX, IconClock, IconCheckbox } from "@tabler/icons-react";
 import { ChatMessage } from "../types";
 
@@ -76,9 +68,7 @@ export function ChatMessageComponent({
             wrap="nowrap"
         >
             {/* Status icon on the left for user messages */}
-            {isUser && showStatusIcon && (
-                <Box style={{ marginTop: 8 }}>{getStatusIcon()}</Box>
-            )}
+            {isUser && showStatusIcon && <Box style={{ marginTop: 8 }}>{getStatusIcon()}</Box>}
 
             <Paper
                 p="md"
@@ -86,10 +76,7 @@ export function ChatMessageComponent({
                 style={{
                     maxWidth: "85%",
                     opacity: message.status === "sending" ? 0.7 : 1,
-                    border:
-                        message.status === "failed"
-                            ? "1px solid red"
-                            : undefined,
+                    border: message.status === "failed" ? "1px solid red" : undefined,
                 }}
             >
                 <Text size="sm" fw={500} mb={4}>

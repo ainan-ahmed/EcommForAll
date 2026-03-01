@@ -9,9 +9,9 @@ interface UseCategoriesParams {
     sort?: string;
 }
 
-export function useCategories({ page = 0, size = 12, sort = '' }: UseCategoriesParams) {
+export function useCategories({ page = 0, size = 12, sort = "" }: UseCategoriesParams) {
     return useQuery<CategoriesResponse>({
         queryKey: ["categories", page, size],
-        queryFn: () => fetchCategories(page, size,sort),
+        queryFn: () => fetchCategories(page, size, sort),
     });
 }

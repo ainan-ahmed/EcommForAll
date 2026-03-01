@@ -53,8 +53,5 @@ export const routes = rootRoute("__root.tsx", [
     ]),
 
     // profile section
-    route("/profile", [
-        index("profile/index.tsx"),
-        route("/edit", "profile/edit.tsx"),
-    ]),
+    route("/profile", [index("profile/index.tsx"), route("/edit", "profile/edit.tsx")]),
 ]);

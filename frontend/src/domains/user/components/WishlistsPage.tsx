@@ -1,13 +1,4 @@
-import {
-    Container,
-    Title,
-    Grid,
-    Button,
-    Paper,
-    Group,
-    LoadingOverlay,
-    Alert,
-} from "@mantine/core";
+import { Container, Title, Grid, Button, Paper, Group, LoadingOverlay, Alert } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-router";
 import { IconPlus } from "@tabler/icons-react";
 import { useUserWishlists } from "../hooks/useWishlist";
@@ -60,10 +51,7 @@ export function WishlistsPage() {
 
             <Grid>
                 {wishlists.map((wishlist) => (
-                    <Grid.Col
-                        key={wishlist.id}
-                        span={{ base: 12, sm: 6, md: 4 }}
-                    >
+                    <Grid.Col key={wishlist.id} span={{ base: 12, sm: 6, md: 4 }}>
                         <WishlistCard wishlist={wishlist} />
                     </Grid.Col>
                 ))}

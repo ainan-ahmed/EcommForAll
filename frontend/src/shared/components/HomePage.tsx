@@ -48,9 +48,7 @@ export function HomePage() {
     //         featured: true,
     //     });
     // get featured products from product data with isaFeatured = true. use the data object already from above
-    const featuredProductsData = productsData?.content.filter(
-        (product) => product.isFeatured
-    );
+    const featuredProductsData = productsData?.content.filter((product) => product.isFeatured);
     const isLoadingFeatured = isLoadingProducts;
 
     const { data: brandsData, isLoading: isLoadingBrands } = useBrands({
@@ -58,12 +56,11 @@ export function HomePage() {
         size: 6,
     });
 
-    const { data: categoriesData, isLoading: isLoadingCategories } =
-        useCategories({
-            page: 0,
-            size: 12,
-            sort: "name,asc",
-        });
+    const { data: categoriesData, isLoading: isLoadingCategories } = useCategories({
+        page: 0,
+        size: 12,
+        sort: "name,asc",
+    });
 
     const products = productsData?.content || [];
     const featuredProducts = featuredProductsData || [];
@@ -171,18 +168,10 @@ export function HomePage() {
                             >
                                 <Container size="xl">
                                     <div className={classes.carouselContent}>
-                                        <Title
-                                            order={1}
-                                            className={classes.carouselTitle}
-                                        >
+                                        <Title order={1} className={classes.carouselTitle}>
                                             {slide.title}
                                         </Title>
-                                        <Text
-                                            size="xl"
-                                            className={
-                                                classes.carouselDescription
-                                            }
-                                        >
+                                        <Text size="xl" className={classes.carouselDescription}>
                                             {slide.description}
                                         </Text>
                                         <Button
@@ -252,11 +241,7 @@ export function HomePage() {
                             className={classes.dealCard}
                         >
                             <Card.Section>
-                                <Image
-                                    src={promo.image}
-                                    height={160}
-                                    alt={promo.title}
-                                />
+                                <Image src={promo.image} height={160} alt={promo.title} />
                             </Card.Section>
 
                             <Badge color={promo.color} my="md">
@@ -298,14 +283,8 @@ export function HomePage() {
                             <ProductSkeletons />
                         ) : (
                             featuredProducts.map((product) => (
-                                <Grid.Col
-                                    key={product.id}
-                                    span={{ base: 6, xs: 6, sm: 4, md: 3 }}
-                                >
-                                    <ProductCard
-                                        product={product}
-                                        showAddToCart={true}
-                                    />
+                                <Grid.Col key={product.id} span={{ base: 6, xs: 6, sm: 4, md: 3 }}>
+                                    <ProductCard product={product} showAddToCart={true} />
                                 </Grid.Col>
                             ))
                         )}
@@ -313,13 +292,7 @@ export function HomePage() {
                 </div>
 
                 {/* Value Props - Similar to Amazon's service highlights */}
-                <Paper
-                    p="lg"
-                    radius="md"
-                    withBorder
-                    className={classes.valuePropSection}
-                    mt="md"
-                >
+                <Paper p="lg" radius="md" withBorder className={classes.valuePropSection} mt="md">
                     <SimpleGrid cols={{ base: 1, sm: 3 }}>
                         <Group align="flex-start">
                             <ThemeIcon size={56} radius={56} color="blue">
@@ -380,14 +353,8 @@ export function HomePage() {
                             <ProductSkeletons />
                         ) : (
                             products.map((product) => (
-                                <Grid.Col
-                                    key={product.id}
-                                    span={{ base: 6, xs: 6, sm: 4, md: 3 }}
-                                >
-                                    <ProductCard
-                                        product={product}
-                                        showAddToCart={true}
-                                    />
+                                <Grid.Col key={product.id} span={{ base: 6, xs: 6, sm: 4, md: 3 }}>
+                                    <ProductCard product={product} showAddToCart={true} />
                                 </Grid.Col>
                             ))
                         )}
@@ -415,10 +382,7 @@ export function HomePage() {
                             <BrandSkeletons />
                         ) : (
                             brands.map((brand) => (
-                                <Grid.Col
-                                    key={brand.id}
-                                    span={{ base: 6, xs: 4, sm: 4, md: 2 }}
-                                >
+                                <Grid.Col key={brand.id} span={{ base: 6, xs: 4, sm: 4, md: 2 }}>
                                     <Paper
                                         p="md"
                                         withBorder
@@ -443,9 +407,7 @@ export function HomePage() {
                                                     justifyContent: "center",
                                                 }}
                                             >
-                                                <Text fw={500}>
-                                                    {brand.name}
-                                                </Text>
+                                                <Text fw={500}>{brand.name}</Text>
                                             </Box>
                                         )}
                                     </Paper>
@@ -456,29 +418,18 @@ export function HomePage() {
                 </div>
 
                 {/* Call to Action */}
-                <Paper
-                    radius="lg"
-                    p="xl"
-                    mt={60}
-                    mb={40}
-                    className={classes.ctaSection}
-                >
+                <Paper radius="lg" p="xl" mt={60} mb={40} className={classes.ctaSection}>
                     <SimpleGrid cols={{ base: 1, md: 2 }} spacing="lg">
                         <div>
                             <Title order={2} mb="lg" c="white">
                                 Join Our Community Today
                             </Title>
                             <Text size="lg" mb="xl" c="white">
-                                Create an account to enjoy personalized
-                                shopping, save your favorites, track orders and
-                                get exclusive offers.
+                                Create an account to enjoy personalized shopping, save your
+                                favorites, track orders and get exclusive offers.
                             </Text>
                             <Group>
-                                <Button
-                                    size="lg"
-                                    component={Link}
-                                    to="/register"
-                                >
+                                <Button size="lg" component={Link} to="/register">
                                     Sign Up Now
                                 </Button>
                                 <Button

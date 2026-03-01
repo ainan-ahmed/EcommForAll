@@ -16,11 +16,7 @@ export function ForgotPasswordPage() {
                 <Paper p="xl" withBorder>
                     <Stack gap="lg" align="center">
                         <div style={{ textAlign: "center" }}>
-                            <IconCheck
-                                size={48}
-                                color="green"
-                                style={{ marginBottom: "1rem" }}
-                            />
+                            <IconCheck size={48} color="green" style={{ marginBottom: "1rem" }} />
                             <Title order={2} mb="md">
                                 Check Your Email
                             </Title>
@@ -34,8 +30,8 @@ export function ForgotPasswordPage() {
                                 variant="light"
                             >
                                 <Text size="sm">
-                                    If you don't see the email, check your spam folder. 
-                                    The link will expire in 24 hours.
+                                    If you don't see the email, check your spam folder. The link
+                                    will expire in 24 hours.
                                 </Text>
                             </Alert>
                         </div>
@@ -53,9 +49,7 @@ export function ForgotPasswordPage() {
                         <Title order={2} mb="md">
                             Forgot Password
                         </Title>
-                        <Text c="dimmed">
-                            Enter your email to receive a password reset link
-                        </Text>
+                        <Text c="dimmed">Enter your email to receive a password reset link</Text>
                     </div>
 
                     <ForgotPasswordForm onSuccess={handleSuccess} />

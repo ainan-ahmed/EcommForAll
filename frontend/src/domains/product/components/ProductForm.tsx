@@ -1,15 +1,5 @@
 import { useMemo } from "react";
-import {
-    Button,
-    Group,
-    Text,
-    Stack,
-    Paper,
-    Tabs,
-    Modal,
-    FileButton,
-    Title,
-} from "@mantine/core";
+import { Button, Group, Text, Stack, Paper, Tabs, Modal, FileButton, Title } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
 import { IconCheck, IconUpload } from "@tabler/icons-react";
 import { Product } from "../types";
@@ -75,9 +65,7 @@ export function ProductForm({
             brandId: initialData?.brandId || "",
             sellerId: initialData?.sellerId || "",
         },
-        validate: zodResolver(
-            productSchema.omit({ variants: true, images: true })
-        ),
+        validate: zodResolver(productSchema.omit({ variants: true, images: true })),
     });
 
     // Sort product images by sortOrder
@@ -102,9 +90,7 @@ export function ProductForm({
             <Paper p="xl" withBorder mb="xl">
                 <Stack gap="xl">
                     <Group gap="sm" justify="space-between">
-                        <Title order={2}>
-                            {initialData ? "Edit Product" : "Add New Product"}
-                        </Title>
+                        <Title order={2}>{initialData ? "Edit Product" : "Add New Product"}</Title>
                         <Group>
                             <Button variant="default" onClick={onCancel}>
                                 Cancel
@@ -114,9 +100,7 @@ export function ProductForm({
                                 loading={isLoading}
                                 leftSection={<IconCheck size={18} />}
                             >
-                                {initialData
-                                    ? "Save Changes"
-                                    : "Create Product"}
+                                {initialData ? "Save Changes" : "Create Product"}
                             </Button>
                         </Group>
                     </Group>
@@ -125,18 +109,12 @@ export function ProductForm({
                         <Tabs.List>
                             <Tabs.Tab value="basic">Basic Information</Tabs.Tab>
                             <Tabs.Tab value="images">Images</Tabs.Tab>
-                            <Tabs.Tab value="variants">
-                                Variants ({variants.length})
-                            </Tabs.Tab>
+                            <Tabs.Tab value="variants">Variants ({variants.length})</Tabs.Tab>
                         </Tabs.List>
 
                         {/* Basic Info Tab */}
                         <Tabs.Panel value="basic" pt="xl">
-                            <BasicInfoTab
-                                form={form}
-                                categories={categories}
-                                brands={brands}
-                            />
+                            <BasicInfoTab form={form} categories={categories} brands={brands} />
                         </Tabs.Panel>
 
                         {/* Images Tab */}
@@ -187,11 +165,7 @@ export function ProductForm({
                 <Button variant="default" onClick={onCancel}>
                     Cancel
                 </Button>
-                <Button
-                    type="submit"
-                    loading={isLoading}
-                    leftSection={<IconCheck size={18} />}
-                >
+                <Button type="submit" loading={isLoading} leftSection={<IconCheck size={18} />}>
                     {initialData ? "Save Changes" : "Create Product"}
                 </Button>
             </Group>
@@ -211,27 +185,19 @@ export function ProductForm({
                 <Stack gap="md">
                     <FileButton
                         onChange={(files) =>
-                            handleVariantImageUpload(
-                                files,
-                                variantImageModal.variantId
-                            )
+                            handleVariantImageUpload(files, variantImageModal.variantId)
                         }
                         accept="image/*"
                         multiple
                     >
                         {(props) => (
-                            <Button
-                                fullWidth
-                                leftSection={<IconUpload size={18} />}
-                                {...props}
-                            >
+                            <Button fullWidth leftSection={<IconUpload size={18} />} {...props}>
                                 Select Images
                             </Button>
                         )}
                     </FileButton>
                     <Text size="sm" c="dimmed">
-                        Supported formats: JPEG, PNG, GIF. Maximum file size:
-                        5MB.
+                        Supported formats: JPEG, PNG, GIF. Maximum file size: 5MB.
                     </Text>
                 </Stack>
             </Modal>

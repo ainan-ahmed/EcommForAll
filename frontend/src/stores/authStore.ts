@@ -20,7 +20,6 @@ export const authStore = create<AuthState>()(
             isAuthenticated: false,
             setUser: (user) => set({ user }),
             checkAuth: async () => {
-                
                 const token = localStorage.getItem("authToken");
 
                 if (!token) {

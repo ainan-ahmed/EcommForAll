@@ -1,14 +1,5 @@
 import { useForm, zodResolver } from "@mantine/form";
-import {
-    TextInput,
-    Textarea,
-    Button,
-    Switch,
-    FileInput,
-    Group,
-    Stack,
-    Paper,
-} from "@mantine/core";
+import { TextInput, Textarea, Button, Switch, FileInput, Group, Stack, Paper } from "@mantine/core";
 import { IconUpload, IconCheck } from "@tabler/icons-react";
 import { Brand } from "../types";
 import { brandSchema } from "../schemas/brandSchemas";
@@ -20,12 +11,7 @@ interface BrandFormProps {
     onCancel: () => void;
 }
 
-export function BrandForm({
-    initialData,
-    onSubmit,
-    isLoading,
-    onCancel,
-}: BrandFormProps) {
+export function BrandForm({ initialData, onSubmit, isLoading, onCancel }: BrandFormProps) {
     const form = useForm<
         Omit<Brand, "productCount" | "createdAt" | "updatedAt" | "id"> & {
             image?: File | null;
@@ -43,10 +29,9 @@ export function BrandForm({
 
     // This function will be called when clicking the submit button
     const handleFormSubmit = (
-        values: Omit<
-            Brand,
-            "productCount" | "createdAt" | "updatedAt" | "id" | "imageUrl"
-        > & { image?: File | null }
+        values: Omit<Brand, "productCount" | "createdAt" | "updatedAt" | "id" | "imageUrl"> & {
+            image?: File | null;
+        }
     ) => {
         console.log("Form submitted with values:", values);
 
@@ -66,9 +51,7 @@ export function BrandForm({
         <Paper p="xl" withBorder>
             <form
                 onSubmit={form.onSubmit(handleFormSubmit)}
-                onError={() =>
-                    console.log("Form has validation errors:", form.errors)
-                }
+                onError={() => console.log("Form has validation errors:", form.errors)}
             >
                 <Stack gap="md">
                     <TextInput
@@ -110,11 +93,7 @@ export function BrandForm({
                     />
 
                     <Group justify="flex-end" mt="md">
-                        <Button
-                            variant="default"
-                            onClick={onCancel}
-                            disabled={isLoading}
-                        >
+                        <Button variant="default" onClick={onCancel} disabled={isLoading}>
                             Cancel
                         </Button>
 

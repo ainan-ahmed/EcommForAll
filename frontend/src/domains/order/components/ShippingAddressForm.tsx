@@ -114,16 +114,13 @@ export function ShippingAddressForm({
                                         cursor: "pointer",
                                         transition: "border-color 0.2s",
                                     }}
-                                    onClick={() =>
-                                        handleSelectSavedAddress(address)
-                                    }
+                                    onClick={() => handleSelectSavedAddress(address)}
                                     bg="gray.0"
                                 >
                                     <Group justify="space-between">
                                         <Stack gap={2}>
                                             <Text size="sm" fw={500}>
-                                                {address.firstName}{" "}
-                                                {address.lastName}
+                                                {address.firstName} {address.lastName}
                                             </Text>
                                             <Text size="xs" c="dimmed">
                                                 {address.addressLine1}
@@ -131,7 +128,7 @@ export function ShippingAddressForm({
                                                     `, ${address.addressLine2}`}
                                             </Text>
                                             <Text size="xs" c="dimmed">
-                                                    {address.city} {address.postalCode}
+                                                {address.city} {address.postalCode}
                                             </Text>
                                             <Text size="xs" c="dimmed">
                                                 {address.country}
@@ -145,10 +142,7 @@ export function ShippingAddressForm({
                             ))}
                         </Stack>
 
-                        <Divider
-                            label="Or enter a new address"
-                            labelPosition="center"
-                        />
+                        <Divider label="Or enter a new address" labelPosition="center" />
                     </>
                 )}
 

@@ -33,9 +33,7 @@ export async function updateUserProfile(userData: {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to update profile: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to update profile: ${response.status}`);
     }
 
     return response.json();
@@ -65,8 +63,6 @@ export async function changePassword(data: {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to change password: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to change password: ${response.status}`);
     }
 }

@@ -18,12 +18,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { Link } from "@tanstack/react-router";
 import { useStore } from "zustand";
 import { authStore } from "../../../stores/authStore";
-import {
-    useCart,
-    useUpdateCartItem,
-    useRemoveFromCart,
-    useClearCart,
-} from "../hooks/useCart";
+import { useCart, useUpdateCartItem, useRemoveFromCart, useClearCart } from "../hooks/useCart";
 import { CartItemCard } from "./CartItemCard";
 
 export function AllCartDetails() {
@@ -140,11 +135,7 @@ export function AllCartDetails() {
                 </Grid.Col>
 
                 <Grid.Col span={{ base: 12, md: 4 }}>
-                    <Card
-                        withBorder
-                        p="lg"
-                        style={{ position: "sticky", top: "20px" }}
-                    >
+                    <Card withBorder p="lg" style={{ position: "sticky", top: "20px" }}>
                         <Title order={4} mb="md">
                             Order Summary
                         </Title>
@@ -162,9 +153,7 @@ export function AllCartDetails() {
 
                             <Group justify="space-between">
                                 <Text>Tax</Text>
-                                <Text>
-                                    ${(cart.totalAmount * 0.08).toFixed(2)}
-                                </Text>
+                                <Text>${(cart.totalAmount * 0.08).toFixed(2)}</Text>
                             </Group>
                         </Stack>
 
@@ -190,12 +179,7 @@ export function AllCartDetails() {
                             Proceed to Checkout
                         </Button>
 
-                        <Button
-                            variant="outline"
-                            fullWidth
-                            component={Link}
-                            to="/products"
-                        >
+                        <Button variant="outline" fullWidth component={Link} to="/products">
                             Continue Shopping
                         </Button>
                     </Card>
@@ -210,8 +194,8 @@ export function AllCartDetails() {
                 centered
             >
                 <Text size="sm" mb="lg">
-                    Are you sure you want to remove all items from your cart?
-                    This action cannot be undone.
+                    Are you sure you want to remove all items from your cart? This action cannot be
+                    undone.
                 </Text>
 
                 <Group justify="flex-end">

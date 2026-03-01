@@ -78,8 +78,7 @@ export function GenerateDescriptionButton({
         if (!productName || productName.trim() === "") {
             notifications.show({
                 title: "Missing Information",
-                message:
-                    "Please enter a product name before generating a description",
+                message: "Please enter a product name before generating a description",
                 color: "yellow",
             });
             return;
@@ -120,9 +119,7 @@ export function GenerateDescriptionButton({
                 }}
                 size="sm"
                 title={
-                    isProductNameEmpty
-                        ? "Enter a product name first"
-                        : "Generate AI description"
+                    isProductNameEmpty ? "Enter a product name first" : "Generate AI description"
                 }
             >
                 Generate with AI
@@ -152,20 +149,14 @@ export function GenerateDescriptionButton({
                         label="Product Name"
                         value={productName}
                         readOnly
-                        error={
-                            isProductNameEmpty
-                                ? "Product name is required"
-                                : null
-                        }
+                        error={isProductNameEmpty ? "Product name is required" : null}
                     />
 
                     <Group grow>
                         <Select
                             label="Tone"
                             value={tone}
-                            onChange={(value) =>
-                                setTone(value || "professional")
-                            }
+                            onChange={(value) => setTone(value || "professional")}
                             data={[
                                 {
                                     value: "professional",

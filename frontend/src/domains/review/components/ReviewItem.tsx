@@ -13,7 +13,7 @@ interface ReviewItemProps {
 export function ReviewItem({ review }: ReviewItemProps) {
     const { user } = useStore(authStore);
     const deleteReviewMutation = useDeleteReview();
-    
+
     const canDelete = user?.id === review.userId || user?.role === "ADMIN";
     const isOwnReview = user?.id === review.userId;
 
@@ -62,7 +62,9 @@ export function ReviewItem({ review }: ReviewItemProps) {
                                 )}
                             </Group>
                             <Text size="xs" c="dimmed">
-                                {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                                {formatDistanceToNow(new Date(review.createdAt), {
+                                    addSuffix: true,
+                                })}
                             </Text>
                         </Stack>
                     </Group>
