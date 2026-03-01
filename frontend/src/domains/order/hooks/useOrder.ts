@@ -95,10 +95,7 @@ export function useTrackOrder(trackingInfo: string, enabled: boolean = true) {
 /**
  * Hook to fetch order payment details
  */
-export function useOrderPaymentDetails(
-    orderId: string,
-    enabled: boolean = true
-) {
+export function useOrderPaymentDetails(orderId: string, enabled: boolean = true) {
     return useQuery({
         queryKey: ["orders", orderId, "payment"],
         queryFn: () => fetchOrderPaymentDetails(orderId),
@@ -149,13 +146,8 @@ export function useUpdateOrder() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            orderId,
-            orderData,
-        }: {
-            orderId: string;
-            orderData: UpdateOrderRequest;
-        }) => updateOrder(orderId, orderData),
+        mutationFn: ({ orderId, orderData }: { orderId: string; orderData: UpdateOrderRequest }) =>
+            updateOrder(orderId, orderData),
         onSuccess: (updatedOrder) => {
             // Update the specific order in cache
             queryClient.setQueryData(["orders", updatedOrder.id], updatedOrder);
@@ -186,19 +178,11 @@ export function useCancelOrder() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            orderId,
-            reason,
-        }: {
-            orderId: string;
-            reason?: string;
-        }) => cancelOrder(orderId, reason),
+        mutationFn: ({ orderId, reason }: { orderId: string; reason?: string }) =>
+            cancelOrder(orderId, reason),
         onSuccess: (cancelledOrder) => {
             // Update the specific order in cache
-            queryClient.setQueryData(
-                ["orders", cancelledOrder.id],
-                cancelledOrder
-            );
+            queryClient.setQueryData(["orders", cancelledOrder.id], cancelledOrder);
 
             // Invalidate orders list to refresh
             queryClient.invalidateQueries({ queryKey: ["orders", "user"] });
@@ -225,9 +209,7 @@ export function useCancelOrder() {
 export function useUpdateOrderStatus() {
     return useMutation({
         mutationFn: () => {
-            throw new Error(
-                "Order status update functionality moved to admin hooks"
-            );
+            throw new Error("Order status update functionality moved to admin hooks");
         },
         onError: () => {
             notifications.show({
@@ -255,10 +237,7 @@ export function useCreateCheckoutSession() {
         }) => createCheckoutSession(sessionData),
         onSuccess: (session) => {
             // Cache the checkout session
-            queryClient.setQueryData(
-                ["checkout", "session", session.id],
-                session
-            );
+            queryClient.setQueryData(["checkout", "session", session.id], session);
 
             notifications.show({
                 title: "Checkout Session Created",
@@ -292,10 +271,7 @@ export function useUpdateCheckoutSession() {
         }) => updateCheckoutSession(sessionId, sessionData),
         onSuccess: (session) => {
             // Update the checkout session in cache
-            queryClient.setQueryData(
-                ["checkout", "session", session.id],
-                session
-            );
+            queryClient.setQueryData(["checkout", "session", session.id], session);
         },
         onError: (error: Error) => {
             notifications.show({

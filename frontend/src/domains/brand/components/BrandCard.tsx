@@ -25,10 +25,7 @@ export function BrandCard({ brand }: BrandCardProps) {
         >
             <Card.Section>
                 <Image
-                    src={
-                        brand.imageUrl ||
-                        "https://placehold.co/300x200?text=No+Image"
-                    }
+                    src={brand.imageUrl || "https://placehold.co/300x200?text=No+Image"}
                     height={160}
                     alt={brand.name}
                 />
@@ -45,11 +42,7 @@ export function BrandCard({ brand }: BrandCardProps) {
             </Stack>
 
             <Group mt="auto" pt="md" justify="space-between" align="center">
-                <Badge
-                    leftSection={<IconPackage size={14} />}
-                    color="blue"
-                    variant="light"
-                >
+                <Badge leftSection={<IconPackage size={14} />} color="blue" variant="light">
                     {brand.productCount} Products
                 </Badge>
 

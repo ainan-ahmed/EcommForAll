@@ -33,8 +33,7 @@ export function AllBrands() {
 
     // Auth state to check if user can create brands
     const { user, isAuthenticated } = useStore(authStore);
-    const canCreateBrand =
-        isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
+    const canCreateBrand = isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
 
     // Fetch brands with filters
     const { data, isLoading, isError } = useBrands({
@@ -122,9 +121,7 @@ export function AllBrands() {
                         <Text c="red" fw={500} size="lg">
                             Failed to load brands
                         </Text>
-                        <Button onClick={() => window.location.reload()}>
-                            Try Again
-                        </Button>
+                        <Button onClick={() => window.location.reload()}>Try Again</Button>
                     </Stack>
                 </Paper>
             ) : (
@@ -138,10 +135,7 @@ export function AllBrands() {
                                     No brands found
                                 </Text>
                                 {nameSearch && (
-                                    <Button
-                                        mt="md"
-                                        onClick={() => setNameSearch("")}
-                                    >
+                                    <Button mt="md" onClick={() => setNameSearch("")}>
                                         Clear Search
                                     </Button>
                                 )}
@@ -149,10 +143,7 @@ export function AllBrands() {
                         </Grid.Col>
                     ) : (
                         brands.map((brand) => (
-                            <Grid.Col
-                                key={brand.id}
-                                span={{ base: 12, xs: 6, sm: 4, md: 3 }}
-                            >
+                            <Grid.Col key={brand.id} span={{ base: 12, xs: 6, sm: 4, md: 3 }}>
                                 <BrandCard brand={brand} />
                             </Grid.Col>
                         ))

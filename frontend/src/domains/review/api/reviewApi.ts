@@ -57,12 +57,15 @@ export async function deleteReview(reviewId: string): Promise<void> {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.REVIEW.DELETE_REVIEW}/${reviewId}`, {
-        method: "DELETE",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    const response = await fetch(
+        `${API.BASE_URL}${API.ENDPOINTS.REVIEW.DELETE_REVIEW}/${reviewId}`,
+        {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 
     if (!response.ok) {
         throw new Error(`Failed to delete review: ${response.status}`);

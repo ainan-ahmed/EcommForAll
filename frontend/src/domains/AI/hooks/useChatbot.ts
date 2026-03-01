@@ -54,8 +54,7 @@ export function useClearConversation() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (conversationId: string) =>
-            clearConversation(conversationId),
+        mutationFn: (conversationId: string) => clearConversation(conversationId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["chatHistory"] });
         },

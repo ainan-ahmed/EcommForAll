@@ -84,8 +84,7 @@ export function PaymentForm({
         useState<PaymentMethod>("CREDIT_CARD");
 
     const requiresCardDetails =
-        selectedPaymentMethod === "CREDIT_CARD" ||
-        selectedPaymentMethod === "DEBIT_CARD";
+        selectedPaymentMethod === "CREDIT_CARD" || selectedPaymentMethod === "DEBIT_CARD";
 
     const form = useForm({
         initialValues: {
@@ -98,16 +97,14 @@ export function PaymentForm({
         },
         validate: {
             cardNumber: (value) => {
-                if (requiresCardDetails && !value)
-                    return "Card number is required";
+                if (requiresCardDetails && !value) return "Card number is required";
                 if (value && !/^\d{4}\s\d{4}\s\d{4}\s\d{4}$/.test(value)) {
                     return "Please enter a valid card number";
                 }
                 return null;
             },
             expiryDate: (value) => {
-                if (requiresCardDetails && !value)
-                    return "Expiry date is required";
+                if (requiresCardDetails && !value) return "Expiry date is required";
                 if (value && !/^(0[1-9]|1[0-2])\/\d{2}$/.test(value)) {
                     return "Please enter expiry date in MM/YY format";
                 }
@@ -121,8 +118,7 @@ export function PaymentForm({
                 return null;
             },
             cardHolderName: (value) => {
-                if (requiresCardDetails && !value)
-                    return "Card holder name is required";
+                if (requiresCardDetails && !value) return "Card holder name is required";
                 return null;
             },
         },
@@ -160,16 +156,12 @@ export function PaymentForm({
         return v;
     };
 
-    const handleCardNumberChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleCardNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formatted = formatCardNumber(event.target.value);
         form.setFieldValue("cardNumber", formatted);
     };
 
-    const handleExpiryDateChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleExpiryDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const formatted = formatExpiryDate(event.target.value);
         form.setFieldValue("expiryDate", formatted);
     };
@@ -218,29 +210,20 @@ export function PaymentForm({
                                             style={{
                                                 cursor: "pointer",
                                                 backgroundColor:
-                                                    selectedPaymentMethod ===
-                                                    method.value
+                                                    selectedPaymentMethod === method.value
                                                         ? "var(--mantine-color-blue-0)"
                                                         : "transparent",
                                                 borderColor:
-                                                    selectedPaymentMethod ===
-                                                    method.value
+                                                    selectedPaymentMethod === method.value
                                                         ? "var(--mantine-color-blue-4)"
                                                         : "var(--mantine-color-gray-3)",
                                             }}
-                                            onClick={() =>
-                                                handlePaymentMethodChange(
-                                                    method.value
-                                                )
-                                            }
+                                            onClick={() => handlePaymentMethodChange(method.value)}
                                         >
                                             <Group gap="md">
                                                 <Radio value={method.value} />
                                                 {method.icon}
-                                                <Stack
-                                                    gap={2}
-                                                    style={{ flex: 1 }}
-                                                >
+                                                <Stack gap={2} style={{ flex: 1 }}>
                                                     <Text size="sm" fw={500}>
                                                         {method.label}
                                                     </Text>
@@ -268,9 +251,7 @@ export function PaymentForm({
                                         label="Card Holder Name"
                                         placeholder="Name as it appears on card"
                                         required
-                                        {...form.getInputProps(
-                                            "cardHolderName"
-                                        )}
+                                        {...form.getInputProps("cardHolderName")}
                                     />
 
                                     <TextInput
@@ -290,9 +271,7 @@ export function PaymentForm({
                                                 placeholder="MM/YY"
                                                 required
                                                 maxLength={5}
-                                                onChange={
-                                                    handleExpiryDateChange
-                                                }
+                                                onChange={handleExpiryDateChange}
                                                 value={form.values.expiryDate}
                                                 error={form.errors.expiryDate}
                                             />
@@ -319,26 +298,16 @@ export function PaymentForm({
 
                         {/* PayPal Instructions */}
                         {selectedPaymentMethod === "PAYPAL" && (
-                            <Alert
-                                icon={<IconInfoCircle size={16} />}
-                                color="blue"
-                                variant="light"
-                            >
-                                You will be redirected to PayPal to complete
-                                your payment securely.
+                            <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
+                                You will be redirected to PayPal to complete your payment securely.
                             </Alert>
                         )}
 
                         {/* Bank Transfer Instructions */}
                         {selectedPaymentMethod === "BANK_TRANSFER" && (
-                            <Alert
-                                icon={<IconInfoCircle size={16} />}
-                                color="blue"
-                                variant="light"
-                            >
-                                Bank transfer details will be provided after
-                                order confirmation. Your order will be processed
-                                once payment is received.
+                            <Alert icon={<IconInfoCircle size={16} />} color="blue" variant="light">
+                                Bank transfer details will be provided after order confirmation.
+                                Your order will be processed once payment is received.
                             </Alert>
                         )}
 
@@ -349,9 +318,8 @@ export function PaymentForm({
                                 color="orange"
                                 variant="light"
                             >
-                                You will pay in cash when the order is delivered
-                                to your address. Additional delivery fees may
-                                apply.
+                                You will pay in cash when the order is delivered to your address.
+                                Additional delivery fees may apply.
                             </Alert>
                         )}
 
@@ -370,8 +338,7 @@ export function PaymentForm({
                             >
                                 {selectedPaymentMethod === "PAYPAL"
                                     ? "Continue to PayPal"
-                                    : selectedPaymentMethod ===
-                                        "CASH_ON_DELIVERY"
+                                    : selectedPaymentMethod === "CASH_ON_DELIVERY"
                                       ? "Place Order"
                                       : "Review Order"}
                             </Button>

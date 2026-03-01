@@ -18,17 +18,8 @@ import {
     Flex,
     ActionIcon,
 } from "@mantine/core";
-import {
-    useDebouncedValue,
-    useDisclosure,
-    useMediaQuery,
-} from "@mantine/hooks";
-import {
-    IconSearch,
-    IconAdjustments,
-    IconX,
-    IconSquarePlus,
-} from "@tabler/icons-react";
+import { useDebouncedValue, useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { IconSearch, IconAdjustments, IconX, IconSquarePlus } from "@tabler/icons-react";
 import { useProducts } from "../hooks/useProducts";
 import { useCategories } from "../../category/hooks/useCategories";
 import { ProductCard } from "./ProductCard";
@@ -43,17 +34,12 @@ export function AllProducts() {
     const [pageSize, setPageSize] = useState(12);
     const [sortBy, setSortBy] = useState("createdAt,desc");
     const [nameSearch, setNameSearch] = useState("");
-    const [debouncedNameSearch, setDebouncedNameSearch] = useDebouncedValue(
-        nameSearch,
-        500
-    );
+    const [debouncedNameSearch, setDebouncedNameSearch] = useDebouncedValue(nameSearch, 500);
 
     const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-    const [
-        filtersDrawerOpened,
-        { open: openFiltersDrawer, close: closeFiltersDrawer },
-    ] = useDisclosure(false);
+    const [filtersDrawerOpened, { open: openFiltersDrawer, close: closeFiltersDrawer }] =
+        useDisclosure(false);
 
     // Media queries for responsive design
     const theme = useMantineTheme();
@@ -158,9 +144,7 @@ export function AllProducts() {
                 />
                 <Group justify="space-between">
                     <Text size="sm">${priceRange[0]}</Text>
-                    <Text size="sm">
-                        ${priceRange[1] === 1000 ? "1000+" : priceRange[1]}
-                    </Text>
+                    <Text size="sm">${priceRange[1] === 1000 ? "1000+" : priceRange[1]}</Text>
                 </Group>
             </Stack>
 
@@ -214,11 +198,7 @@ export function AllProducts() {
         return items.map((product) => (
             <Grid.Col
                 key={product.id}
-                span={
-                    isMobile
-                        ? { base: 6, xs: 6, sm: 6 }
-                        : { base: 12, xs: 6, sm: 4, md: 3 }
-                }
+                span={isMobile ? { base: 6, xs: 6, sm: 6 } : { base: 12, xs: 6, sm: 4, md: 3 }}
             >
                 <ProductCard product={product} showAddToCart={true} />
             </Grid.Col>
@@ -283,9 +263,7 @@ export function AllProducts() {
                                 placeholder="Sort by"
                                 data={sortOptions}
                                 value={sortBy}
-                                onChange={(value) =>
-                                    setSortBy(value || "createdAt,desc")
-                                }
+                                onChange={(value) => setSortBy(value || "createdAt,desc")}
                                 style={{ width: "180px" }}
                             />
                         </Group>
@@ -303,16 +281,12 @@ export function AllProducts() {
 
                         <Grid.Col span={9}>
                             <Group justify="space-between" mb="md">
-                                <Text>
-                                    {data?.totalElements || 0} Products found
-                                </Text>
+                                <Text>{data?.totalElements || 0} Products found</Text>
                                 <Select
                                     placeholder="Sort by"
                                     data={sortOptions}
                                     value={sortBy}
-                                    onChange={(value) =>
-                                        setSortBy(value || "createdAt,desc")
-                                    }
+                                    onChange={(value) => setSortBy(value || "createdAt,desc")}
                                     style={{ width: "180px" }}
                                 />
                             </Group>
@@ -325,9 +299,7 @@ export function AllProducts() {
                                     <Pagination
                                         total={totalPages}
                                         value={page + 1}
-                                        onChange={(newPage) =>
-                                            setPage(newPage - 1)
-                                        }
+                                        onChange={(newPage) => setPage(newPage - 1)}
                                         withEdges
                                     />
                                 </Flex>

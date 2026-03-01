@@ -40,8 +40,7 @@ interface PaymentData {
 
 export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
     const [active, setActive] = useState(0);
-    const [shippingAddress, setShippingAddress] =
-        useState<ShippingAddress | null>(null);
+    const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
     const [paymentData, setPaymentData] = useState<PaymentData | null>(null);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -175,16 +174,11 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
     };
 
     const isSubmitDisabled =
-        !shippingAddress ||
-        !paymentData ||
-        !cart?.items?.length ||
-        createOrderMutation.isPending;
+        !shippingAddress || !paymentData || !cart?.items?.length || createOrderMutation.isPending;
 
     return (
         <Container size="md" py="xl">
-            <LoadingOverlay
-                visible={isLoading || createOrderMutation.isPending}
-            />
+            <LoadingOverlay visible={isLoading || createOrderMutation.isPending} />
 
             <Stack gap="xl">
                 <Title order={1} ta="center">
@@ -208,11 +202,7 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                     </Alert>
                 )}
 
-                <Stepper
-                    active={active}
-                    onStepClick={handleStepClick}
-                    allowNextStepsSelect={false}
-                >
+                <Stepper active={active} onStepClick={handleStepClick} allowNextStepsSelect={false}>
                     <Stepper.Step
                         label="Shipping"
                         description="Delivery address"
@@ -257,48 +247,33 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                             <Stack gap="xs">
                                                 <Group justify="space-between">
                                                     <Text size="sm">
-                                                        Items (
-                                                        {cart.totalItems || 0})
+                                                        Items ({cart.totalItems || 0})
                                                     </Text>
                                                     <Text size="sm">
-                                                        {subtotal.toLocaleString(
-                                                            "en-EU",
-                                                            {
-                                                                style: "currency",
-                                                                currency: "EUR",
-                                                            }
-                                                        )}
+                                                        {subtotal.toLocaleString("en-EU", {
+                                                            style: "currency",
+                                                            currency: "EUR",
+                                                        })}
                                                     </Text>
                                                 </Group>
                                                 <Group justify="space-between">
+                                                    <Text size="sm">Tax (8%)</Text>
                                                     <Text size="sm">
-                                                        Tax (8%)
-                                                    </Text>
-                                                    <Text size="sm">
-                                                        {tax.toLocaleString(
-                                                            "en-EU",
-                                                            {
-                                                                style: "currency",
-                                                                currency: "EUR",
-                                                            }
-                                                        )}
+                                                        {tax.toLocaleString("en-EU", {
+                                                            style: "currency",
+                                                            currency: "EUR",
+                                                        })}
                                                     </Text>
                                                 </Group>
                                                 <Group justify="space-between">
-                                                    <Text size="sm">
-                                                        Shipping
-                                                    </Text>
+                                                    <Text size="sm">Shipping</Text>
                                                     <Text size="sm">
                                                         {shipping === 0
                                                             ? "Free"
-                                                            : shipping.toLocaleString(
-                                                                  "en-EU",
-                                                                  {
-                                                                      style: "currency",
-                                                                      currency:
-                                                                          "EUR",
-                                                                  }
-                                                              )}
+                                                            : shipping.toLocaleString("en-EU", {
+                                                                  style: "currency",
+                                                                  currency: "EUR",
+                                                              })}
                                                     </Text>
                                                 </Group>
                                             </Stack>
@@ -310,9 +285,7 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                 {shippingAddress && (
                                     <Stack gap="sm">
                                         <Group justify="space-between">
-                                            <Title order={4}>
-                                                Shipping Address
-                                            </Title>
+                                            <Title order={4}>Shipping Address</Title>
                                             <Button
                                                 variant="subtle"
                                                 size="sm"
@@ -328,30 +301,21 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                                     {shippingAddress.lastName}
                                                 </Text>
                                                 <Text size="sm">
-                                                    {
-                                                        shippingAddress.addressLine1
-                                                    }
+                                                    {shippingAddress.addressLine1}
                                                 </Text>
                                                 {shippingAddress.addressLine2 && (
                                                     <Text size="sm">
-                                                        {
-                                                            shippingAddress.addressLine2
-                                                        }
+                                                        {shippingAddress.addressLine2}
                                                     </Text>
                                                 )}
                                                 <Text size="sm">
                                                     {shippingAddress.city},{" "}
                                                     {shippingAddress.postalCode}
                                                 </Text>
-                                                <Text size="sm">
-                                                    {shippingAddress.country}
-                                                </Text>
+                                                <Text size="sm">{shippingAddress.country}</Text>
                                                 {shippingAddress.phone && (
                                                     <Text size="sm">
-                                                        Phone:{" "}
-                                                        {
-                                                            shippingAddress.phone
-                                                        }
+                                                        Phone: {shippingAddress.phone}
                                                     </Text>
                                                 )}
                                             </Stack>
@@ -363,9 +327,7 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                 {paymentData && (
                                     <Stack gap="sm">
                                         <Group justify="space-between">
-                                            <Title order={4}>
-                                                Payment Method
-                                            </Title>
+                                            <Title order={4}>Payment Method</Title>
                                             <Button
                                                 variant="subtle"
                                                 size="sm"
@@ -377,24 +339,17 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                         <Paper p="md" bg="gray.0">
                                             <Stack gap={2}>
                                                 <Text fw={500}>
-                                                    {formatPaymentMethod(
-                                                        paymentData.paymentMethod
-                                                    )}
+                                                    {formatPaymentMethod(paymentData.paymentMethod)}
                                                 </Text>
                                                 {paymentData.cardNumber && (
                                                     <Text size="sm">
                                                         **** **** ****{" "}
-                                                        {paymentData.cardNumber.slice(
-                                                            -4
-                                                        )}
+                                                        {paymentData.cardNumber.slice(-4)}
                                                     </Text>
                                                 )}
                                                 {paymentData.cardholderName && (
                                                     <Text size="sm">
-                                                        Cardholder:{" "}
-                                                        {
-                                                            paymentData.cardholderName
-                                                        }
+                                                        Cardholder: {paymentData.cardholderName}
                                                     </Text>
                                                 )}
                                             </Stack>
@@ -407,13 +362,10 @@ export function CheckoutForm({ isLoading = false }: CheckoutFormProps) {
                                     <Group justify="space-between">
                                         <Title order={4}>Total Amount</Title>
                                         <Title order={3} c="blue">
-                                            {totalAmount.toLocaleString(
-                                                "en-EU",
-                                                {
-                                                    style: "currency",
-                                                    currency: "EUR",
-                                                }
-                                            )}
+                                            {totalAmount.toLocaleString("en-EU", {
+                                                style: "currency",
+                                                currency: "EUR",
+                                            })}
                                         </Title>
                                     </Group>
                                 </Paper>

@@ -99,4 +99,3 @@ export interface WishlistProductSummary {
     primaryImage?: ProductImage;
     brand: string;
 }
-

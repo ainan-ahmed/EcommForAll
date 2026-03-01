@@ -79,11 +79,7 @@ export function OrderCard({
 
                     <Menu shadow="md" width={200}>
                         <Menu.Target>
-                            <ActionIcon
-                                variant="subtle"
-                                color="gray"
-                                loading={isLoading}
-                            >
+                            <ActionIcon variant="subtle" color="gray" loading={isLoading}>
                                 <IconDots size={16} />
                             </ActionIcon>
                         </Menu.Target>
@@ -102,10 +98,7 @@ export function OrderCard({
                                     leftSection={<IconTruck size={14} />}
                                     onClick={() => {
                                         // Handle tracking
-                                        console.log(
-                                            "Track order:",
-                                            order.trackingNumber
-                                        );
+                                        console.log("Track order:", order.trackingNumber);
                                     }}
                                 >
                                     Track Package
@@ -165,10 +158,7 @@ export function OrderCard({
                                     <Text size="sm" c="dimmed" mt="xs">
                                         Tracking
                                     </Text>
-                                    <Text
-                                        size="xs"
-                                        style={{ fontFamily: "monospace" }}
-                                    >
+                                    <Text size="xs" style={{ fontFamily: "monospace" }}>
                                         {order.trackingNumber}
                                     </Text>
                                 </>

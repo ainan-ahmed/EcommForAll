@@ -21,11 +21,7 @@ import { useStore } from "zustand";
 import { authStore } from "../../../stores/authStore";
 import { IconShoppingCart, IconTrash } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
-import {
-    useWishlistById,
-    useRemoveFromWishlist,
-    useDeleteWishlist,
-} from "../hooks/useWishlist";
+import { useWishlistById, useRemoveFromWishlist, useDeleteWishlist } from "../hooks/useWishlist";
 // Remove this import: import { modals } from "@mantine/modals";
 import { useDisclosure } from "@mantine/hooks"; // Add this import
 
@@ -38,10 +34,8 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
     const navigate = useNavigate();
 
     // Add state for delete confirmation modal
-    const [
-        deleteModalOpen,
-        { open: openDeleteModal, close: closeDeleteModal },
-    ] = useDisclosure(false);
+    const [deleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] =
+        useDisclosure(false);
 
     // Fetch the specific wishlist details using ID from URL
     const {
@@ -90,12 +84,7 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
             message: "Please log in to access your wishlist",
             color: "red",
         });
-        return (
-            <Navigate
-                to="/login"
-                search={{ redirect: `/wishlist/${wishlistId}` }}
-            />
-        );
+        return <Navigate to="/login" search={{ redirect: `/wishlist/${wishlistId}` }} />;
     }
 
     // Loading state
@@ -119,8 +108,7 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                 </Title>
                 <Paper p="xl" withBorder ta="center">
                     <Text size="lg" mb="md">
-                        This wishlist doesn't exist or you don't have access to
-                        it
+                        This wishlist doesn't exist or you don't have access to it
                     </Text>
                     <Button onClick={() => navigate({ to: "/wishlists" })}>
                         Back to My Wishlists
@@ -171,9 +159,7 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                     <Text size="lg" mb="md">
                         This wishlist is empty
                     </Text>
-                    <Button onClick={() => navigate({ to: "/products" })}>
-                        Browse Products
-                    </Button>
+                    <Button onClick={() => navigate({ to: "/products" })}>Browse Products</Button>
                 </Paper>
 
                 {/* Add the modal here */}
@@ -184,8 +170,8 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                     centered
                 >
                     <Text size="sm" mb="lg">
-                        Are you sure you want to delete the wishlist "
-                        {wishlist?.name}"? This action cannot be undone.
+                        Are you sure you want to delete the wishlist "{wishlist?.name}"? This action
+                        cannot be undone.
                     </Text>
 
                     <Group justify="flex-end">
@@ -236,16 +222,10 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
 
             <Grid>
                 {wishlist.products.map((product) => (
-                    <Grid.Col
-                        key={product.id}
-                        span={{ base: 12, sm: 6, md: 4, lg: 3 }}
-                    >
+                    <Grid.Col key={product.id} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
                         <Card shadow="sm" padding="lg" radius="md" withBorder>
                             {/* Product Image */}
-                            <Card.Section
-                                component={Link}
-                                to={`/products/${product.id}`}
-                            >
+                            <Card.Section component={Link} to={`/products/${product.id}`}>
                                 <Image
                                     src={
                                         product.primaryImage?.imageUrl ||
@@ -258,11 +238,7 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
 
                             {/* Product Info */}
                             <Stack mt="md" gap="xs">
-                                <Text
-                                    fw={500}
-                                    component={Link}
-                                    to={`/products/${product.id}`}
-                                >
+                                <Text fw={500} component={Link} to={`/products/${product.id}`}>
                                     {product.name}
                                 </Text>
 
@@ -271,14 +247,10 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                                         ${product.minPrice.toFixed(2)}
                                     </Badge>
                                     <Badge
-                                        color={
-                                            product.isActive ? "green" : "red"
-                                        }
+                                        color={product.isActive ? "green" : "red"}
                                         variant="light"
                                     >
-                                        {product.isActive
-                                            ? "In Stock"
-                                            : "Out of Stock"}
+                                        {product.isActive ? "In Stock" : "Out of Stock"}
                                     </Badge>
                                 </Group>
 
@@ -290,9 +262,7 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                                     <Button
                                         variant="light"
                                         color="blue"
-                                        leftSection={
-                                            <IconShoppingCart size={16} />
-                                        }
+                                        leftSection={<IconShoppingCart size={16} />}
                                         onClick={() => handleAddToCart(product)}
                                         disabled={!product.isActive}
                                     >
@@ -302,12 +272,8 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                                         variant="light"
                                         color="red"
                                         leftSection={<IconTrash size={16} />}
-                                        onClick={() =>
-                                            handleRemoveFromWishlist(product.id)
-                                        }
-                                        loading={
-                                            removeFromWishlistMutation.isPending
-                                        }
+                                        onClick={() => handleRemoveFromWishlist(product.id)}
+                                        loading={removeFromWishlistMutation.isPending}
                                     >
                                         Remove
                                     </Button>
@@ -326,8 +292,8 @@ export function WishlistDetails({ wishlistId }: WishlistDetailsProps) {
                 centered
             >
                 <Text size="sm" mb="lg">
-                    Are you sure you want to delete the wishlist "
-                    {wishlist?.name}"? This action cannot be undone.
+                    Are you sure you want to delete the wishlist "{wishlist?.name}"? This action
+                    cannot be undone.
                 </Text>
 
                 <Group justify="flex-end">

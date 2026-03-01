@@ -64,13 +64,20 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
         return (
             <Paper p="xl" withBorder radius="md" shadow="sm">
                 <Stack align="center" gap="md">
-                    <Text fw={600} size="lg">Share your thoughts</Text>
+                    <Text fw={600} size="lg">
+                        Share your thoughts
+                    </Text>
                     <Text c="dimmed" ta="center">
                         You need to be logged in to write a review for this product.
                     </Text>
-                    <Button 
-                        variant="light" 
-                        onClick={() => navigate({ to: "/login", search: { redirect: window.location.pathname } })}
+                    <Button
+                        variant="light"
+                        onClick={() =>
+                            navigate({
+                                to: "/login",
+                                search: { redirect: window.location.pathname },
+                            })
+                        }
                     >
                         Log in to Review
                     </Button>
@@ -84,7 +91,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
             <Title order={4} mb="md">
                 Write a Review
             </Title>
-            
+
             <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="md">
                     {/* Rating */}
@@ -109,9 +116,23 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
                             </Text>
                         </Group>
                         <Text size="xs" c="dimmed" mt={4}>
-                            Click on the stars to rate this product • 
-                            <Text span c={rating <= 2 ? 'red' : rating === 3 ? 'yellow' : 'green'} fw={500}>
-                                {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Very Good' : rating === 5 ? 'Excellent' : 'No Rating'}
+                            Click on the stars to rate this product •
+                            <Text
+                                span
+                                c={rating <= 2 ? "red" : rating === 3 ? "yellow" : "green"}
+                                fw={500}
+                            >
+                                {rating === 1
+                                    ? "Poor"
+                                    : rating === 2
+                                      ? "Fair"
+                                      : rating === 3
+                                        ? "Good"
+                                        : rating === 4
+                                          ? "Very Good"
+                                          : rating === 5
+                                            ? "Excellent"
+                                            : "No Rating"}
                             </Text>
                         </Text>
                     </div>

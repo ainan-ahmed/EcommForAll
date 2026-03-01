@@ -26,18 +26,13 @@ export function Footer() {
     return (
         <footer className={classes.footer}>
             <Container size="xl">
-                <SimpleGrid
-                    cols={{ base: 1, sm: 2, md: 4 }}
-                    spacing="xl"
-                    py="xl"
-                >
+                <SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing="xl" py="xl">
                     {/* Company Information */}
                     <Stack>
                         <Title order={3}>EcommForAll</Title>
                         <Text size="sm" c="dimmed">
-                            Your one-stop shop for quality products at
-                            competitive prices. Shop with confidence and
-                            discover your favorite brands.
+                            Your one-stop shop for quality products at competitive prices. Shop with
+                            confidence and discover your favorite brands.
                         </Text>
                         <Group>
                             <ActionIcon size="lg" variant="subtle" radius="xl">
@@ -98,10 +93,7 @@ export function Footer() {
                                 radius="md"
                                 style={{ flexGrow: 1 }}
                             />
-                            <Button
-                                radius="md"
-                                rightSection={<IconSend size={16} />}
-                            >
+                            <Button radius="md" rightSection={<IconSend size={16} />}>
                                 Subscribe
                             </Button>
                         </Group>

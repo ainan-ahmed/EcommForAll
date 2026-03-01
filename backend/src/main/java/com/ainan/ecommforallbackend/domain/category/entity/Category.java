@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import tech.ailef.snapadmin.external.annotations.DisplayName;
+import tech.ailef.snapadmin.external.annotations.Filterable;
+import tech.ailef.snapadmin.external.annotations.ReadOnly;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ public class Category {
 
     @Column(nullable = false, unique = true)
     private String name;
+
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -31,6 +35,7 @@ public class Category {
 
     private String description;
 
+    @Filterable
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Category parent;
@@ -38,11 +43,18 @@ public class Category {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> subCategories = new ArrayList<>();
 
+    @ReadOnly
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @ReadOnly
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @DisplayName
+    public String getDisplayName() {
+        return name;
+    }
 }

@@ -12,12 +12,8 @@ interface BasicInfoTabProps {
     brands: Brand[];
 }
 export function BasicInfoTab({ form, categories, brands }: BasicInfoTabProps) {
-    const selectedCategory = categories.find(
-        (cat) => cat.id === form.values.categoryId
-    );
-    const selectedBrand = brands.find(
-        (brand) => brand.id === form.values.brandId
-    );
+    const selectedCategory = categories.find((cat) => cat.id === form.values.categoryId);
+    const selectedBrand = brands.find((brand) => brand.id === form.values.brandId);
     return (
         <Grid>
             <Grid.Col span={12}>

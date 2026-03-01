@@ -8,14 +8,17 @@ interface RatingSummaryProps {
 
 export function RatingSummary({ productId }: RatingSummaryProps) {
     const { data: reviewsData, isLoading } = useProductReviews(productId, 0, 100); // Get all reviews for summary
-    
+
     if (isLoading || !reviewsData || reviewsData.totalElements === 0) {
         return null;
     }
 
     // Calculate average rating based on fetched content
     const fetchedCount = reviewsData.content.length;
-    const totalRating = reviewsData.content.reduce((sum: number, review: any) => sum + review.rating, 0);
+    const totalRating = reviewsData.content.reduce(
+        (sum: number, review: any) => sum + review.rating,
+        0
+    );
     const averageRating = fetchedCount > 0 ? totalRating / fetchedCount : 0;
     const roundedRating = Math.round(averageRating * 10) / 10;
 
@@ -43,7 +46,8 @@ export function RatingSummary({ productId }: RatingSummaryProps) {
                         fullSymbol={<IconStar size={24} fill="yellow.4" color="yellow.4" />}
                     />
                     <Text size="sm" c="dimmed">
-                        Based on {reviewsData.totalElements} {reviewsData.totalElements === 1 ? 'review' : 'reviews'}
+                        Based on {reviewsData.totalElements}{" "}
+                        {reviewsData.totalElements === 1 ? "review" : "reviews"}
                     </Text>
                 </Stack>
             </Grid.Col>

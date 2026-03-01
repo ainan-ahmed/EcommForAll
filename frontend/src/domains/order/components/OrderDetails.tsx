@@ -129,14 +129,9 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                     color="red"
                     variant="light"
                 >
-                    {error?.message ||
-                        "Order not found. Please check the order ID and try again."}
+                    {error?.message || "Order not found. Please check the order ID and try again."}
                     <Group gap="sm" mt="sm">
-                        <Button
-                            variant="light"
-                            size="sm"
-                            onClick={() => refetch()}
-                        >
+                        <Button variant="light" size="sm" onClick={() => refetch()}>
                             Try Again
                         </Button>
                         <Button
@@ -229,15 +224,12 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                             <Paper p="lg" withBorder>
                                 <Stack gap="md">
                                     <Group justify="space-between">
-                                        <Title order={3}>
-                                            Items ({order.items.length})
-                                        </Title>
+                                        <Title order={3}>Items ({order.items.length})</Title>
                                         <Text size="sm" c="dimmed">
                                             Total:{" "}
                                             {new Intl.NumberFormat("en-EU", {
                                                 style: "currency",
-                                                currency:
-                                                    order.currency || "EUR",
+                                                currency: order.currency || "EUR",
                                             }).format(order.totalAmount)}
                                         </Text>
                                     </Group>
@@ -249,17 +241,11 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                                             <OrderItemCard
                                                 key={item.id}
                                                 item={item}
-                                                canReview={
-                                                    order.status === "DELIVERED"
-                                                }
+                                                canReview={order.status === "DELIVERED"}
                                                 canReorder={true}
                                                 onReview={handleReviewProduct}
-                                                onReorderItem={
-                                                    handleReorderItem
-                                                }
-                                                onViewProduct={
-                                                    handleViewProduct
-                                                }
+                                                onReorderItem={handleReorderItem}
+                                                onViewProduct={handleViewProduct}
                                             />
                                         ))}
                                     </Stack>
@@ -277,11 +263,7 @@ export function OrderDetails({ orderId }: OrderDetailsProps) {
                             <OrderSummary
                                 order={order}
                                 onDownloadInvoice={handleDownloadInvoice}
-                                onTrackOrder={
-                                    showTrackingButton
-                                        ? handleTrackOrder
-                                        : undefined
-                                }
+                                onTrackOrder={showTrackingButton ? handleTrackOrder : undefined}
                                 isLoading={isActionsLoading}
                                 showActions={false} // We have actions in the header
                             />

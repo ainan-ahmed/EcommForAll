@@ -97,9 +97,7 @@ export function ProductsFilterPanel({
                 />
                 <Group justify="space-between">
                     <Text size="sm">${priceRange[0]}</Text>
-                    <Text size="sm">
-                        ${priceRange[1] === 1000 ? "1000+" : priceRange[1]}
-                    </Text>
+                    <Text size="sm">${priceRange[1] === 1000 ? "1000+" : priceRange[1]}</Text>
                 </Group>
             </Stack>
 

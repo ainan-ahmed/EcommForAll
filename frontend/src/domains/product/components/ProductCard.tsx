@@ -13,10 +13,7 @@ interface ProductCardProps {
     showAddToCart?: boolean;
 }
 
-export function ProductCard({
-    product,
-    showAddToCart = true,
-}: ProductCardProps) {
+export function ProductCard({ product, showAddToCart = true }: ProductCardProps) {
     const navigate = useNavigate();
     const addToCartMutation = useAddToCart();
     const { isAuthenticated } = useStore(authStore);
@@ -68,10 +65,7 @@ export function ProductCard({
         } catch (error) {
             notifications.show({
                 title: "Error",
-                message:
-                    error instanceof Error
-                        ? error.message
-                        : "Failed to add to cart",
+                message: error instanceof Error ? error.message : "Failed to add to cart",
                 color: "red",
             });
         }
@@ -139,15 +133,10 @@ export function ProductCard({
                 <Stack gap="xs">
                     <Group justify="space-between" mt="md">
                         <Text fw={700} size="lg">
-                            {product.variants &&
-                                product.variants.length > 1 &&
-                                "from "}
-                            ${product.minPrice.toFixed(2)}
+                            {product.variants && product.variants.length > 1 && "from "}$
+                            {product.minPrice != null ? product.minPrice.toFixed(2) : "N/A"}
                         </Text>
-                        <Button
-                            variant="light"
-                            leftSection={<IconShoppingCart size={16} />}
-                        >
+                        <Button variant="light" leftSection={<IconShoppingCart size={16} />}>
                             View
                         </Button>
                     </Group>

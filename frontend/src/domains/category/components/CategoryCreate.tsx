@@ -15,18 +15,17 @@ export function CategoryCreate() {
     const createCategoryMutation = useCreateCategory();
 
     // Fetch all categories for parent selection
-    const { data: categoriesData, isLoading: isLoadingCategories } =
-        useCategories({
-            page: 0,
-            size: 100, // Fetch a large number to get all categories
-        });
+    const { data: categoriesData, isLoading: isLoadingCategories } = useCategories({
+        page: 0,
+        size: 100, // Fetch a large number to get all categories
+    });
     const categories = categoriesData?.content || [];
 
     // Check if user is authenticated and is an admin
     const canCreateCategory = isAuthenticated && user?.role === "ADMIN";
 
     const handleSubmit = async (
-        formData: Omit<Category, "id" | "productCount" | "slug" | "imageUrl"> & { image?: File } 
+        formData: Omit<Category, "id" | "productCount" | "slug" | "imageUrl"> & { image?: File }
     ) => {
         if (!formData) return;
 
@@ -36,8 +35,7 @@ export function CategoryCreate() {
             console.log("Category data to create:", categoryData);
             console.log("Image file to upload:", image);
             // Create category first (without image)
-            const createdCategory =
-                await createCategoryMutation.mutateAsync(categoryData);
+            const createdCategory = await createCategoryMutation.mutateAsync(categoryData);
 
             // Step 2: If there's an image, try to upload it separately
             if (image) {
@@ -47,8 +45,7 @@ export function CategoryCreate() {
                     // Complete success - category created and image uploaded
                     notifications.show({
                         title: "Category Created",
-                        message:
-                            "The category has been successfully created with image",
+                        message: "The category has been successfully created with image",
                         color: "green",
                     });
                 } catch (imageError) {

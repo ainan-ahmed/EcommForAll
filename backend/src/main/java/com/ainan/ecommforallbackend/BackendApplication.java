@@ -1,11 +1,14 @@
 package com.ainan.ecommforallbackend;
 
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import tech.ailef.snapadmin.external.SnapAdminAutoConfiguration;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = "com.ainan.ecommforallbackend.domain.*.repository")
+@ImportAutoConfiguration(SnapAdminAutoConfiguration.class)
 public class BackendApplication {
 
     public static void main(String[] args) {

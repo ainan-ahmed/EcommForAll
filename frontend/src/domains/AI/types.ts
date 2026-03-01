@@ -57,7 +57,6 @@ export interface ChatHistory {
     messages: ChatMessage[];
 }
 
-
 export interface similarProductsResponse {
     success: boolean;
     message: string;

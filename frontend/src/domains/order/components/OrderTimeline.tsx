@@ -1,12 +1,4 @@
-import {
-    Timeline,
-    Text,
-    Group,
-    Badge,
-    Stack,
-    Paper,
-    ThemeIcon,
-} from "@mantine/core";
+import { Timeline, Text, Group, Badge, Stack, Paper, ThemeIcon } from "@mantine/core";
 import {
     IconPackage,
     IconCheck,
@@ -39,16 +31,14 @@ const getStatusInfo = (status: OrderStatus) => {
         case "PENDING":
             return {
                 title: "Order Placed",
-                description:
-                    "Your order has been received and is being processed",
+                description: "Your order has been received and is being processed",
                 icon: <IconClock size={16} />,
                 color: "yellow",
             };
         case "CONFIRMED":
             return {
                 title: "Order Confirmed",
-                description:
-                    "Your order has been confirmed and payment verified",
+                description: "Your order has been confirmed and payment verified",
                 icon: <IconCheck size={16} />,
                 color: "blue",
             };
@@ -110,10 +100,7 @@ const getStatusOrder = (status: OrderStatus): number => {
     return order[status] || 0;
 };
 
-export function OrderTimeline({
-    order,
-    showEstimatedDates = true,
-}: OrderTimelineProps) {
+export function OrderTimeline({ order, showEstimatedDates = true }: OrderTimelineProps) {
     const currentStatusOrder = getStatusOrder(order.status);
     const isCancelled = order.status === "CANCELLED";
     const isRefunded = order.status === "REFUNDED";
@@ -158,16 +145,10 @@ export function OrderTimeline({
         // Set actual dates based on order status
         if (status === "PENDING" && order.createdAt) {
             date = order.createdAt;
-        } else if (
-            status === "SHIPPED" &&
-            order.shippingDetails?.estimatedDelivery
-        ) {
+        } else if (status === "SHIPPED" && order.shippingDetails?.estimatedDelivery) {
             // For shipped status, show actual ship date if available, otherwise estimated
             date = order.shippingDetails.estimatedDelivery;
-        } else if (
-            status === "DELIVERED" &&
-            order.shippingDetails?.actualDelivery
-        ) {
+        } else if (status === "DELIVERED" && order.shippingDetails?.actualDelivery) {
             date = order.shippingDetails.actualDelivery;
         }
 
@@ -205,19 +186,12 @@ export function OrderTimeline({
                     <Text fw={600} size="lg">
                         Order Timeline
                     </Text>
-                    <Badge
-                        color={getStatusInfo(order.status).color}
-                        variant="light"
-                        size="lg"
-                    >
+                    <Badge color={getStatusInfo(order.status).color} variant="light" size="lg">
                         {order.status.replace("_", " ")}
                     </Badge>
                 </Group>
 
-                <Timeline
-                    active={timelineItems.findIndex((item) => item.isActive)}
-                    bulletSize={24}
-                >
+                <Timeline active={timelineItems.findIndex((item) => item.isActive)} bulletSize={24}>
                     {timelineItems.map((item) => (
                         <Timeline.Item
                             key={item.status}
@@ -227,9 +201,7 @@ export function OrderTimeline({
                                     size={24}
                                     radius="xl"
                                     color={item.color}
-                                    variant={
-                                        item.isCompleted ? "filled" : "outline"
-                                    }
+                                    variant={item.isCompleted ? "filled" : "outline"}
                                 >
                                     {item.icon}
                                 </ThemeIcon>
@@ -260,26 +232,20 @@ export function OrderTimeline({
                                                     fontFamily: "monospace",
                                                 }}
                                             >
-                                                {
-                                                    order.shippingDetails
-                                                        .trackingNumber
-                                                }
+                                                {order.shippingDetails.trackingNumber}
                                             </Text>
                                         </Group>
                                     )}
 
                                 {/* Show carrier information */}
-                                {item.status === "SHIPPED" &&
-                                    order.shippingDetails?.carrier && (
-                                        <Group gap="xs">
-                                            <Text size="xs" fw={500}>
-                                                Carrier:
-                                            </Text>
-                                            <Text size="xs">
-                                                {order.shippingDetails.carrier}
-                                            </Text>
-                                        </Group>
-                                    )}
+                                {item.status === "SHIPPED" && order.shippingDetails?.carrier && (
+                                    <Group gap="xs">
+                                        <Text size="xs" fw={500}>
+                                            Carrier:
+                                        </Text>
+                                        <Text size="xs">{order.shippingDetails.carrier}</Text>
+                                    </Group>
+                                )}
                             </Stack>
                         </Timeline.Item>
                     ))}
@@ -293,17 +259,12 @@ export function OrderTimeline({
                     order.shippingDetails?.estimatedDelivery && (
                         <Paper p="sm" bg="blue.0" radius="sm">
                             <Group gap="xs">
-                                <IconTruck
-                                    size={16}
-                                    color="var(--mantine-color-blue-6)"
-                                />
+                                <IconTruck size={16} color="var(--mantine-color-blue-6)" />
                                 <Text size="sm" fw={500}>
                                     Estimated Delivery:
                                 </Text>
                                 <Text size="sm">
-                                    {formatDate(
-                                        order.shippingDetails.estimatedDelivery
-                                    )}
+                                    {formatDate(order.shippingDetails.estimatedDelivery)}
                                 </Text>
                             </Group>
                         </Paper>

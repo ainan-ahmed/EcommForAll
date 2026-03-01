@@ -1,9 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import {
-    fetchProductById,
-    fetchProducts,
-    fetchProductsByCategoryId,
-} from "./api/productApi";
+import { fetchProductById, fetchProducts, fetchProductsByCategoryId } from "./api/productApi";
 import { ProductQueryParams } from "./types";
 
 /**

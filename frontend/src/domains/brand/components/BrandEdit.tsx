@@ -24,14 +24,12 @@ export function BrandEdit({ id }: BrandEditProps) {
     const updateBrandMutation = useUpdateBrand();
 
     // Check if user is authenticated and has proper role
-    const canEditBrand =
-        isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
+    const canEditBrand = isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
 
     const handleSubmit = async (
-        formData: Omit<
-            Brand,
-            "id" | "createdAt" | "updatedAt" | "imageUrl" | "productCount"
-        > & { image?: File }
+        formData: Omit<Brand, "id" | "createdAt" | "updatedAt" | "imageUrl" | "productCount"> & {
+            image?: File;
+        }
     ) => {
         if (!formData) return;
 
@@ -51,16 +49,14 @@ export function BrandEdit({ id }: BrandEditProps) {
                     await uploadBrandImage(image, id);
                     notifications.show({
                         title: "Brand Updated",
-                        message:
-                            "The brand has been successfully updated with new logo",
+                        message: "The brand has been successfully updated with new logo",
                         color: "green",
                     });
                 } catch (imageError) {
                     console.error("Image upload failed:", imageError);
                     notifications.show({
                         title: "Brand Updated",
-                        message:
-                            "Brand updated successfully, but logo upload failed.",
+                        message: "Brand updated successfully, but logo upload failed.",
                         color: "yellow",
                     });
                 }

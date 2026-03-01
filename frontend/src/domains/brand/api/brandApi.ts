@@ -15,9 +15,7 @@ export async function fetchBrands(
     return response.json();
 }
 export async function fetchBrandById(id: string): Promise<Brand> {
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}`
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}`);
     if (!response.ok) {
         throw new Error("Failed to fetch brand");
     }
@@ -51,16 +49,13 @@ export async function uploadBrandImage(file: File, id: string): Promise<Brand> {
     const formData = new FormData();
     formData.append("image", file);
     console.log("Uploading file:", file);
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}/image`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-            body: formData,
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}/image`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+    });
 
     if (!response.ok) {
         throw new Error("Failed to upload image");
@@ -78,17 +73,14 @@ export async function updateBrand(
 ): Promise<Brand> {
     const token = localStorage.getItem("authToken");
 
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(brand),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.BRANDS}/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(brand),
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to update brand: ${response.status}`);

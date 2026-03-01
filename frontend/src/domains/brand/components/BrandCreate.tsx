@@ -14,11 +14,12 @@ export function BrandCreate() {
     const createBrandMutation = useCreateBrand();
 
     // Check if user is authenticated and has proper role
-    const canCreateBrand =
-        isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
+    const canCreateBrand = isAuthenticated && (user?.role === "ADMIN" || user?.role === "SELLER");
 
     const handleSubmit = async (
-        formData: Omit<Brand, "id" | 'createdAt' | 'updatedAt' | 'imageUrl' | 'productCount'> & { image?: File }
+        formData: Omit<Brand, "id" | "createdAt" | "updatedAt" | "imageUrl" | "productCount"> & {
+            image?: File;
+        }
     ) => {
         console.log("Brand data to create:", formData);
         console.log("Image file to upload:", formData.image);
@@ -29,8 +30,7 @@ export function BrandCreate() {
             const { image, ...brandData } = formData;
 
             // Create brand first (without image)
-            const createdBrand =
-                await createBrandMutation.mutateAsync(brandData);
+            const createdBrand = await createBrandMutation.mutateAsync(brandData);
 
             // Step 2: If there's an image, upload it using the NEW brand ID
             if (image) {
@@ -38,8 +38,7 @@ export function BrandCreate() {
                     await uploadBrandImage(image, createdBrand.id!);
                     notifications.show({
                         title: "Brand Created",
-                        message:
-                            "The brand has been successfully created with logo",
+                        message: "The brand has been successfully created with logo",
                         color: "green",
                     });
                 } catch (imageError) {

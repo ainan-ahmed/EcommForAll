@@ -1,9 +1,4 @@
-import {
-    createFileRoute,
-    Link,
-    redirect,
-    useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, redirect, useNavigate } from "@tanstack/react-router";
 import { LoginFormValues } from "../domains/auth/types.ts";
 import { useLogin } from "../domains/auth/hooks/useLogin.ts";
 import { LoginForm } from "../domains/auth/components/loginForm.tsx";
@@ -51,7 +46,7 @@ export function LoginPage() {
     });
     const handleSubmit = (values: LoginFormValues) => {
         loginMutation.mutate(values);
-       // console.log(values);
+        // console.log(values);
     };
     return (
         <Container size="xs" mt="xl">
@@ -63,10 +58,7 @@ export function LoginPage() {
                     Enter your credentials to log in
                 </Text>
 
-                <LoginForm
-                    onSubmit={handleSubmit}
-                    isLoading={loginMutation.isPending}
-                />
+                <LoginForm onSubmit={handleSubmit} isLoading={loginMutation.isPending} />
 
                 <Text ta="center" mt="md">
                     Don't have an account?{" "}

@@ -156,6 +156,13 @@
             <artifactId>spring-ai-advisors-vector-store</artifactId>
         </dependency>
 
+        <!-- SnapAdmin: auto-generated CRUD database admin panel -->
+        <dependency>
+            <groupId>tech.ailef</groupId>
+            <artifactId>snap-admin</artifactId>
+            <version>0.2.1</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
@@ -167,6 +174,9 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Thymeleaf version is managed by Spring Boot parent; no override needed.
+                 The getSimpleName() forbidden call in SnapAdmin 0.2.1's list.html is fixed
+                 by overriding the template at src/main/resources/templates/snapadmin/model/list.html -->
         </dependencies>
     </dependencyManagement>
 

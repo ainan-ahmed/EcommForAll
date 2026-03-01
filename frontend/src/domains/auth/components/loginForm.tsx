@@ -1,11 +1,4 @@
-import {
-    Anchor,
-    Button,
-    Group,
-    Loader,
-    PasswordInput,
-    TextInput,
-} from "@mantine/core";
+import { Anchor, Button, Group, Loader, PasswordInput, TextInput } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import { LoginFormValues } from "../types.ts";
 import { loginSchema } from "../schemas/userSchema.ts";

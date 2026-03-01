@@ -22,6 +22,7 @@ import {
     IconShoppingCart,
     IconSun,
     IconUser,
+    IconDatabase,
 } from "@tabler/icons-react";
 import { JSX, useEffect } from "react";
 import { useAuth } from "../domains/auth/hooks/useAuth.ts";
@@ -46,6 +47,7 @@ export function RootComponent(): JSX.Element {
             lastName: string;
             email: string;
             username: string;
+            role?: string;
         } | null;
     };
     const { setColorScheme } = useMantineColorScheme();
@@ -56,6 +58,7 @@ export function RootComponent(): JSX.Element {
     const cartItemCount = cart?.totalItems || 0;
     const logout = useLogout();
     const { checkAuth } = useStore(authStore);
+    const isAdmin = user?.role === "ADMIN";
 
     useEffect(() => {
         // Validate token on app load
@@ -89,25 +92,13 @@ export function RootComponent(): JSX.Element {
                         </Group>
                         {/* middle section (empty) */}
                         <Group justify="center">
-                            <Button
-                                variant="subtle"
-                                component={Link}
-                                to="/products"
-                            >
+                            <Button variant="subtle" component={Link} to="/products">
                                 Products
                             </Button>
-                            <Button
-                                variant="subtle"
-                                component={Link}
-                                to="/categories"
-                            >
+                            <Button variant="subtle" component={Link} to="/categories">
                                 Categories
                             </Button>
-                            <Button
-                                variant="subtle"
-                                component={Link}
-                                to="/brands"
-                            >
+                            <Button variant="subtle" component={Link} to="/brands">
                                 Brands
                             </Button>
                             <Button
@@ -121,11 +112,7 @@ export function RootComponent(): JSX.Element {
                             </Button>
                             {isAuthenticated && (
                                 <Group gap="xs">
-                                    <Button
-                                        variant="subtle"
-                                        component={Link}
-                                        to="/wishlists"
-                                    >
+                                    <Button variant="subtle" component={Link} to="/wishlists">
                                         My Wishlists
                                     </Button>
                                     <ActionIcon
@@ -152,6 +139,20 @@ export function RootComponent(): JSX.Element {
                                             </Badge>
                                         )}
                                     </ActionIcon>
+                                    {isAdmin && (
+                                        <Button
+                                            variant="light"
+                                            color="orange"
+                                            component="a"
+                                            href="http://localhost:8080/admin"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            leftSection={<IconDatabase size={16} />}
+                                            size="sm"
+                                        >
+                                            DB Admin
+                                        </Button>
+                                    )}
                                 </Group>
                             )}
                         </Group>
@@ -160,23 +161,15 @@ export function RootComponent(): JSX.Element {
                             <ActionIcon
                                 onClick={() =>
                                     setColorScheme(
-                                        computedColorScheme === "light"
-                                            ? "dark"
-                                            : "light"
+                                        computedColorScheme === "light" ? "dark" : "light"
                                     )
                                 }
                                 variant="default"
                                 size="xl"
                                 aria-label="Toggle color scheme"
                             >
-                                <IconSun
-                                    className={cx(classes.icon, classes.light)}
-                                    stroke={1.5}
-                                />
-                                <IconMoon
-                                    className={cx(classes.icon, classes.dark)}
-                                    stroke={1.5}
-                                />
+                                <IconSun className={cx(classes.icon, classes.light)} stroke={1.5} />
+                                <IconMoon className={cx(classes.icon, classes.dark)} stroke={1.5} />
                             </ActionIcon>
                             {isAuthenticated ? (
                                 <Menu position="bottom-end" withArrow>
@@ -202,17 +195,23 @@ export function RootComponent(): JSX.Element {
                                         >
                                             Profile
                                         </Menu.Item>
-                                        <Menu.Item
-                                            leftSection={
-                                                <IconSettings size={16} />
-                                            }
-                                        >
+                                        <Menu.Item leftSection={<IconSettings size={16} />}>
                                             Settings
                                         </Menu.Item>
+                                        {isAdmin && (
+                                            <Menu.Item
+                                                component="a"
+                                                href="http://localhost:8080/admin"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                leftSection={<IconDatabase size={16} />}
+                                                color="orange"
+                                            >
+                                                DB Admin Panel
+                                            </Menu.Item>
+                                        )}
                                         <Menu.Item
-                                            leftSection={
-                                                <IconLogout size={16} />
-                                            }
+                                            leftSection={<IconLogout size={16} />}
                                             color="red"
                                             onClick={logout}
                                         >

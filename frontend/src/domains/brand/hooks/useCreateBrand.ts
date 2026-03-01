@@ -6,12 +6,8 @@ export function useCreateBrand() {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (
-            brand: Omit<
-                Brand,
-                "id" | "createdAt" | "updatedAt" | "productCount"
-            >
-        ) => createBrand(brand),
+        mutationFn: (brand: Omit<Brand, "id" | "createdAt" | "updatedAt" | "productCount">) =>
+            createBrand(brand),
         onSuccess: () => {
             // Invalidate brands queries to refresh the data
             queryClient.invalidateQueries({ queryKey: ["brands"] });

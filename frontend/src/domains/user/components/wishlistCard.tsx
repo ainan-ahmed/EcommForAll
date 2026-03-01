@@ -24,7 +24,7 @@ export function WishlistCard({ wishlist }: WishlistCardProps) {
                 cursor: "pointer",
             }}
             onClick={(e) => {
-                e.preventDefault(); 
+                e.preventDefault();
                 navigate({
                     to: "/wishlists/$wishlistId",
                     params: { wishlistId: wishlist.id },
@@ -45,9 +45,7 @@ export function WishlistCard({ wishlist }: WishlistCardProps) {
                 </Group>
 
                 <Group>
-                    <Badge color="blue">
-                        {wishlist.products?.length || 0} items
-                    </Badge>
+                    <Badge color="blue">{wishlist.products?.length || 0} items</Badge>
                     <Text size="xs" c="dimmed">
                         Created{" "}
                         {formatDistanceToNow(new Date(wishlist.createdAt), {

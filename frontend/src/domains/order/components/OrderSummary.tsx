@@ -11,12 +11,7 @@ import {
     ActionIcon,
     Tooltip,
 } from "@mantine/core";
-import {
-    IconCopy,
-    IconCheck,
-    IconDownload,
-    IconTruck,
-} from "@tabler/icons-react";
+import { IconCopy, IconCheck, IconDownload, IconTruck } from "@tabler/icons-react";
 import { Order } from "../types";
 
 interface OrderSummaryProps {
@@ -84,13 +79,7 @@ export function OrderSummary({
                             </Text>
                             <CopyButton value={order.orderNumber}>
                                 {({ copied, copy }) => (
-                                    <Tooltip
-                                        label={
-                                            copied
-                                                ? "Copied!"
-                                                : "Copy order number"
-                                        }
-                                    >
+                                    <Tooltip label={copied ? "Copied!" : "Copy order number"}>
                                         <ActionIcon
                                             color={copied ? "teal" : "gray"}
                                             variant="subtle"
@@ -108,27 +97,21 @@ export function OrderSummary({
                         </Group>
 
                         <Group gap="md">
-                            <Badge
-                                color={getStatusColor(order.status)}
-                                variant="light"
-                                size="md"
-                            >
+                            <Badge color={getStatusColor(order.status)} variant="light" size="md">
                                 {order.status.replace("_", " ")}
                             </Badge>
 
                             {order.paymentDetails && (
                                 <Badge
                                     color={
-                                        order.paymentDetails.paymentStatus ===
-                                        "PAID"
+                                        order.paymentDetails.paymentStatus === "PAID"
                                             ? "green"
                                             : "yellow"
                                     }
                                     variant="outline"
                                     size="sm"
                                 >
-                                    Payment:{" "}
-                                    {order.paymentDetails.paymentStatus}
+                                    Payment: {order.paymentDetails.paymentStatus}
                                 </Badge>
                             )}
                         </Group>
@@ -149,18 +132,17 @@ export function OrderSummary({
                                 </Button>
                             )}
 
-                            {onTrackOrder &&
-                                order.shippingDetails?.trackingNumber && (
-                                    <Button
-                                        variant="filled"
-                                        size="sm"
-                                        leftSection={<IconTruck size={16} />}
-                                        onClick={onTrackOrder}
-                                        loading={isLoading}
-                                    >
-                                        Track
-                                    </Button>
-                                )}
+                            {onTrackOrder && order.shippingDetails?.trackingNumber && (
+                                <Button
+                                    variant="filled"
+                                    size="sm"
+                                    leftSection={<IconTruck size={16} />}
+                                    onClick={onTrackOrder}
+                                    loading={isLoading}
+                                >
+                                    Track
+                                </Button>
+                            )}
                         </Group>
                     )}
                 </Group>
@@ -194,10 +176,7 @@ export function OrderSummary({
                                 <Group justify="space-between">
                                     <Text size="sm">Payment Method:</Text>
                                     <Text size="sm" fw={500}>
-                                        {order.paymentDetails.paymentMethod.replace(
-                                            "_",
-                                            " "
-                                        )}
+                                        {order.paymentDetails.paymentMethod.replace("_", " ")}
                                     </Text>
                                 </Group>
                             )}
@@ -231,25 +210,18 @@ export function OrderSummary({
                                     </Text>
                                 )}
 
-                                <Text size="sm">
-                                    {order.shippingAddress.addressLine1}
-                                </Text>
+                                <Text size="sm">{order.shippingAddress.addressLine1}</Text>
 
                                 {order.shippingAddress.addressLine2 && (
-                                    <Text size="sm">
-                                        {order.shippingAddress.addressLine2}
-                                    </Text>
+                                    <Text size="sm">{order.shippingAddress.addressLine2}</Text>
                                 )}
 
                                 <Text size="sm">
-                                    {order.shippingAddress.city},{" "}
-                                    {/* state removed */}
+                                    {order.shippingAddress.city}, {/* state removed */}
                                     {order.shippingAddress.postalCode}
                                 </Text>
 
-                                <Text size="sm">
-                                    {order.shippingAddress.country}
-                                </Text>
+                                <Text size="sm">{order.shippingAddress.country}</Text>
 
                                 {order.shippingAddress.phone && (
                                     <Text size="sm" c="dimmed">
@@ -271,9 +243,7 @@ export function OrderSummary({
 
                     <Group justify="space-between">
                         <Text size="sm">Subtotal:</Text>
-                        <Text size="sm">
-                            {formatCurrency(order.subtotalAmount)}
-                        </Text>
+                        <Text size="sm">{formatCurrency(order.subtotalAmount)}</Text>
                     </Group>
 
                     {order.discountAmount && order.discountAmount > 0 && (
@@ -331,23 +301,13 @@ export function OrderSummary({
                                             fw={500}
                                             style={{ fontFamily: "monospace" }}
                                         >
-                                            {
-                                                order.shippingDetails
-                                                    .trackingNumber
-                                            }
+                                            {order.shippingDetails.trackingNumber}
                                         </Text>
-                                        <CopyButton
-                                            value={
-                                                order.shippingDetails
-                                                    .trackingNumber
-                                            }
-                                        >
+                                        <CopyButton value={order.shippingDetails.trackingNumber}>
                                             {({ copied, copy }) => (
                                                 <ActionIcon
                                                     size="sm"
-                                                    color={
-                                                        copied ? "teal" : "gray"
-                                                    }
+                                                    color={copied ? "teal" : "gray"}
                                                     variant="subtle"
                                                     onClick={copy}
                                                 >
@@ -376,10 +336,7 @@ export function OrderSummary({
                                 <Group justify="space-between">
                                     <Text size="sm">Estimated Delivery:</Text>
                                     <Text size="sm" fw={500}>
-                                        {formatDate(
-                                            order.shippingDetails
-                                                .estimatedDelivery
-                                        )}
+                                        {formatDate(order.shippingDetails.estimatedDelivery)}
                                     </Text>
                                 </Group>
                             )}

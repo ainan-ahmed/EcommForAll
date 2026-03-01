@@ -14,9 +14,7 @@ import {
  * Get all orders for the current user with pagination and filtering
  * Returns OrderSummary[], not full Order[]
  */
-export async function fetchUserOrders(
-    params: OrderQueryParams = {}
-): Promise<OrdersResponse> {
+export async function fetchUserOrders(params: OrderQueryParams = {}): Promise<OrdersResponse> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -26,10 +24,8 @@ export async function fetchUserOrders(
     const url = new URL(`${API.BASE_URL}/orders`);
 
     // Add query parameters
-    if (params.page !== undefined)
-        url.searchParams.append("page", params.page.toString());
-    if (params.size !== undefined)
-        url.searchParams.append("size", params.size.toString());
+    if (params.page !== undefined) url.searchParams.append("page", params.page.toString());
+    if (params.size !== undefined) url.searchParams.append("size", params.size.toString());
 
     // Fix sort parameter handling
     if (params.sort) {
@@ -51,8 +47,7 @@ export async function fetchUserOrders(
         url.searchParams.append("minAmount", params.minAmount.toString());
     if (params.maxAmount !== undefined)
         url.searchParams.append("maxAmount", params.maxAmount.toString());
-    if (params.orderNumber)
-        url.searchParams.append("orderNumber", params.orderNumber);
+    if (params.orderNumber) url.searchParams.append("orderNumber", params.orderNumber);
 
     const response = await fetch(url, {
         method: "GET",
@@ -63,9 +58,7 @@ export async function fetchUserOrders(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to fetch orders: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch orders: ${response.status}`);
     }
 
     return response.json();
@@ -91,9 +84,7 @@ export async function fetchOrderById(orderId: string): Promise<Order> {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to fetch order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch order: ${response.status}`);
     }
 
     return response.json();
@@ -102,9 +93,7 @@ export async function fetchOrderById(orderId: string): Promise<Order> {
 /**
  * Create a new order
  */
-export async function createOrder(
-    orderData: CreateOrderRequest
-): Promise<Order> {
+export async function createOrder(orderData: CreateOrderRequest): Promise<Order> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -133,9 +122,7 @@ export async function createOrder(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to create order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to create order: ${response.status}`);
     }
 
     return response.json();
@@ -144,10 +131,7 @@ export async function createOrder(
 /**
  * Update an existing order (limited fields for users)
  */
-export async function updateOrder(
-    orderId: string,
-    orderData: UpdateOrderRequest
-): Promise<Order> {
+export async function updateOrder(orderId: string, orderData: UpdateOrderRequest): Promise<Order> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -165,9 +149,7 @@ export async function updateOrder(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to update order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to update order: ${response.status}`);
     }
 
     return response.json();
@@ -176,10 +158,7 @@ export async function updateOrder(
 /**
  * Cancel an order (user can cancel their own orders)
  */
-export async function cancelOrder(
-    orderId: string,
-    reason?: string
-): Promise<Order> {
+export async function cancelOrder(orderId: string, reason?: string): Promise<Order> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -197,9 +176,7 @@ export async function cancelOrder(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to cancel order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to cancel order: ${response.status}`);
     }
 
     return response.json();
@@ -233,8 +210,7 @@ export async function createCheckoutSession(sessionData: {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to create checkout session: ${response.status}`
+            errorData.message || `Failed to create checkout session: ${response.status}`
         );
     }
 
@@ -244,30 +220,24 @@ export async function createCheckoutSession(sessionData: {
 /**
  * Get checkout session by ID
  */
-export async function fetchCheckoutSession(
-    sessionId: string
-): Promise<CheckoutSession> {
+export async function fetchCheckoutSession(sessionId: string): Promise<CheckoutSession> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/checkout/session/${sessionId}`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/checkout/session/${sessionId}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to fetch checkout session: ${response.status}`
+            errorData.message || `Failed to fetch checkout session: ${response.status}`
         );
     }
 
@@ -287,23 +257,19 @@ export async function updateCheckoutSession(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/checkout/session/${sessionId}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(sessionData),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/checkout/session/${sessionId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(sessionData),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to update checkout session: ${response.status}`
+            errorData.message || `Failed to update checkout session: ${response.status}`
         );
     }
 
@@ -320,22 +286,16 @@ export async function completeCheckout(sessionId: string): Promise<Order> {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/checkout/session/${sessionId}/complete`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/checkout/session/${sessionId}/complete`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to complete checkout: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to complete checkout: ${response.status}`);
     }
 
     return response.json();
@@ -354,23 +314,19 @@ export async function updateOrderShippingAddress(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/orders/${orderId}/shipping-address`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(shippingAddress),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/orders/${orderId}/shipping-address`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(shippingAddress),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to update shipping address: ${response.status}`
+            errorData.message || `Failed to update shipping address: ${response.status}`
         );
     }
 
@@ -387,21 +343,16 @@ export async function trackOrder(trackingInfo: string): Promise<Order> {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/orders/track/${trackingInfo}`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/orders/track/${trackingInfo}`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to track order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to track order: ${response.status}`);
     }
 
     return response.json();
@@ -410,9 +361,7 @@ export async function trackOrder(trackingInfo: string): Promise<Order> {
 /**
  * Get order payment details (user can view their own order payment details)
  */
-export async function fetchOrderPaymentDetails(
-    orderId: string
-): Promise<PaymentDetails> {
+export async function fetchOrderPaymentDetails(orderId: string): Promise<PaymentDetails> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -428,10 +377,7 @@ export async function fetchOrderPaymentDetails(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to fetch payment details: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch payment details: ${response.status}`);
     }
 
     return response.json();
@@ -456,9 +402,7 @@ export async function reorder(orderId: string): Promise<Order> {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to reorder: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to reorder: ${response.status}`);
     }
 
     return response.json();
@@ -491,8 +435,7 @@ export async function createOrderFromCart(orderData: {
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to create order from cart: ${response.status}`
+            errorData.message || `Failed to create order from cart: ${response.status}`
         );
     }
 

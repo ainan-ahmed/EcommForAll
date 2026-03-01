@@ -2,7 +2,7 @@ spring:
     application:
         name: backend
     datasource:
-        url: jdbc:postgresql://localhost:5432/ecommforall
+        url: jdbc:postgresql://localhost:5432/ecommforall?stringtype=unspecified
         driver-class-name: org.postgresql.Driver
         username: postgres
         password: postgres
@@ -13,6 +13,7 @@ spring:
         hibernate:
             ddl-auto: update
         show-sql: true
+        open-in-view: true
     security:
         user:
             name: admin
@@ -83,3 +84,18 @@ logging:
                     util:
                         VectorConverter: DEBUG
         root: INFO
+
+# SnapAdmin configuration
+snapadmin:
+    enabled: true
+    baseUrl: admin
+    modelsPackage: >
+        com.ainan.ecommforallbackend.domain.user.entity,
+        com.ainan.ecommforallbackend.domain.product.entity,
+        com.ainan.ecommforallbackend.domain.order.entity,
+        com.ainan.ecommforallbackend.domain.brand.entity,
+        com.ainan.ecommforallbackend.domain.category.entity,
+        com.ainan.ecommforallbackend.domain.review.entity,
+        com.ainan.ecommforallbackend.domain.wishlist.entity,
+        com.ainan.ecommforallbackend.domain.cart.entity
+    sqlConsoleEnabled: true

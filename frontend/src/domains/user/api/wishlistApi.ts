@@ -28,9 +28,7 @@ export async function fetchUserWishlists(): Promise<Wishlist[]> {
 /**
  * Get a specific wishlist by ID
  */
-export async function fetchWishlistById(
-    wishlistId: string
-): Promise<Wishlist> {
+export async function fetchWishlistById(wishlistId: string): Promise<Wishlist> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -80,27 +78,21 @@ export async function createWishlist(name: string): Promise<Wishlist> {
 /**
  * Add a product to a wishlist
  */
-export async function addToWishlist(
-    wishlistId: string,
-    productId: string
-): Promise<Wishlist> {
+export async function addToWishlist(wishlistId: string, productId: string): Promise<Wishlist> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/wishlists/${wishlistId}/add`,
-        {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${token}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ productId }),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/wishlists/${wishlistId}/add`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ productId }),
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to add to wishlist: ${response.status}`);
@@ -112,25 +104,19 @@ export async function addToWishlist(
 /**
  * Remove a product from a wishlist
  */
-export async function removeFromWishlist(
-    wishlistId: string,
-    productId: string
-): Promise<Wishlist> {
+export async function removeFromWishlist(wishlistId: string, productId: string): Promise<Wishlist> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/wishlists/${wishlistId}/products/${productId}`,
-        {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/wishlists/${wishlistId}/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to remove from wishlist: ${response.status}`);
@@ -142,10 +128,7 @@ export async function removeFromWishlist(
 /**
  * Update a wishlist (rename)
  */
-export async function updateWishlist(
-    wishlistId: string,
-    name: string
-): Promise<Wishlist> {
+export async function updateWishlist(wishlistId: string, name: string): Promise<Wishlist> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -193,10 +176,7 @@ export async function deleteWishlist(wishlistId: string): Promise<void> {
 /**
  * Check if a product is in a wishlist
  */
-export async function isProductInWishlist(
-    wishlistId: string,
-    productId: string
-): Promise<boolean> {
+export async function isProductInWishlist(wishlistId: string, productId: string): Promise<boolean> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -221,4 +201,3 @@ export async function isProductInWishlist(
 
     return response.json();
 }
-

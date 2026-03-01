@@ -26,11 +26,10 @@ export function CategoryEdit({ slug }: CategoryEditProps) {
     } = useCategory(slug);
 
     // Fetch all categories for parent selection
-    const { data: categoriesData, isLoading: isCategoriesLoading } =
-        useCategories({
-            page: 0,
-            size: 100, // Fetch a large number to get all categories
-        });
+    const { data: categoriesData, isLoading: isCategoriesLoading } = useCategories({
+        page: 0,
+        size: 100, // Fetch a large number to get all categories
+    });
 
     const categories = categoriesData?.content || [];
 
@@ -41,10 +40,7 @@ export function CategoryEdit({ slug }: CategoryEditProps) {
     const canEditCategory = isAuthenticated && user?.role === "ADMIN";
 
     const handleSubmit = async (
-        formData: Omit<
-            Category,
-            "id" | "productCount" | "slug" | "imageUrl"
-        > & { image?: File }
+        formData: Omit<Category, "id" | "productCount" | "slug" | "imageUrl"> & { image?: File }
     ) => {
         if (!formData || !category) return;
 
@@ -64,15 +60,13 @@ export function CategoryEdit({ slug }: CategoryEditProps) {
                     await uploadCategoryImage(category.id!, image);
                     notifications.show({
                         title: "Category Updated",
-                        message:
-                            "The category has been successfully updated with new image",
+                        message: "The category has been successfully updated with new image",
                         color: "green",
                     });
                 } catch (imageError) {
                     notifications.show({
                         title: "Category Updated",
-                        message:
-                            "Category updated successfully, but image upload failed.",
+                        message: "Category updated successfully, but image upload failed.",
                         color: "yellow",
                     });
                 }
@@ -103,12 +97,7 @@ export function CategoryEdit({ slug }: CategoryEditProps) {
             message: "You don't have permission to edit categories",
             color: "red",
         });
-        return (
-            <Navigate
-                to="/categories/$categorySlug"
-                params={{ categorySlug: slug }}
-            />
-        );
+        return <Navigate to="/categories/$categorySlug" params={{ categorySlug: slug }} />;
     }
 
     // Show loading while fetching category data
@@ -140,9 +129,7 @@ export function CategoryEdit({ slug }: CategoryEditProps) {
                 initialData={category}
                 onSubmit={handleSubmit}
                 isLoading={updateCategoryMutation.isPending}
-                onCancel={() =>
-                    navigate({ to: `/categories/${category.slug}` })
-                }
+                onCancel={() => navigate({ to: `/categories/${category.slug}` })}
                 categories={categories.filter((c) => c.id !== category.id)}
             />
         </Container>

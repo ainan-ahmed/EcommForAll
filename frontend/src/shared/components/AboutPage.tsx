@@ -32,29 +32,25 @@ export function AboutPage() {
         {
             icon: <IconShoppingCart size={28} />,
             title: "Wide Selection",
-            description:
-                "Browse thousands of products across various categories",
+            description: "Browse thousands of products across various categories",
             color: "blue",
         },
         {
             icon: <IconTruck size={28} />,
             title: "Fast Delivery",
-            description:
-                "Get your orders quickly with our reliable shipping partners",
+            description: "Get your orders quickly with our reliable shipping partners",
             color: "green",
         },
         {
             icon: <IconHeadset size={28} />,
             title: "24/7 Support",
-            description:
-                "Our customer service team is always ready to help you",
+            description: "Our customer service team is always ready to help you",
             color: "orange",
         },
         {
             icon: <IconDiscount size={28} />,
             title: "Regular Deals",
-            description:
-                "Enjoy special promotions and discounts throughout the year",
+            description: "Enjoy special promotions and discounts throughout the year",
             color: "violet",
         },
         {
@@ -103,20 +99,14 @@ export function AboutPage() {
                             Discover Shopping Without Limits
                         </Title>
                         <Text size="xl" className={classes.heroText}>
-                            Your one-stop destination for quality products at
-                            competitive prices. Join thousands of satisfied
-                            customers who trust our platform.
+                            Your one-stop destination for quality products at competitive prices.
+                            Join thousands of satisfied customers who trust our platform.
                         </Text>
                         <Group mt="xl">
                             <Button size="lg" component={Link} to="/products">
                                 Browse Products
                             </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                component={Link}
-                                to="/categories"
-                            >
+                            <Button size="lg" variant="outline" component={Link} to="/categories">
                                 Explore Categories
                             </Button>
                         </Group>
@@ -127,12 +117,7 @@ export function AboutPage() {
             {/* Stats Section */}
             <Container size="xl" py="xl">
                 <SimpleGrid cols={{ base: 1, sm: 3 }} spacing="xl">
-                    <Paper
-                        p="md"
-                        radius="md"
-                        withBorder
-                        className={classes.statCard}
-                    >
+                    <Paper p="md" radius="md" withBorder className={classes.statCard}>
                         <Text
                             size="xl"
                             fw={700}
@@ -146,12 +131,7 @@ export function AboutPage() {
                             Products
                         </Text>
                     </Paper>
-                    <Paper
-                        p="md"
-                        radius="md"
-                        withBorder
-                        className={classes.statCard}
-                    >
+                    <Paper p="md" radius="md" withBorder className={classes.statCard}>
                         <Text
                             size="xl"
                             fw={700}
@@ -165,12 +145,7 @@ export function AboutPage() {
                             Happy Customers
                         </Text>
                     </Paper>
-                    <Paper
-                        p="md"
-                        radius="md"
-                        withBorder
-                        className={classes.statCard}
-                    >
+                    <Paper p="md" radius="md" withBorder className={classes.statCard}>
                         <Text
                             size="xl"
                             fw={700}
@@ -201,12 +176,7 @@ export function AboutPage() {
                             withBorder
                             className={classes.featureCard}
                         >
-                            <ThemeIcon
-                                size={60}
-                                radius={60}
-                                color={feature.color}
-                                mb="md"
-                            >
+                            <ThemeIcon size={60} radius={60} color={feature.color} mb="md">
                                 {feature.icon}
                             </ThemeIcon>
                             <Text size="lg" fw={500} mb="sm">
@@ -232,39 +202,25 @@ export function AboutPage() {
                                 Bringing Quality Products to Everyone
                             </Title>
                             <Text mb="md">
-                                Founded in 2020, EcommForAll started with a
-                                simple mission: to make quality products
-                                accessible to everyone. What began as a small
-                                online shop has grown into a comprehensive
-                                e-commerce platform that connects customers with
-                                the best products from around the world.
+                                Founded in 2020, EcommForAll started with a simple mission: to make
+                                quality products accessible to everyone. What began as a small
+                                online shop has grown into a comprehensive e-commerce platform that
+                                connects customers with the best products from around the world.
                             </Text>
                             <Text mb="md">
-                                Our team is passionate about providing an
-                                exceptional shopping experience, from browsing
-                                to delivery. We carefully select the products we
-                                offer and work directly with manufacturers and
-                                brands to ensure quality and value.
+                                Our team is passionate about providing an exceptional shopping
+                                experience, from browsing to delivery. We carefully select the
+                                products we offer and work directly with manufacturers and brands to
+                                ensure quality and value.
                             </Text>
                             <Group mt="xl" gap="md">
-                                <Paper
-                                    p="md"
-                                    withBorder
-                                    className={classes.valueCard}
-                                >
-                                    <IconUsers
-                                        size={24}
-                                        color="var(--mantine-color-blue-6)"
-                                    />
+                                <Paper p="md" withBorder className={classes.valueCard}>
+                                    <IconUsers size={24} color="var(--mantine-color-blue-6)" />
                                     <Text fw={500} mt="sm">
                                         Customer First
                                     </Text>
                                 </Paper>
-                                <Paper
-                                    p="md"
-                                    withBorder
-                                    className={classes.valueCard}
-                                >
+                                <Paper p="md" withBorder className={classes.valueCard}>
                                     <IconShieldCheck
                                         size={24}
                                         color="var(--mantine-color-green-6)"
@@ -273,15 +229,8 @@ export function AboutPage() {
                                         Quality Assured
                                     </Text>
                                 </Paper>
-                                <Paper
-                                    p="md"
-                                    withBorder
-                                    className={classes.valueCard}
-                                >
-                                    <IconHistory
-                                        size={24}
-                                        color="var(--mantine-color-orange-6)"
-                                    />
+                                <Paper p="md" withBorder className={classes.valueCard}>
+                                    <IconHistory size={24} color="var(--mantine-color-orange-6)" />
                                     <Text fw={500} mt="sm">
                                         Fast Service
                                     </Text>
@@ -306,16 +255,9 @@ export function AboutPage() {
                 <Title order={2} ta="center" mb="md">
                     Meet Our Team
                 </Title>
-                <Text
-                    size="lg"
-                    ta="center"
-                    mb="xl"
-                    c="dimmed"
-                    maw={800}
-                    mx="auto"
-                >
-                    We're a dedicated team of e-commerce experts committed to
-                    bringing you the best shopping experience.
+                <Text size="lg" ta="center" mb="xl" c="dimmed" maw={800} mx="auto">
+                    We're a dedicated team of e-commerce experts committed to bringing you the best
+                    shopping experience.
                 </Text>
                 <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="xl">
                     {team.map((member, index) => (
@@ -327,11 +269,7 @@ export function AboutPage() {
                             className={classes.teamCard}
                         >
                             <Card.Section>
-                                <Image
-                                    src={member.image}
-                                    height={240}
-                                    alt={member.name}
-                                />
+                                <Image src={member.image} height={240} alt={member.name} />
                             </Card.Section>
                             <Stack mt="md" gap="xs">
                                 <Text fw={500} size="lg">
@@ -352,16 +290,9 @@ export function AboutPage() {
                     <Title order={2} ta="center" c="white" mb="lg">
                         Ready to Start Shopping?
                     </Title>
-                    <Text
-                        ta="center"
-                        size="lg"
-                        c="white"
-                        mb="xl"
-                        maw={600}
-                        mx="auto"
-                    >
-                        Join thousands of satisfied customers who have
-                        discovered their favorite products on EcommForAll.
+                    <Text ta="center" size="lg" c="white" mb="xl" maw={600} mx="auto">
+                        Join thousands of satisfied customers who have discovered their favorite
+                        products on EcommForAll.
                     </Text>
                     <Center>
                         <Button size="lg" component={Link} to="/register">

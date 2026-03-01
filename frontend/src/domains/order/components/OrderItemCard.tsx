@@ -10,12 +10,7 @@ import {
     Menu,
     Tooltip,
 } from "@mantine/core";
-import {
-    IconStar,
-    IconDots,
-    IconShoppingCart,
-    IconExternalLink,
-} from "@tabler/icons-react";
+import { IconStar, IconDots, IconShoppingCart, IconExternalLink } from "@tabler/icons-react";
 import { OrderItem } from "../types";
 
 interface OrderItemCardProps {
@@ -101,21 +96,20 @@ export function OrderItemCard({
 
                             {/* Variant Attributes */}
                             {item.variantAttributes &&
-                                Object.keys(item.variantAttributes).length >
-                                    0 && (
+                                Object.keys(item.variantAttributes).length > 0 && (
                                     <Group gap="xs">
-                                        {Object.entries(
-                                            item.variantAttributes
-                                        ).map(([key, value]) => (
-                                            <Badge
-                                                key={key}
-                                                variant="light"
-                                                size="xs"
-                                                color="gray"
-                                            >
-                                                {key}: {value}
-                                            </Badge>
-                                        ))}
+                                        {Object.entries(item.variantAttributes).map(
+                                            ([key, value]) => (
+                                                <Badge
+                                                    key={key}
+                                                    variant="light"
+                                                    size="xs"
+                                                    color="gray"
+                                                >
+                                                    {key}: {value}
+                                                </Badge>
+                                            )
+                                        )}
                                     </Group>
                                 )}
 
@@ -128,11 +122,7 @@ export function OrderItemCard({
                         {/* Actions Menu */}
                         <Menu shadow="md" width={180}>
                             <Menu.Target>
-                                <ActionIcon
-                                    variant="subtle"
-                                    color="gray"
-                                    loading={isLoading}
-                                >
+                                <ActionIcon variant="subtle" color="gray" loading={isLoading}>
                                     <IconDots size={16} />
                                 </ActionIcon>
                             </Menu.Target>
@@ -147,9 +137,7 @@ export function OrderItemCard({
 
                                 {canReorder && (
                                     <Menu.Item
-                                        leftSection={
-                                            <IconShoppingCart size={14} />
-                                        }
+                                        leftSection={<IconShoppingCart size={14} />}
                                         onClick={handleReorderItem}
                                     >
                                         Add to Cart

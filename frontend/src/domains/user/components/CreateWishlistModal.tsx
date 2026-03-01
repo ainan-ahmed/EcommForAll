@@ -28,9 +28,7 @@ export function CreateWishlistModal({
     // Handle creating new wishlist
     const handleCreateWishlist = form.onSubmit(async (values) => {
         try {
-            const newWishlist = await createWishlistMutation.mutateAsync(
-                values.name
-            );
+            const newWishlist = await createWishlistMutation.mutateAsync(values.name);
             form.reset();
             onClose();
 
@@ -44,12 +42,7 @@ export function CreateWishlistModal({
     });
 
     return (
-        <Modal
-            opened={opened}
-            onClose={onClose}
-            title="Create New Wishlist"
-            centered
-        >
+        <Modal opened={opened} onClose={onClose} title="Create New Wishlist" centered>
             <form onSubmit={handleCreateWishlist}>
                 <TextInput
                     label="Wishlist Name"
@@ -63,10 +56,7 @@ export function CreateWishlistModal({
                     <Button variant="outline" onClick={onClose}>
                         Cancel
                     </Button>
-                    <Button
-                        type="submit"
-                        loading={createWishlistMutation.isPending}
-                    >
+                    <Button type="submit" loading={createWishlistMutation.isPending}>
                         Create
                     </Button>
                 </Group>

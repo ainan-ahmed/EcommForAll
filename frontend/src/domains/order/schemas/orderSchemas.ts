@@ -93,10 +93,7 @@ export const checkoutSessionSchema = z.object({
             z.object({
                 productId: z.string().uuid("Invalid product ID"),
                 variantId: z.string().uuid("Invalid variant ID").optional(),
-                quantity: z
-                    .number()
-                    .int()
-                    .min(1, "Quantity must be at least 1"),
+                quantity: z.number().int().min(1, "Quantity must be at least 1"),
             })
         )
         .min(1, "At least one item is required"),
@@ -185,9 +182,7 @@ export const orderStatusUpdateSchema = z.object({
 
 // Bulk Order Action Schema
 export const bulkOrderActionSchema = z.object({
-    orderIds: z
-        .array(z.string().uuid())
-        .min(1, "At least one order ID is required"),
+    orderIds: z.array(z.string().uuid()).min(1, "At least one order ID is required"),
     action: z.enum(["CONFIRM", "CANCEL", "MARK_SHIPPED", "MARK_DELIVERED"]),
     notes: z.string().max(500, "Notes cannot exceed 500 characters").optional(),
 });
@@ -201,10 +196,7 @@ export const orderRefundSchema = z.object({
         .array(
             z.object({
                 orderItemId: z.string().uuid("Invalid order item ID"),
-                quantity: z
-                    .number()
-                    .int()
-                    .min(1, "Quantity must be at least 1"),
+                quantity: z.number().int().min(1, "Quantity must be at least 1"),
                 amount: z.number().min(0, "Amount must be non-negative"),
             })
         )
@@ -217,7 +209,5 @@ export type UpdateOrderFormValues = z.infer<typeof updateOrderSchema>;
 export type AddressFormValues = z.infer<typeof addressValidationSchema>;
 export type CheckoutSessionFormValues = z.infer<typeof checkoutSessionSchema>;
 export type OrderSearchFormValues = z.infer<typeof orderSearchSchema>;
-export type OrderStatusUpdateFormValues = z.infer<
-    typeof orderStatusUpdateSchema
->;
+export type OrderStatusUpdateFormValues = z.infer<typeof orderStatusUpdateSchema>;
 export type OrderRefundFormValues = z.infer<typeof orderRefundSchema>;

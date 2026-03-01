@@ -270,7 +270,8 @@ export function Chatbot({
                                 </Tooltip>
                             )}
 
-                            {chatHistory?.messages && chatHistory.messages.length > 0 &&
+                            {chatHistory?.messages &&
+                                chatHistory.messages.length > 0 &&
                                 renderClearButton()}
 
                             {onToggleMaximize && (

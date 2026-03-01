@@ -1,23 +1,17 @@
 import { API } from "../../../config/api";
 import { ProductImage, VariantImage } from "../types";
 
-export async function uploadProductImage(
-    productId: string,
-    file: File
-): Promise<ProductImage> {
+export async function uploadProductImage(productId: string, file: File): Promise<ProductImage> {
     const formData = new FormData();
     formData.append("file", file);
     console.log("Form data", formData);
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/images`,
-        {
-            method: "POST",
-            body: formData,
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/images`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to upload image: ${response.status}`);
@@ -63,10 +57,7 @@ export async function updateProductImage(
     return response.json();
 }
 
-export async function deleteProductImage(
-    productId: string,
-    imageId: string
-): Promise<void> {
+export async function deleteProductImage(productId: string, imageId: string): Promise<void> {
     const response = await fetch(
         `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}/images/${imageId}`,
         {

@@ -28,7 +28,7 @@ export function useCreateReview() {
             queryClient.invalidateQueries({
                 queryKey: ["reviews", data.productId],
             });
-            
+
             notifications.show({
                 title: "Review Posted",
                 message: "Your review has been posted successfully",
@@ -55,7 +55,7 @@ export function useDeleteReview() {
         onSuccess: () => {
             // Invalidate all review queries to refresh the data
             queryClient.invalidateQueries({ queryKey: ["reviews"] });
-            
+
             notifications.show({
                 title: "Review Deleted",
                 message: "Review has been deleted successfully",

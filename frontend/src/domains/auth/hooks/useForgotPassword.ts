@@ -16,7 +16,8 @@ export function useForgotPassword(options: UseForgotPasswordOptions = {}) {
         onSuccess: (data) => {
             notifications.show({
                 title: "Reset Email Sent",
-                message: "If an account with that email exists, you will receive a password reset link.",
+                message:
+                    "If an account with that email exists, you will receive a password reset link.",
                 color: "green",
                 position: "top-center",
             });

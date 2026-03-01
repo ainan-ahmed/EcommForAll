@@ -1,14 +1,8 @@
 import { API } from "../../../config/api";
-import {
-    Product,
-    ProductQueryParams,
-    ProductsResponse
-} from "../types";
+import { Product, ProductQueryParams, ProductsResponse } from "../types";
 import { uploadProductImage } from "./productImageApi";
 
-export async function fetchProducts(
-    params: ProductQueryParams
-): Promise<ProductsResponse> {
+export async function fetchProducts(params: ProductQueryParams): Promise<ProductsResponse> {
     const {
         page = 0,
         size = 12,
@@ -48,10 +42,8 @@ export async function fetchProducts(
     if (isFiltering) {
         if (nameSearch) queryParams.append("name", nameSearch);
         if (categoryId) queryParams.append("categoryId", categoryId);
-        if (minPrice !== undefined)
-            queryParams.append("minPrice", minPrice.toString());
-        if (maxPrice !== undefined)
-            queryParams.append("maxPrice", maxPrice.toString());
+        if (minPrice !== undefined) queryParams.append("minPrice", minPrice.toString());
+        if (maxPrice !== undefined) queryParams.append("maxPrice", maxPrice.toString());
         if (brandId) queryParams.append("brandId", brandId);
         if (sellerId) queryParams.append("sellerId", sellerId);
         if (isActive) queryParams.append("isActive", isActive.toString());
@@ -114,17 +106,14 @@ export async function fetchProductsByBrandId(
 
 export async function updateProduct(product: Product): Promise<Product> {
     const token = localStorage.getItem("authToken");
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${product.id}`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(product),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${product.id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(product),
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to update product: ${response.status}`);
@@ -252,9 +241,7 @@ export async function updateProductVariants(
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(
-                `Failed to create new variant: ${response.status} - ${errorText}`
-            );
+            throw new Error(`Failed to create new variant: ${response.status} - ${errorText}`);
         }
     }
     return refreshProductData(productId);
@@ -273,18 +260,14 @@ export async function refreshProductData(productId: string): Promise<Product> {
  */
 export async function deleteProduct(productId: string): Promise<void> {
     const token = localStorage.getItem("authToken");
-    const response = await fetch(
-        `${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}`,
-        {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}${API.ENDPOINTS.PRODUCTS}/${productId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         throw new Error(`Failed to delete product: ${response.status}`);
     }
 }
-

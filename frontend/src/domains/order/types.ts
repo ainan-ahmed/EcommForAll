@@ -12,12 +12,7 @@ export type OrderStatus =
     | "REFUNDED";
 
 // Payment Status Enum
-export type PaymentStatus =
-    | "PENDING"
-    | "PAID"
-    | "FAILED"
-    | "REFUNDED"
-    | "PARTIALLY_REFUNDED";
+export type PaymentStatus = "PENDING" | "PAID" | "FAILED" | "REFUNDED" | "PARTIALLY_REFUNDED";
 
 // Payment Method Enum
 export type PaymentMethod =

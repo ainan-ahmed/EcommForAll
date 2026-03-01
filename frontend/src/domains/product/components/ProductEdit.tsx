@@ -25,11 +25,7 @@ export function ProductEdit({ id }: ProductEditProps) {
     const navigate = useNavigate();
 
     // Fetch product using hook
-    const {
-        data: product,
-        isLoading: isLoadingProduct,
-        isError,
-    } = useProduct(id);
+    const { data: product, isLoading: isLoadingProduct, isError } = useProduct(id);
 
     // Fetch categories for dropdown
     const { data: categoriesData } = useCategories({ page: 0, size: 100 });
@@ -81,10 +77,7 @@ export function ProductEdit({ id }: ProductEditProps) {
                     );
 
                     console.log("Basic variants data:", basicVariantsData);
-                    await updateProductVariants(
-                        productData.id,
-                        basicVariantsData
-                    );
+                    await updateProductVariants(productData.id, basicVariantsData);
 
                     // The rest of your variant image upload code remains the same
                     try {
@@ -105,9 +98,7 @@ export function ProductEdit({ id }: ProductEditProps) {
                                             img.file
                                         );
                                     } catch (imageError: any) {
-                                        errors.push(
-                                            `Variant Image Upload: ${imageError.message}`
-                                        );
+                                        errors.push(`Variant Image Upload: ${imageError.message}`);
                                         // Continue with other images
                                     }
                                 }
@@ -126,9 +117,7 @@ export function ProductEdit({ id }: ProductEditProps) {
             // Step 3: Handle product images separately
             try {
                 // Step 3a: Upload any new images
-                const tempImages = productData.images.filter((img) =>
-                    img.id.startsWith("temp-")
-                );
+                const tempImages = productData.images.filter((img) => img.id.startsWith("temp-"));
                 if (tempImages.length > 0) {
                     for (const img of tempImages) {
                         if (img.file) {
@@ -170,9 +159,7 @@ export function ProductEdit({ id }: ProductEditProps) {
             // Complete failure (even basic info failed)
             notifications.show({
                 title: "Update Failed",
-                message:
-                    error.message ||
-                    "Failed to update product basic information",
+                message: error.message || "Failed to update product basic information",
                 color: "red",
             });
         }
@@ -186,12 +173,7 @@ export function ProductEdit({ id }: ProductEditProps) {
             message: "You need to log in to edit products",
             color: "red",
         });
-        return (
-            <Navigate
-                to="/login"
-                search={{ redirect: `/products/${id}/edit` }}
-            />
-        );
+        return <Navigate to="/login" search={{ redirect: `/products/${id}/edit` }} />;
     }
 
     // Show loading while fetching product
@@ -224,13 +206,7 @@ export function ProductEdit({ id }: ProductEditProps) {
             color: "red",
         });
 
-        return (
-            <Navigate
-                to="/products/$productId"
-                params={{ productId: id }}
-                replace
-            />
-        );
+        return <Navigate to="/products/$productId" params={{ productId: id }} replace />;
     }
 
     return (

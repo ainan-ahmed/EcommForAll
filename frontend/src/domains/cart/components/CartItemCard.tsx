@@ -73,24 +73,17 @@ export function CartItemCard({
                         <Stack gap="xs">
                             {item.variantId &&
                                 item.variantAttributes &&
-                                Object.keys(item.variantAttributes).length >
-                                    0 && (
+                                Object.keys(item.variantAttributes).length > 0 && (
                                     <Group gap="xs" wrap="wrap">
-                                        {Object.entries(
-                                            item.variantAttributes
-                                        ).map(
-                                            ([
-                                                attributeName,
-                                                attributeValue,
-                                            ]) => (
+                                        {Object.entries(item.variantAttributes).map(
+                                            ([attributeName, attributeValue]) => (
                                                 <Badge
                                                     key={attributeName}
                                                     variant="light"
                                                     color="blue"
                                                     size="sm"
                                                 >
-                                                    {attributeName}:{" "}
-                                                    {attributeValue}
+                                                    {attributeName}: {attributeValue}
                                                 </Badge>
                                             )
                                         )}
@@ -101,11 +94,7 @@ export function CartItemCard({
                                     <Text size="sm" c="dimmed">
                                         SKU:
                                     </Text>
-                                    <Badge
-                                        variant="filled"
-                                        size="sm"
-                                        color="purple"
-                                    >
+                                    <Badge variant="filled" size="sm" color="purple">
                                         {item.sku}
                                     </Badge>
                                 </Group>
@@ -143,14 +132,8 @@ export function CartItemCard({
                         <Group gap="xs">
                             <ActionIcon
                                 variant="outline"
-                                onClick={() =>
-                                    handleQuantityChange(item.quantity - 1)
-                                }
-                                disabled={
-                                    item.quantity <= 1 ||
-                                    isUpdating ||
-                                    !item.inStock
-                                }
+                                onClick={() => handleQuantityChange(item.quantity - 1)}
+                                disabled={item.quantity <= 1 || isUpdating || !item.inStock}
                                 loading={isUpdating}
                             >
                                 <IconMinus size={16} />
@@ -158,9 +141,7 @@ export function CartItemCard({
 
                             <NumberInput
                                 value={item.quantity}
-                                onChange={(value) =>
-                                    handleQuantityChange(Number(value))
-                                }
+                                onChange={(value) => handleQuantityChange(Number(value))}
                                 min={1}
                                 max={item.inStock ? 99 : item.quantity}
                                 w={80}
@@ -174,14 +155,8 @@ export function CartItemCard({
 
                             <ActionIcon
                                 variant="outline"
-                                onClick={() =>
-                                    handleQuantityChange(item.quantity + 1)
-                                }
-                                disabled={
-                                    !item.inStock ||
-                                    isUpdating ||
-                                    item.quantity >= 99
-                                }
+                                onClick={() => handleQuantityChange(item.quantity + 1)}
+                                disabled={!item.inStock || isUpdating || item.quantity >= 99}
                                 loading={isUpdating}
                             >
                                 <IconPlus size={16} />

@@ -1,39 +1,40 @@
 .product-description {
-  line-height: 1.6;
+    line-height: 1.6;
 }
 
 .product-description h1 {
-  font-size: 1.8rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
+    font-size: 1.8rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 .product-description h2 {
-  font-size: 1.5rem;
-  margin-top: 1.2rem;
-  margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+    margin-top: 1.2rem;
+    margin-bottom: 0.8rem;
 }
 
 .product-description h3 {
-  font-size: 1.2rem;
-  margin-top: 1rem;
-  margin-bottom: 0.6rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
 }
 
 .product-description p {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
-.product-description ul, .product-description ol {
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
+.product-description ul,
+.product-description ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
 }
 
 .product-description a {
-  color: var(--mantine-color-blue-6);
-  text-decoration: none;
+    color: var(--mantine-color-blue-6);
+    text-decoration: none;
 }
 
 .product-description a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }

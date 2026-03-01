@@ -36,10 +36,7 @@ export function useWishlistById(wishlistId: string) {
 }
 
 // Hook to check if a product is in a wishlist
-export function useIsProductInWishlist(
-    wishlistId?: string,
-    productId?: string
-) {
+export function useIsProductInWishlist(wishlistId?: string, productId?: string) {
     const { isAuthenticated } = useStore(authStore);
 
     return useQuery({
@@ -80,8 +77,7 @@ export function useAddToWishlist(wishlistId?: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (productId: string) =>
-            addToWishlist(wishlistId!, productId),
+        mutationFn: (productId: string) => addToWishlist(wishlistId!, productId),
         onSuccess: (_, productId) => {
             // Invalidate relevant queries to refresh data
             queryClient.invalidateQueries({
@@ -112,8 +108,7 @@ export function useRemoveFromWishlist(wishlistId?: string) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (productId: string) =>
-            removeFromWishlist(wishlistId!, productId),
+        mutationFn: (productId: string) => removeFromWishlist(wishlistId!, productId),
         onSuccess: (_, productId) => {
             // Invalidate relevant queries to refresh data
             queryClient.invalidateQueries({
@@ -132,8 +127,7 @@ export function useRemoveFromWishlist(wishlistId?: string) {
         onError: (error: Error) => {
             notifications.show({
                 title: "Error",
-                message:
-                    error.message || "Failed to remove product from wishlist",
+                message: error.message || "Failed to remove product from wishlist",
                 color: "red",
             });
         },

@@ -12,9 +12,7 @@ import {
 /**
  * Get all orders (admin/seller can access all orders or filter by seller)
  */
-export async function fetchAllOrders(
-    params: OrderQueryParams = {}
-): Promise<OrdersResponse> {
+export async function fetchAllOrders(params: OrderQueryParams = {}): Promise<OrdersResponse> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -24,10 +22,8 @@ export async function fetchAllOrders(
     const url = new URL(`${API.BASE_URL}/admin/orders`);
 
     // Add query parameters
-    if (params.page !== undefined)
-        url.searchParams.append("page", params.page.toString());
-    if (params.size !== undefined)
-        url.searchParams.append("size", params.size.toString());
+    if (params.page !== undefined) url.searchParams.append("page", params.page.toString());
+    if (params.size !== undefined) url.searchParams.append("size", params.size.toString());
     if (params.sort) url.searchParams.append("sort", params.sort);
     if (params.status) url.searchParams.append("status", params.status);
     if (params.userId) url.searchParams.append("userId", params.userId);
@@ -37,8 +33,7 @@ export async function fetchAllOrders(
         url.searchParams.append("minAmount", params.minAmount.toString());
     if (params.maxAmount !== undefined)
         url.searchParams.append("maxAmount", params.maxAmount.toString());
-    if (params.orderNumber)
-        url.searchParams.append("orderNumber", params.orderNumber);
+    if (params.orderNumber) url.searchParams.append("orderNumber", params.orderNumber);
 
     const response = await fetch(url.toString(), {
         method: "GET",
@@ -49,9 +44,7 @@ export async function fetchAllOrders(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to fetch orders: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch orders: ${response.status}`);
     }
 
     return response.json();
@@ -73,10 +66,8 @@ export async function fetchSellerOrders(
     const url = new URL(`${API.BASE_URL}/seller/${sellerId}/orders`);
 
     // Add query parameters
-    if (params.page !== undefined)
-        url.searchParams.append("page", params.page.toString());
-    if (params.size !== undefined)
-        url.searchParams.append("size", params.size.toString());
+    if (params.page !== undefined) url.searchParams.append("page", params.page.toString());
+    if (params.size !== undefined) url.searchParams.append("size", params.size.toString());
     if (params.sort) url.searchParams.append("sort", params.sort);
     if (params.status) url.searchParams.append("status", params.status);
     if (params.dateFrom) url.searchParams.append("dateFrom", params.dateFrom);
@@ -95,10 +86,7 @@ export async function fetchSellerOrders(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to fetch seller orders: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch seller orders: ${response.status}`);
     }
 
     return response.json();
@@ -123,9 +111,7 @@ export async function fetchOrderByIdAdmin(orderId: string): Promise<Order> {
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to fetch order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch order: ${response.status}`);
     }
 
     return response.json();
@@ -147,29 +133,23 @@ export async function updateOrderStatus(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/status`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-                status,
-                notes,
-                trackingNumber,
-                estimatedDelivery,
-            }),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/status`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            status,
+            notes,
+            trackingNumber,
+            estimatedDelivery,
+        }),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to update order status: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to update order status: ${response.status}`);
     }
 
     return response.json();
@@ -189,24 +169,18 @@ export async function forceCancelOrder(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/force-cancel`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ reason, refundAmount }),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/force-cancel`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reason, refundAmount }),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to force cancel order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to force cancel order: ${response.status}`);
     }
 
     return response.json();
@@ -241,10 +215,7 @@ export async function fetchOrderStats(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to fetch order stats: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch order stats: ${response.status}`);
     }
 
     return response.json();
@@ -263,23 +234,19 @@ export async function updateShippingDetails(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/shipping`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(shippingDetails),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/shipping`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(shippingDetails),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to update shipping details: ${response.status}`
+            errorData.message || `Failed to update shipping details: ${response.status}`
         );
     }
 
@@ -301,24 +268,18 @@ export async function updatePaymentStatus(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/payment/status`,
-        {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ paymentStatus, transactionId, notes }),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/payment/status`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ paymentStatus, transactionId, notes }),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to update payment status: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to update payment status: ${response.status}`);
     }
 
     return response.json();
@@ -350,8 +311,7 @@ export async function bulkUpdateOrderStatus(
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(
-            errorData.message ||
-                `Failed to bulk update order status: ${response.status}`
+            errorData.message || `Failed to bulk update order status: ${response.status}`
         );
     }
 
@@ -361,9 +321,7 @@ export async function bulkUpdateOrderStatus(
 /**
  * Export orders to CSV (admin privilege)
  */
-export async function exportOrdersToCSV(
-    params: OrderQueryParams = {}
-): Promise<Blob> {
+export async function exportOrdersToCSV(params: OrderQueryParams = {}): Promise<Blob> {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -391,9 +349,7 @@ export async function exportOrdersToCSV(
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to export orders: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to export orders: ${response.status}`);
     }
 
     return response.blob();
@@ -409,22 +365,16 @@ export async function fetchOrderAuditLog(orderId: string): Promise<any[]> {
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/audit`,
-        {
-            method: "GET",
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/audit`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to fetch order audit log: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to fetch order audit log: ${response.status}`);
     }
 
     return response.json();
@@ -453,23 +403,18 @@ export async function processRefund(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/admin/orders/${orderId}/refund`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(refundData),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/admin/orders/${orderId}/refund`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(refundData),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to process refund: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to process refund: ${response.status}`);
     }
 
     return response.json();
@@ -494,24 +439,18 @@ export async function markOrderAsShipped(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/seller/orders/${orderId}/ship`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(shippingData),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/seller/orders/${orderId}/ship`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(shippingData),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message ||
-                `Failed to mark order as shipped: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to mark order as shipped: ${response.status}`);
     }
 
     return response.json();
@@ -530,23 +469,18 @@ export async function confirmOrder(
         throw new Error("Authentication required");
     }
 
-    const response = await fetch(
-        `${API.BASE_URL}/seller/orders/${orderId}/confirm`,
-        {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ estimatedProcessingTime }),
-        }
-    );
+    const response = await fetch(`${API.BASE_URL}/seller/orders/${orderId}/confirm`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ estimatedProcessingTime }),
+    });
 
     if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-            errorData.message || `Failed to confirm order: ${response.status}`
-        );
+        throw new Error(errorData.message || `Failed to confirm order: ${response.status}`);
     }
 
     return response.json();

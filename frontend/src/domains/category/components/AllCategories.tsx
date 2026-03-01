@@ -1,12 +1,4 @@
-import {
-    Container,
-    Title,
-    Text,
-    Grid,
-    Group,
-    Pagination,
-    Button,
-} from "@mantine/core";
+import { Container, Title, Text, Grid, Group, Pagination, Button } from "@mantine/core";
 import { useState } from "react";
 import { CategoryCard } from "./CategoryCard.tsx";
 import { useCategories } from "../hooks/useCategories.ts";
@@ -43,10 +35,7 @@ export function AllCategories() {
                 <>
                     <Grid>
                         {data?.content.map((category) => (
-                            <Grid.Col
-                                key={category.id}
-                                span={{ base: 12, md: 6, lg: 4 }}
-                            >
+                            <Grid.Col key={category.id} span={{ base: 12, md: 6, lg: 4 }}>
                                 <CategoryCard category={category} />
                             </Grid.Col>
                         ))}

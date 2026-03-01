@@ -15,7 +15,6 @@ export function ReviewsList({ productId }: ReviewsListProps) {
 
     const { data: reviewsData, isLoading, isError } = useProductReviews(productId, page, pageSize);
 
-
     if (isLoading) {
         return (
             <Stack gap="md">
