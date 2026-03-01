@@ -11,7 +11,7 @@ import {
     Paper,
     Title,
 } from "@mantine/core";
-import { IconStar, IconSend } from "@tabler/icons-react";
+import { IconSend } from "@tabler/icons-react";
 import { useCreateReview } from "../hooks/useReviews";
 import { ReviewCreateRequest } from "../types";
 import { useStore } from "zustand/react";
