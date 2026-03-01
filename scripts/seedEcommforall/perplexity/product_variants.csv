@@ -53,7 +53,7 @@ dd1ee5e4-04c4-42a7-9d05-de44f17bd7e4,06772580-6ae0-470b-8569-35ff1ee023a6,"{""co
 cc18f3a4-48e2-4027-87bf-8bb177b32086,d0ccf8cb-1830-4252-8269-d62dc4b9ccb7,"{""color"": ""Black"", ""size"": ""XXL""}",KID-7471-BXXL,34.89,31
 9e807f9f-900e-42d4-87dc-c7af3de9cb44,d0ccf8cb-1830-4252-8269-d62dc4b9ccb7,"{""color"": ""Brown"", ""size"": ""XS""}",KID-7471-BXS,32.28,47
 fdc576b2-0b14-43ee-81a0-36bc0a1478f3,d0ccf8cb-1830-4252-8269-d62dc4b9ccb7,"{""color"": ""Pink"", ""size"": ""M""}",KID-7471-PM,33.29,48
-17d007a5-4dbb-4e47-b4a1-3fbbbc3eef5a,d0ccf8cb-1830-4252-8269-d62dc4b9ccb7,"{""color"": ""Black"", ""size"": ""XXL""}",KID-7471-BXXL,32.13,92
+17d007a5-4dbb-4e47-b4a1-3fbbbc3eef5a,d0ccf8cb-1830-4252-8269-d62dc4b9ccb7,"{""color"": ""Black"", ""size"": ""XXL""}",KID-7471-BXXL-2,32.13,92
 3377d7c2-45ef-42c3-8093-b1b91487442e,bedc29a4-2e11-440f-b154-2b671b079820,"{""color"": ""Pink"", ""size"": ""XXL""}",KID-2043-PXXL,46.29,17
 7ae443c4-144f-4113-991d-2d566566c693,bedc29a4-2e11-440f-b154-2b671b079820,"{""color"": ""White"", ""size"": ""M""}",KID-2043-WM,44.28,97
 c03b0777-1d04-4139-bdb3-fa52189e0165,bedc29a4-2e11-440f-b154-2b671b079820,"{""color"": ""Red"", ""size"": ""XL""}",KID-2043-RXL,45.55,53
@@ -77,7 +77,7 @@ eecdc58c-9e1a-44f2-b6a8-5c6001ab12f7,21048970-bd7c-4b72-a94f-4b6873c5f282,"{""co
 f2995772-ba09-4301-b453-70bc96a6a9b9,21048970-bd7c-4b72-a94f-4b6873c5f282,"{""color"": ""Green"", ""size"": ""M""}",SHO-4954-GM,147.16,39
 c7e85350-92a8-4eb6-b064-3a0608b83c0a,21048970-bd7c-4b72-a94f-4b6873c5f282,"{""color"": ""Pink"", ""size"": ""M""}",SHO-4954-PM,147.0,77
 90f11cd0-f576-45a7-8901-eb1a3bfb9e75,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Blue"", ""size"": ""M""}",SHO-8424-BM,152.97,60
-877a12bf-a510-407e-b187-d3a0802aadac,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Black"", ""size"": ""S""}",SHO-8424-BS,178.69,0
+877a12bf-a510-407e-b187-d3a0802aadac,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Black"", ""size"": ""S""}",SHO-8424-BS,178.69,1
 3f208778-1ee4-4f3f-ba67-c93a9166e2ef,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Red"", ""size"": ""XL""}",SHO-8424-RXL,172.56,47
 ffac5e6f-c109-418e-803a-98c1123582cb,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Pink"", ""size"": ""L""}",SHO-8424-PL,179.0,50
 5ccfdf88-2dda-4f71-b5d2-96ee09d13091,700b8669-db69-4d55-963f-19d179606a1c,"{""color"": ""Yellow"", ""size"": ""L""}",SHO-8424-YL,164.62,82
@@ -109,7 +109,7 @@ a109d6c3-e729-4b4d-b777-9f68aa31c35f,bb0f8a71-8075-4ae2-86cb-35a1972aa5a2,"{""co
 9041b1f3-c615-42b9-81c2-0fcbbc45634f,f17797d2-678e-4c98-a07c-e21ce483ff9b,"{""color"": ""Blue"", ""size"": ""M""}",SHO-3334-BM,60.92,15
 a9cff767-1285-4449-9ee2-b063b085aef8,f17797d2-678e-4c98-a07c-e21ce483ff9b,"{""color"": ""White"", ""size"": ""XS""}",SHO-3334-WXS,64.32,74
 42d4717c-c99f-4639-ae7a-5509025bc9f3,f17797d2-678e-4c98-a07c-e21ce483ff9b,"{""color"": ""Black"", ""size"": ""L""}",SHO-3334-BL,66.22,97
-f0882b30-800f-4d64-90ae-85887b88d083,54aacb3f-63df-42cd-929f-d3eb3e7b135f,"{""color"": ""Red"", ""size"": ""XS""}",SHO-8615-RXS,30.28,0
+f0882b30-800f-4d64-90ae-85887b88d083,54aacb3f-63df-42cd-929f-d3eb3e7b135f,"{""color"": ""Red"", ""size"": ""XS""}",SHO-8615-RXS,30.28,1
 a43d2166-083d-481f-b5ed-f07d8e14af9a,54aacb3f-63df-42cd-929f-d3eb3e7b135f,"{""color"": ""Brown"", ""size"": ""XS""}",SHO-8615-BXS,29.21,66
 9bc32ebd-5735-405f-a091-f362d7459a09,c6358634-ea53-4d52-b585-39607e6c0f46,"{""color"": ""Purple"", ""size"": ""XL""}",ACC-5990-PXL,100.67,97
 70c8f2e8-dd5d-4c39-8b9a-24d39777839c,c6358634-ea53-4d52-b585-39607e6c0f46,"{""color"": ""White"", ""size"": ""L""}",ACC-5990-WL,99.73,43
@@ -122,11 +122,11 @@ c026f6fc-44b8-41ff-a476-4ffb9f314e28,93e2037d-1605-4db8-b1e9-0e23084a8e9c,"{""co
 b4a631a4-4886-4434-8557-bd74eaaf8fb3,078cb6b1-48fb-4d04-8198-02b2a4ba479e,"{""color"": ""Black"", ""size"": ""M""}",ACC-7435-BM,160.15,87
 a686fe1b-ae95-41e5-8ee1-416e1768f361,078cb6b1-48fb-4d04-8198-02b2a4ba479e,"{""color"": ""Pink"", ""size"": ""XL""}",ACC-7435-PXL,158.89,24
 d220cfdf-5a3d-4077-a777-71b3d3312a9a,078cb6b1-48fb-4d04-8198-02b2a4ba479e,"{""color"": ""Red"", ""size"": ""XXL""}",ACC-7435-RXXL,176.5,41
-fe1ce961-c4bc-41f0-8f4a-eed642e9f105,078cb6b1-48fb-4d04-8198-02b2a4ba479e,"{""color"": ""Red"", ""size"": ""XXL""}",ACC-7435-RXXL,157.18,5
+fe1ce961-c4bc-41f0-8f4a-eed642e9f105,078cb6b1-48fb-4d04-8198-02b2a4ba479e,"{""color"": ""Red"", ""size"": ""XXL""}",ACC-7435-RXXL-2,157.18,5
 21877f44-abfa-4526-933f-c2a256bacfd7,e7a24dc7-db39-45a6-b963-d754586054a7,"{""color"": ""Pink"", ""size"": ""S""}",ACC-4623-PS,198.24,51
 7ec011f6-5b75-46d6-8721-1b43d87aec86,e7a24dc7-db39-45a6-b963-d754586054a7,"{""color"": ""Brown"", ""size"": ""XS""}",ACC-4623-BXS,188.21,60
 1f75d6ae-3822-4339-8d63-bc02ce6ec028,e7a24dc7-db39-45a6-b963-d754586054a7,"{""color"": ""Blue"", ""size"": ""XXL""}",ACC-4623-BXXL,189.63,77
-9cfd755c-d592-4348-9d72-05da7b8243de,e7a24dc7-db39-45a6-b963-d754586054a7,"{""color"": ""Black"", ""size"": ""XXL""}",ACC-4623-BXXL,180.25,66
+9cfd755c-d592-4348-9d72-05da7b8243de,e7a24dc7-db39-45a6-b963-d754586054a7,"{""color"": ""Black"", ""size"": ""XXL""}",ACC-4623-BXXL-2,180.25,66
 2c05825e-65c4-4ed0-88d5-7c90fb332edb,2378653d-ca7f-4ba3-91b0-fdf82ea394c6,"{""color"": ""Gray"", ""size"": ""XS""}",ACC-3793-GXS,128.43,11
 ab05f453-a018-469d-b801-839bc828e97d,2378653d-ca7f-4ba3-91b0-fdf82ea394c6,"{""color"": ""White"", ""size"": ""XXL""}",ACC-3793-WXXL,152.53,59
 ec774f17-f3f7-4d78-bc7c-5e5e5ab9a4dc,2378653d-ca7f-4ba3-91b0-fdf82ea394c6,"{""color"": ""Green"", ""size"": ""L""}",ACC-3793-GL,151.39,61
