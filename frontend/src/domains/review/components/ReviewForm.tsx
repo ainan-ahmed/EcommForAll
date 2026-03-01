@@ -54,7 +54,7 @@ export function ReviewForm({ productId, onSuccess }: ReviewFormProps) {
         createReviewMutation.mutate(reviewData, {
             onSuccess: () => {
                 form.reset();
-                setRating(5);
+                setRating(0);
                 onSuccess?.();
             },
         });
