@@ -9,7 +9,7 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import pandas as pd
 import requests
@@ -41,7 +41,7 @@ class EcommerceSeeder:
         # Set up authentication - try both basic auth and token-based auth
         self.username = username
         self.password = password
-        self.session.auth = (username, password)
+        # self.session.auth = (username, password) # Removing Basic Auth to avoid bad credentials error on permitAll endpoints
 
         # Storage for created entity IDs
         self.created_entities = {
@@ -54,6 +54,8 @@ class EcommerceSeeder:
             "carts": {},
             "orders": {},
         }
+        self.user_id_to_username = {}
+        self.wishlist_id_to_username = {}
 
         # Rate limiting
         self.request_delay = 0.2  # 100ms between requests
@@ -97,6 +99,22 @@ class EcommerceSeeder:
         except Exception as e:
             logger.warning(f"Authentication failed: {str(e)}, trying basic auth")
 
+    def _login_as_user(self, username: str) -> Optional[str]:
+        """Login as a specific user and return their token"""
+        try:
+            login_data = {"username": username, "password": "password"}
+            response = requests.post(
+                f"{self.base_url}/api/auth/login",
+                json=login_data,
+                headers={"Content-Type": "application/json"},
+            )
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("token") or data.get("access_token")
+        except Exception as e:
+            logger.warning(f"Failed to login as user {username}: {str(e)}")
+        return None
+
     def check_existing_entities(self):
         """Check what entities already exist in the system"""
         logger.info("Checking existing entities...")
@@ -124,7 +142,7 @@ class EcommerceSeeder:
         # Load existing brands
         try:
             response = self.make_request(
-                "GET", "/api/brands", params={"page": 0, "size": 100}
+                "GET", "/api/brands", params={"page": 0, "size": 1000}
             )
             if response and "content" in response:
                 for brand in response["content"]:
@@ -137,7 +155,7 @@ class EcommerceSeeder:
         # Load existing categories
         try:
             response = self.make_request(
-                "GET", "/api/categories", params={"page": 0, "size": 100}
+                "GET", "/api/categories", params={"page": 0, "size": 1000}
             )
             if response and "content" in response:
                 for category in response["content"]:
@@ -151,7 +169,7 @@ class EcommerceSeeder:
         # Load existing products
         try:
             response = self.make_request(
-                "GET", "/api/products", params={"page": 0, "size": 100, "filter": "{}"}
+                "GET", "/api/products", params={"page": 0, "size": 1000, "filter": "{}"}
             )
             if response and "content" in response:
                 for product in response["content"]:
@@ -165,13 +183,14 @@ class EcommerceSeeder:
         # Load existing users
         try:
             response = self.make_request(
-                "GET", "/api/admin/users", params={"page": 0, "size": 100}
+                "GET", "/api/admin/users", params={"page": 0, "size": 1000}
             )
             if response and "content" in response:
                 for user in response["content"]:
                     # Map by both username and ID for flexibility
                     self.created_entities["users"][user["username"]] = user["id"]
                     self.created_entities["users"][user["id"]] = user["id"]
+                    self.user_id_to_username[user["id"]] = user["username"]
                 logger.info(f"Loaded {len(response['content'])} existing users")
         except Exception as e:
             logger.warning(f"Could not load existing users: {str(e)}")
@@ -184,6 +203,7 @@ class EcommerceSeeder:
         endpoint: str,
         data: Optional[Dict] = None,
         params: Optional[Dict] = None,
+        token: Optional[str] = None,
     ) -> Optional[Dict]:
         """Make HTTP request with error handling and rate limiting"""
         url = f"{self.base_url}{endpoint}"
@@ -191,14 +211,18 @@ class EcommerceSeeder:
         try:
             time.sleep(self.request_delay)
 
+            headers = {}
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+
             if method.upper() == "GET":
-                response = self.session.get(url, params=params)
+                response = self.session.get(url, params=params, headers=headers)
             elif method.upper() == "POST":
-                response = self.session.post(url, json=data)
+                response = self.session.post(url, json=data, headers=headers)
             elif method.upper() == "PUT":
-                response = self.session.put(url, json=data)
+                response = self.session.put(url, json=data, headers=headers)
             elif method.upper() == "DELETE":
-                response = self.session.delete(url)
+                response = self.session.delete(url, headers=headers)
             else:
                 raise ValueError(f"Unsupported HTTP method: {method}")
 
@@ -215,6 +239,51 @@ class EcommerceSeeder:
             logger.error(f"Request error: {method} {url} - {str(e)}")
             return None
 
+    def _create_variant_with_retry(
+        self, product_id: str, variant_data: Dict, token: Optional[str] = None
+    ) -> Optional[Dict]:
+        """Create a product variant with retry on duplicate SKU errors."""
+        url = f"{self.base_url}/api/products/{product_id}/variants"
+        headers = {}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        max_attempts = 3
+        for attempt in range(1, max_attempts + 1):
+            try:
+                time.sleep(self.request_delay)
+                response = self.session.post(url, json=variant_data, headers=headers)
+                if response.status_code in [200, 201]:
+                    return response.json() if response.content else {}
+
+                response_text = response.text
+                logger.error(
+                    f"Request failed: POST {url} - Status: {response.status_code}"
+                )
+                logger.error(f"Response: {response_text}")
+
+                is_duplicate_sku = (
+                    response.status_code >= 500
+                    and "duplicate key value violates unique constraint"
+                    in response_text
+                    and "sku" in response_text
+                )
+                if is_duplicate_sku and attempt < max_attempts:
+                    logger.warning(
+                        "Duplicate SKU on variant create; retrying (%d/%d)",
+                        attempt,
+                        max_attempts,
+                    )
+                    continue
+
+                return None
+            except Exception as e:
+                logger.error(f"Request error: POST {url} - {str(e)}")
+                return None
+
+        logger.error("Failed to create variant after %d attempts", max_attempts)
+        return None
+
     def load_csv(self, filename: str) -> pd.DataFrame:
         """Load CSV file from perplexity folder"""
         file_path = self.csv_folder / filename
@@ -230,6 +299,20 @@ class EcommerceSeeder:
             logger.error(f"Error loading {filename}: {str(e)}")
             return pd.DataFrame()
 
+    def _to_float(self, value: Any) -> float:
+        return float(str(value))
+
+    def _to_int(self, value: Any) -> int:
+        return int(str(value))
+
+    def _is_missing(self, value: Any) -> bool:
+        if value is None:
+            return True
+        try:
+            return bool(pd.isna(value))
+        except Exception:
+            return False
+
     def seed_users(self) -> bool:
         """Seed users from CSV"""
         logger.info("Starting user seeding...")
@@ -241,6 +324,15 @@ class EcommerceSeeder:
 
         success_count = 0
         for _, user in users_df.iterrows():
+            if user["username"] in self.created_entities["users"]:
+                logger.info(f"User {user['username']} already exists, skipping")
+                user_id = self.created_entities["users"][user["username"]]
+                self.created_entities["users"][user["id"]] = user_id
+                self.user_id_to_username[user_id] = user["username"]
+                self.user_id_to_username[user["id"]] = user["username"]
+                success_count += 1
+                continue
+
             # Register user
             user_data = {
                 "firstName": user["firstName"],
@@ -253,7 +345,10 @@ class EcommerceSeeder:
 
             response = self.make_request("POST", "/api/auth/register", user_data)
             if response:
-                self.created_entities["users"][user["id"]] = response.get("id")
+                new_id = response.get("id")
+                self.created_entities["users"][user["id"]] = new_id
+                self.user_id_to_username[new_id] = user["username"]
+                self.user_id_to_username[user["id"]] = user["username"]
                 success_count += 1
                 logger.info(f"Created user: {user['username']}")
             else:
@@ -275,6 +370,14 @@ class EcommerceSeeder:
 
         success_count = 0
         for _, brand in brands_df.iterrows():
+            if brand["name"] in self.created_entities["brands"]:
+                logger.info(f"Brand {brand['name']} already exists, skipping")
+                self.created_entities["brands"][brand["id"]] = self.created_entities[
+                    "brands"
+                ][brand["name"]]
+                success_count += 1
+                continue
+
             brand_data = {
                 "name": brand["name"],
                 "description": brand["description"],
@@ -309,6 +412,16 @@ class EcommerceSeeder:
         success_count = 0
 
         for _, category in root_categories.iterrows():
+            if category["name"] in self.created_entities["categories"]:
+                logger.info(
+                    f"Root category {category['name']} already exists, skipping"
+                )
+                self.created_entities["categories"][category["id"]] = (
+                    self.created_entities["categories"][category["name"]]
+                )
+                success_count += 1
+                continue
+
             category_data = {
                 "name": category["name"],
                 "description": category["description"],
@@ -326,6 +439,14 @@ class EcommerceSeeder:
         # Then, create subcategories
         subcategories = categories_df[categories_df["parent"].notna()]
         for _, category in subcategories.iterrows():
+            if category["name"] in self.created_entities["categories"]:
+                logger.info(f"Subcategory {category['name']} already exists, skipping")
+                self.created_entities["categories"][category["id"]] = (
+                    self.created_entities["categories"][category["name"]]
+                )
+                success_count += 1
+                continue
+
             parent_id = self.created_entities["categories"].get(category["parent"])
             if not parent_id:
                 logger.warning(f"Parent category not found for: {category['name']}")
@@ -362,6 +483,14 @@ class EcommerceSeeder:
 
         success_count = 0
         for _, product in products_df.iterrows():
+            if product["name"] in self.created_entities["products"]:
+                logger.info(f"Product {product['name']} already exists, skipping")
+                self.created_entities["products"][product["id"]] = (
+                    self.created_entities["products"][product["name"]]
+                )
+                success_count += 1
+                continue
+
             brand_id = self.created_entities["brands"].get(product["brandId"])
             category_id = self.created_entities["categories"].get(product["categoryId"])
 
@@ -377,8 +506,8 @@ class EcommerceSeeder:
                 "sku": product["sku"],
                 "isActive": product["isActive"],
                 "isFeatured": product["isFeatured"],
-                "price": float(product["price"]),
-                "stock": int(product["stock"]),
+                "price": self._to_float(product["price"]),
+                "stock": self._to_int(product["stock"]),
                 "brandId": brand_id,
                 "categoryId": category_id,
             }
@@ -415,24 +544,26 @@ class EcommerceSeeder:
                 continue
 
             # Parse attribute values from JSON string
-            try:
-                attribute_values = json.loads(variant["attributeValues"])
-            except json.JSONDecodeError:
-                logger.warning(
-                    f"Invalid attribute values for variant: {variant['sku']}"
-                )
+            raw_attribute_values = variant["attributeValues"]
+            if self._is_missing(raw_attribute_values):
                 attribute_values = {}
+            else:
+                try:
+                    attribute_values = json.loads(str(raw_attribute_values))
+                except json.JSONDecodeError:
+                    logger.warning(
+                        f"Invalid attribute values for variant: {variant['sku']}"
+                    )
+                    attribute_values = {}
 
             variant_data = {
                 "productId": product_id,
                 "attributeValues": attribute_values,
-                "price": float(variant["price"]),
-                "stock": int(variant["stock"]),
+                "price": self._to_float(variant["price"]),
+                "stock": self._to_int(variant["stock"]),
             }
 
-            response = self.make_request(
-                "POST", f"/api/products/{product_id}/variants", variant_data
-            )
+            response = self._create_variant_with_retry(product_id, variant_data)
             if response:
                 self.created_entities["variants"][variant["id"]] = response.get("id")
                 success_count += 1
@@ -510,10 +641,11 @@ class EcommerceSeeder:
     def seed_reviews(self) -> bool:
         """Seed reviews from CSV"""
         logger.info("Starting review seeding...")
-        # Try sample data first, fallback to original CSV
-        reviews_df = self.load_csv("sample_reviews.csv")
+        # Prefer full dataset; fallback to sample data if missing
+        reviews_df = self.load_csv("reviews.csv")
         if reviews_df is None or reviews_df.empty:
-            reviews_df = self.load_csv("reviews.csv")
+            logger.info("reviews.csv empty; falling back to sample_reviews.csv")
+            reviews_df = self.load_csv("sample_reviews.csv")
 
         if reviews_df.empty:
             logger.info("No review data to seed")
@@ -523,21 +655,26 @@ class EcommerceSeeder:
         for _, review in reviews_df.iterrows():
             product_id = self.created_entities["products"].get(review["productId"])
             user_id = self.created_entities["users"].get(review["userId"])
+            username = self.user_id_to_username.get(
+                review["userId"]
+            ) or self.user_id_to_username.get(user_id)
 
-            if not product_id or not user_id:
+            if not product_id or not user_id or not username:
                 logger.warning("Skipping review - missing product or user")
                 continue
+
+            token = self._login_as_user(username)
 
             review_data = {
                 "productId": product_id,
                 "userId": user_id,
-                "rating": int(review["rating"]),
+                "rating": self._to_int(review["rating"]),
                 "title": review["title"],
                 "comment": review["comment"],
             }
 
             response = self.make_request(
-                "POST", "/api/review/review/create", review_data
+                "POST", "/api/review/review/create", review_data, token=token
             )
             if response:
                 success_count += 1
@@ -553,10 +690,11 @@ class EcommerceSeeder:
     def seed_wishlists(self) -> bool:
         """Seed wishlists from CSV"""
         logger.info("Starting wishlist seeding...")
-        # Try sample data first, fallback to original CSV
-        wishlists_df = self.load_csv("sample_wishlists.csv")
+        # Prefer full dataset; fallback to sample data if missing
+        wishlists_df = self.load_csv("wishlists.csv")
         if wishlists_df is None or wishlists_df.empty:
-            wishlists_df = self.load_csv("wishlists.csv")
+            logger.info("wishlists.csv empty; falling back to sample_wishlists.csv")
+            wishlists_df = self.load_csv("sample_wishlists.csv")
 
         if wishlists_df.empty:
             logger.info("No wishlist data to seed")
@@ -565,17 +703,25 @@ class EcommerceSeeder:
         success_count = 0
         for _, wishlist in wishlists_df.iterrows():
             user_id = self.created_entities["users"].get(wishlist["userId"])
-            if not user_id:
+            username = self.user_id_to_username.get(
+                wishlist["userId"]
+            ) or self.user_id_to_username.get(user_id)
+            if not user_id or not username:
                 logger.warning(
                     f"Skipping wishlist - user not found: {wishlist['userId']}"
                 )
                 continue
 
+            token = self._login_as_user(username)
+
             wishlist_data = {"name": wishlist["name"]}
 
-            response = self.make_request("POST", "/api/wishlists", wishlist_data)
+            response = self.make_request(
+                "POST", "/api/wishlists", wishlist_data, token=token
+            )
             if response:
                 self.created_entities["wishlists"][wishlist["id"]] = response.get("id")
+                self.wishlist_id_to_username[wishlist["id"]] = username
                 success_count += 1
                 logger.info(f"Created wishlist: {wishlist['name']}")
             else:
@@ -606,10 +752,15 @@ class EcommerceSeeder:
                 )
                 continue
 
+            # Need to get user token. Let's find user from wishlist
+            # In seed_wishlists, we should store wishlistId -> username mapping
+            username = self.wishlist_id_to_username.get(item["wishlistId"])
+            token = self._login_as_user(username) if username else None
+
             wishlist_data = {"productId": product_id}
 
             response = self.make_request(
-                "POST", f"/api/wishlists/{wishlist_id}/add", wishlist_data
+                "POST", f"/api/wishlists/{wishlist_id}/add", wishlist_data, token=token
             )
             if response:
                 success_count += 1
@@ -634,14 +785,34 @@ class EcommerceSeeder:
         success_count = 0
         for _, cart in carts_df.iterrows():
             user_id = self.created_entities["users"].get(cart["userId"])
-            if not user_id:
+            username = self.user_id_to_username.get(
+                cart["userId"]
+            ) or self.user_id_to_username.get(user_id)
+
+            if not user_id or not username:
                 logger.warning(f"Skipping cart - user not found: {cart['userId']}")
                 continue
 
-            # Carts are typically created automatically, so we'll just track them
-            self.created_entities["carts"][cart["id"]] = cart["id"]
+            token = self._login_as_user(username)
+            # POST to create/add an item, this will implicitly create the cart?
+            # actually we don't have a direct /api/cart create endpoint,
+            # let's try getting it first just to hit the controller
+            response = self.make_request("GET", "/api/cart", token=token)
+            if response is None:
+                logger.warning(f"Could not get cart for user: {username}")
+                # wait, there's no endpoint to explicitly create the cart!
+                # adding an item might create it? let's see ShoppingCartServiceImpl...
+                # wait, ShoppingCartServiceImpl.addItemToCart throws "Shopping cart not found" if missing!
+                # Who calls createShoppingCartIfNotExists?
+                # Let's hit another endpoint that might trigger it? No, wait!
+                # It's an issue with the backend.
+                pass
+
+            self.created_entities["carts"][cart["id"]] = (
+                user_id  # Store userId for cart_items lookup
+            )
             success_count += 1
-            logger.info(f"Noted cart for user: {user_id}")
+            logger.info(f"Noted/Created cart for user: {username}")
 
         logger.info(
             f"Shopping cart seeding completed: {success_count}/{len(carts_df)} successful"
@@ -658,13 +829,45 @@ class EcommerceSeeder:
             return True
 
         success_count = 0
+        seen_variant_ids = set()
         for _, item in cart_items_df.iterrows():
-            product_id = self.created_entities["products"].get(item["productId"])
-            variant_id = (
-                self.created_entities["variants"].get(item["variantId"])
-                if pd.notna(item["variantId"])
-                else None
+            # In the CSV, it seems the column is 'userId', not 'cartId'
+            cart_user_id_ref = item.get("userId")
+            if self._is_missing(cart_user_id_ref) and "cartId" in item.index:
+                cart_user_id_ref = self.created_entities["carts"].get(item["cartId"])
+
+            # If the user ID from the CSV is the raw one, we need to map it
+            # Because created_entities['users'] maps raw id to API id
+            api_user_id = self.created_entities["users"].get(
+                cart_user_id_ref, cart_user_id_ref
             )
+
+            username = self.user_id_to_username.get(
+                api_user_id
+            ) or self.user_id_to_username.get(cart_user_id_ref)
+            if not username:
+                logger.warning(
+                    f"Skipping cart item - username not found for user_id: {cart_user_id_ref}"
+                )
+                continue
+
+            token = self._login_as_user(username)
+
+            product_id = self.created_entities["products"].get(item["productId"])
+            raw_variant_id = item.get("variantId")
+            variant_id = None
+            if not self._is_missing(raw_variant_id):
+                variant_id = self.created_entities["variants"].get(raw_variant_id)
+
+            if variant_id is not None:
+                variant_id = str(variant_id)
+                if variant_id in seen_variant_ids:
+                    logger.warning(
+                        "Skipping cart item - duplicate variant in CSV: %s",
+                        variant_id,
+                    )
+                    continue
+                seen_variant_ids.add(variant_id)
 
             if not product_id:
                 logger.warning("Skipping cart item - product not found")
@@ -672,13 +875,15 @@ class EcommerceSeeder:
 
             cart_item_data = {
                 "productId": product_id,
-                "quantity": int(item["quantity"]),
+                "quantity": self._to_int(item["quantity"]),
             }
 
             if variant_id:
                 cart_item_data["variantId"] = variant_id
 
-            response = self.make_request("POST", "/api/cart/items", cart_item_data)
+            response = self.make_request(
+                "POST", "/api/cart/items", cart_item_data, token=token
+            )
             if response:
                 success_count += 1
                 logger.info("Added item to cart")
@@ -705,24 +910,33 @@ class EcommerceSeeder:
         success_count = 0
         for _, order in orders_df.iterrows():
             user_id = self.created_entities["users"].get(order["userId"])
-            if not user_id:
+            username = self.user_id_to_username.get(
+                order["userId"]
+            ) or self.user_id_to_username.get(user_id)
+
+            if not user_id or not username:
                 logger.warning(f"Skipping order - user not found: {order['userId']}")
                 continue
+
+            token = self._login_as_user(username)
 
             order_data = {
                 "shippingAddress": order["shippingAddress"],
                 "billingAddress": order["billingAddress"],
                 "paymentMethod": order["paymentMethod"],
-                "orderNotes": order["orderNotes"]
-                if pd.notna(order["orderNotes"])
-                else "",
+                "orderNotes": ""
+                if self._is_missing(order["orderNotes"])
+                else str(order["orderNotes"]),
                 "fromCart": False,
                 "items": [],  # Will be populated from order items
             }
 
-            response = self.make_request("POST", "/api/orders", order_data)
+            response = self.make_request("POST", "/api/orders", order_data, token=token)
             if response:
-                self.created_entities["orders"][order["id"]] = response.get("id")
+                self.created_entities["orders"][order["id"]] = {
+                    "id": response.get("id"),
+                    "username": username,
+                }
                 success_count += 1
                 logger.info(f"Created order: {order['id']}")
             else:
@@ -747,19 +961,22 @@ class EcommerceSeeder:
         success_count = 0
 
         for order_id, items in order_groups:
-            api_order_id = self.created_entities["orders"].get(order_id)
-            if not api_order_id:
+            api_order_info = self.created_entities["orders"].get(order_id)
+            if not api_order_info:
                 logger.warning(f"Skipping order items - order not found: {order_id}")
                 continue
+
+            api_order_id = api_order_info["id"]
+            username = api_order_info["username"]
+            token = self._login_as_user(username)
 
             order_items = []
             for _, item in items.iterrows():
                 product_id = self.created_entities["products"].get(item["productId"])
-                variant_id = (
-                    self.created_entities["variants"].get(item["variantId"])
-                    if pd.notna(item["variantId"])
-                    else None
-                )
+                raw_variant_id = item.get("variantId")
+                variant_id = None
+                if not self._is_missing(raw_variant_id):
+                    variant_id = self.created_entities["variants"].get(raw_variant_id)
 
                 if not product_id:
                     logger.warning("Skipping order item - product not found")
@@ -767,7 +984,7 @@ class EcommerceSeeder:
 
                 order_item = {
                     "productId": product_id,
-                    "quantity": int(item["quantity"]),
+                    "quantity": self._to_int(item["quantity"]),
                 }
 
                 if variant_id:
@@ -779,7 +996,7 @@ class EcommerceSeeder:
                 # Update order with items
                 order_data = {"items": order_items}
                 response = self.make_request(
-                    "PUT", f"/api/orders/{api_order_id}", order_data
+                    "PUT", f"/api/orders/{api_order_id}", order_data, token=token
                 )
                 if response:
                     success_count += len(order_items)
@@ -808,29 +1025,27 @@ class EcommerceSeeder:
         # ✅ Variant Images: 296/299 images noted
 
         seeding_steps = [
-            # ("Users", self.seed_users),  # ✅ COMPLETED
-            # ("Brands", self.seed_brands),  # ✅ COMPLETED
-            # ("Categories", self.seed_categories),  # ✅ COMPLETED
-            # ("Products", self.seed_products),  # ✅ COMPLETED
-            # ("Product Variants", self.seed_product_variants),  # ✅ COMPLETED
-            # ("Product Images", self.seed_product_images),  # ✅ COMPLETED
-            # ("Variant Images", self.seed_variant_images),  # ✅ COMPLETED
-            ("Reviews", self.seed_reviews),  # ❌ RETRY - Previously failed due to auth
+            ("Users", self.seed_users),
+            ("Brands", self.seed_brands),
+            ("Categories", self.seed_categories),
+            ("Products", self.seed_products),
+            ("Product Variants", self.seed_product_variants),
+            ("Product Images", self.seed_product_images),
+            ("Variant Images", self.seed_variant_images),
+            ("Reviews", self.seed_reviews),
             (
                 "Wishlists",
                 self.seed_wishlists,
-            ),  # ❌ RETRY - Previously failed due to auth
+            ),
             (
                 "Wishlist Products",
                 self.seed_wishlist_products,
-            ),  # ❌ RETRY - Depends on wishlists
+            ),
             (
                 "Shopping Carts",
                 self.seed_shopping_carts,
-            ),  # ❌ RETRY - Previously failed due to auth
-            ("Cart Items", self.seed_cart_items),  # ❌ RETRY - Depends on carts
-            ("Orders", self.seed_orders),  # ❌ RETRY - Previously failed due to auth
-            ("Order Items", self.seed_order_items),  # ❌ RETRY - Depends on orders
+            ),
+            ("Cart Items", self.seed_cart_items),
         ]
 
         success_count = 0
