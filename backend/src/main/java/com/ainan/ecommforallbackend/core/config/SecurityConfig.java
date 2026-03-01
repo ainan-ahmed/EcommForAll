@@ -88,7 +88,7 @@ public class SecurityConfig {
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/admin/**"))
                         .hasRole("ADMIN")
                         // public endpoints
-                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error")
+                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error", "/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products/**",
@@ -106,10 +106,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(customUserDetailsService())
-                // Enable form login for SnapAdmin web UI (it uses session-based auth for the browser)
+                // Enable form login for SnapAdmin web UI (uses Spring Security's built-in login page at /login)
                 .formLogin(form -> form
-                        .loginPage("/admin/login")
-                        .loginProcessingUrl("/admin/login")
                         .defaultSuccessUrl("/admin", true)
                         .permitAll())
                 // Custom access denied handler: show SnapAdmin forbidden page for /admin/** paths
