@@ -81,6 +81,8 @@ public class SecurityConfig {
                 // SnapAdmin uses server-side sessions for its own UI; keep API stateless via JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
+                        // Admin login page is public (must be before the /admin/** ADMIN rule)
+                        .requestMatchers("/admin/login").permitAll()
                         // SnapAdmin routes: all write operations (POST) restricted to ADMIN role
                         .requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/admin/**"))
                         .hasRole("ADMIN")
@@ -88,7 +90,7 @@ public class SecurityConfig {
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/admin/**"))
                         .hasRole("ADMIN")
                         // public endpoints
-                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error", "/login")
+                        .requestMatchers("/api/auth/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/error")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/api/products/**",
@@ -106,8 +108,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .userDetailsService(customUserDetailsService())
-                // Enable form login for SnapAdmin web UI (uses Spring Security's built-in login page at /login)
+                // Enable form login for SnapAdmin web UI at /admin/login
                 .formLogin(form -> form
+                        .loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/login")
                         .defaultSuccessUrl("/admin", true)
                         .permitAll())
                 // Custom access denied handler: show SnapAdmin forbidden page for /admin/** paths
